@@ -3,485 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>地理 期末対策クイズ</title>
+<title>期末対策クイズ｜科目をえらぶ</title>
 <style>
   :root{
-    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
-    --accent:#2563eb; --accent-d:#1d4ed8;
-    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
-    --line:#e3e8f0; --shadow:0 4px 14px rgba(20,40,80,.08);
+    --bg:#f4f6fb; --card:#fff; --ink:#1f2733; --sub:#6b7686;
+    --shadow:0 6px 18px rgba(20,40,80,.10); --line:#e3e8f0;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{
     font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
-    background:var(--bg); color:var(--ink);
-    line-height:1.6; font-size:17px;
-    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+    background:linear-gradient(180deg,#eef2fb,#f6f4fb);
+    color:var(--ink); line-height:1.6; font-size:17px;
+    padding:26px 14px 40px; max-width:480px; margin:0 auto; min-height:100vh;
   }
-  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
-  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
-  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
-
-  /* HOME */
-  .topic{
-    display:flex; align-items:center; gap:12px; width:100%;
-    background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:14px 14px; margin-bottom:11px; text-align:left;
-    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  .hero{text-align:center; margin-bottom:22px;}
+  .hero .ico{font-size:42px;}
+  h1{font-size:22px; margin:4px 0 4px;}
+  .hero p{color:var(--sub); font-size:13px; margin:0;}
+  .subj{
+    display:flex; align-items:center; gap:14px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:18px;
+    padding:20px 18px; margin-bottom:14px; text-decoration:none; color:var(--ink);
+    box-shadow:var(--shadow); transition:transform .08s;
   }
-  .topic:active{transform:scale(.98);}
-  .topic .emo{font-size:26px; flex:0 0 auto;}
-  .topic .tt{flex:1 1 auto;}
-  .topic .tt b{font-size:16px; display:block;}
-  .topic .tt small{color:var(--sub); font-size:12px;}
-  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
-  .arrow{color:var(--accent); font-weight:700;}
-
-  /* QUIZ */
-  .bar{height:8px; background:#e7ecf5; border-radius:99px; overflow:hidden; margin-bottom:8px;}
-  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
-  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
-  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
-  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.5;}
-  .opt{
-    display:block; width:100%; text-align:left; background:#fff;
-    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
-    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer;
-    transition:.1s;
+  .subj:active{transform:scale(.98);}
+  .subj .emo{font-size:38px; flex:0 0 auto; width:52px; text-align:center;}
+  .subj .t{flex:1 1 auto;}
+  .subj .t b{font-size:19px; display:block;}
+  .subj .t small{color:var(--sub); font-size:12.5px;}
+  .subj .go{font-size:22px; color:#9aa6b8;}
+  .chiri .emo{background:#e8f0ff; border-radius:14px; padding:6px 0;}
+  .rekishi .emo{background:#f1e9ff; border-radius:14px; padding:6px 0;}
+  .note{
+    background:#fff; border-radius:14px; padding:14px 16px; margin-top:8px;
+    box-shadow:var(--shadow); font-size:13px; color:var(--sub);
   }
-  .opt:active{transform:scale(.99);}
-  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
-  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
-  .opt:disabled{cursor:default;}
-  .exp{
-    background:#f1f5fd; border-left:4px solid var(--accent); border-radius:8px;
-    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
-  }
-  .exp.show{display:block;}
-  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
-  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
-  .btn{
-    display:block; width:100%; background:var(--accent); color:#fff; border:none;
-    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
-    margin-top:14px; box-shadow:var(--shadow);
-  }
-  .btn:active{background:var(--accent-d);}
-  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
-  .btn.gray{background:#eef1f6; color:var(--sub); box-shadow:none;}
-  .hidden{display:none;}
-
-  /* RESULT */
-  .score{text-align:center; padding:8px 0 4px;}
-  .score .big{font-size:46px; font-weight:800; line-height:1;}
-  .score .pct{font-size:15px; color:var(--sub);}
-  .ring{font-size:54px; text-align:center; margin:6px 0;}
-  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
-  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+  .note b{color:var(--ink);}
+  .foot{text-align:center; color:#9aa6b8; font-size:11px; margin-top:22px;}
 </style>
 </head>
 <body>
-
-<div id="home">
-  <h1>📘 地理 期末対策クイズ</h1>
-  <p class="lead">1学期末考査 / 教科書 p.106〜151<br>テーマを選んでスタート！</p>
-  <div id="topicList"></div>
-  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
-</div>
-
-<div id="quiz" class="hidden">
-  <div class="card">
-    <div class="bar"><i id="prog"></i></div>
-    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
-    <span class="qtag" id="qtag">問題</span>
-    <p class="q" id="qText"></p>
-    <div id="opts"></div>
-    <div class="exp" id="exp"></div>
-    <button class="btn hidden" id="nextBtn">次へ →</button>
+  <div class="hero">
+    <div class="ico">📖</div>
+    <h1>期末対策クイズ</h1>
+    <p>1学期末考査（社会）/ 教科書範囲<br>科目をえらんでスタート！</p>
   </div>
-  <button class="btn gray" id="quitBtn">やめてホームに戻る</button>
-</div>
 
-<div id="result" class="hidden">
-  <div class="card">
-    <div class="ring" id="ring">🎉</div>
-    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
-    <div class="msg" id="resMsg"></div>
-    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
-    <button class="btn" id="againBtn">もう一度（全問）</button>
-    <button class="btn gray" id="homeBtn">ホームに戻る</button>
+  <a class="subj chiri" href="chiri.html">
+    <span class="emo">📘</span>
+    <span class="t"><b>地理</b><small>南アメリカ州・オセアニア州・地域調査・日本の地形と気候・自然災害（p.106〜151）／全78問</small></span>
+    <span class="go">›</span>
+  </a>
+
+  <a class="subj rekishi" href="rekishi.html">
+    <span class="emo">📚</span>
+    <span class="t"><b>歴史</b><small>中世のユーラシア・モンゴル襲来・室町幕府・産業と民衆・室町文化（p.76〜97）／全77問</small></span>
+    <span class="go">›</span>
+  </a>
+
+  <div class="note">
+    <b>使い方</b>：科目 → テーマを選ぶと、4択クイズが始まります。タップで答えると正誤と解説が出ます。最後に正答率（<b>80%で合格ライン</b>）と「まちがえた問題だけ復習」が表示されます。すきま時間に何度でもどうぞ！
   </div>
-</div>
 
-<script>
-/* ====== 問題データ ====== */
-const QUIZ = {
-  samerica: { title:"南アメリカ州", emo:"🌎", questions:[
-    {q:"南アメリカ大陸の太平洋側を、南北に約7500km連なる世界最長の山脈は？",
-     o:[["アンデス山脈",1],["ヒマラヤ山脈",0],["ロッキー山脈",0],["アルプス山脈",0]],
-     e:"アンデス山脈。世界最長で、北のベネズエラから南のチリまで続く。"},
-    {q:"流域面積が世界最大で、赤道の近くを東へ流れる川は？",
-     o:[["アマゾン川",1],["ナイル川",0],["ラプラタ川",0],["ミシシッピ川",0]],
-     e:"アマゾン川。長さは世界2番目（ナイル川に次ぐ）だが、流域面積は世界最大。"},
-    {q:"アマゾン川の長さは世界で何番目？",
-     o:[["2番目",1],["1番目",0],["3番目",0],["5番目",0]],
-     e:"長さは2番目（1位はナイル川）。流域面積は1位。"},
-    {q:"アルゼンチンのラプラタ川河口付近に広がる大草原を何という？",
-     o:[["パンパ",1],["サバナ",0],["プレーリー",0],["セルバ",0]],
-     e:"パンパ。小麦の栽培や肉牛の放牧が盛ん。"},
-    {q:"赤道に近いのに、クスコやラパスのような標高2000m以上の高地に大都市が発達した理由は？",
-     o:[["標高が高く気温が低めで過ごしやすいから",1],["雨が全く降らないから",0],["海に近く涼しいから",0],["寒流が流れているから",0]],
-     e:"標高が高い地域は気温が下がり、赤道近くでも過ごしやすい気候になる。"},
-    {q:"南アメリカの先住民が築いた、アンデス山脈の高度な文明の帝国は？",
-     o:[["インカ帝国",1],["アステカ帝国",0],["マヤ文明",0],["ローマ帝国",0]],
-     e:"インカ帝国。とうもろこしやじゃがいもの栽培、アルパカの放牧などの伝統的生活。"},
-    {q:"16世紀に南アメリカへ進出し、植民地をつくった国の組み合わせは？",
-     o:[["スペインとポルトガル",1],["イギリスとフランス",0],["ドイツとイタリア",0],["オランダとベルギー",0]],
-     e:"スペインとポルトガル。その影響で今もスペイン語・ポルトガル語が話され、キリスト教（カトリック）が信仰されている。"},
-    {q:"ブラジルで主に話されている言語は？",
-     o:[["ポルトガル語",1],["スペイン語",0],["英語",0],["フランス語",0]],
-     e:"ブラジルだけポルトガル語。周りの多くの国はスペイン語。"},
-    {q:"リオデジャネイロで有名な、ヨーロッパとアフリカの文化が融合して生まれた祭りは？",
-     o:[["カーニバル",1],["タンゴ",0],["ハカ",0],["サンバ祭(七夕)",0]],
-     e:"カーニバル。サンバのリズムで踊るにぎやかな祭り。タンゴはアルゼンチンの舞踏音楽。"},
-    {q:"ブラジルに約270万人が暮らすとされ、1908年に移住が始まった人々は？",
-     o:[["日系人（日本人移民）",1],["中国系移民",0],["先住民",0],["ドイツ系移民",0]],
-     e:"日系人。初めはコーヒー農園で働き、サンパウロには日本人街がある。"},
-    {q:"森林を焼いてその灰を肥料にし、数年たつと別の場所に移動する農業を何という？",
-     o:[["焼畑農業",1],["プランテーション",0],["アグリビジネス",0],["混合農業",0]],
-     e:"焼畑農業。10〜50年で1サイクル。先住民が伝統的に行ってきた。"},
-    {q:"かつてブラジルがコーヒー豆の輸出に依存していたような、特定の産物にたよる経済を何という？",
-     o:[["モノカルチャー経済",1],["アグリビジネス",0],["バイオ経済",0],["プランテーション",0]],
-     e:"モノカルチャー経済。近年は大豆など輸出品が多角化している。"},
-    {q:"ブラジルの主要輸出品で、アメリカなどのアグリビジネス企業に買われ中国へ多く輸出される作物は？",
-     o:[["大豆",1],["コーヒー豆",0],["バナナ",0],["小麦",0]],
-     e:"大豆。飼料や大豆油の原料になる。品種改良でブラジル高原でも栽培可能に。"},
-    {q:"ブラジルで多く産出する代表的な鉱産資源は？",
-     o:[["鉄鉱石",1],["銅",0],["ボーキサイト",0],["石炭",0]],
-     e:"ブラジル＝鉄鉱石。チリ＝銅、ベネズエラやエクアドル＝原油が代表。"},
-    {q:"さとうきびなどを原料とし、燃やしても計算上は大気中の二酸化炭素が増えないとされる燃料は？",
-     o:[["バイオ燃料",1],["天然ガス",0],["原子力",0],["石炭",0]],
-     e:"バイオ燃料。植物が成長時にCO2を吸収するため。ブラジルで普及。"},
-    {q:"都市に人口が集中し、山の斜面や河川敷などにできた居住環境の悪い地区を何という？",
-     o:[["スラム",1],["プランテーション",0],["ニュータウン",0],["パンパ",0]],
-     e:"スラム。急速な都市化と経済格差が背景にある。"},
-    {q:"熱帯林の伐採が進むと、地球規模で心配される問題は？",
-     o:[["地球温暖化が進む",1],["オゾン層が厚くなる",0],["海面が下がる",0],["氷河が増える",0]],
-     e:"植物の光合成によるCO2吸収量が減り、地球温暖化が進むと考えられている。"},
-  ]},
-
-  oceania: { title:"オセアニア州", emo:"🦘", questions:[
-    {q:"オセアニア州の中心となる、地震や火山が少ない安定した大陸は？",
-     o:[["オーストラリア大陸",1],["ニュージーランド",0],["パプアニューギニア",0],["南極大陸",0]],
-     e:"オーストラリア大陸。大部分が標高500m以下のなだらかな平原。"},
-    {q:"太平洋の島々の三区分のうち、「小さい島々」を意味する地域は？",
-     o:[["ミクロネシア",1],["メラネシア",0],["ポリネシア",0],["インドネシア",0]],
-     e:"ミクロ＝小さい。メラネシア＝黒い島々、ポリネシア＝多くの島々。"},
-    {q:"オーストラリア内陸部の乾燥した荒野を何とよぶ？",
-     o:[["アウトバック",1],["パンパ",0],["サバナ",0],["タイガ",0]],
-     e:"アウトバック。年降水量500mm未満の地域が大陸の3分の2を占める。"},
-    {q:"平均標高が約1mしかなく、海面上昇による水没の危機にある国は？",
-     o:[["ツバル",1],["ニュージーランド",0],["フィジー",0],["パプアニューギニア",0]],
-     e:"ツバル。地球温暖化対策（温室効果ガス削減）を国際社会によびかけている。"},
-    {q:"オーストラリアの先住民は？",
-     o:[["アボリジニ",1],["マオリ",0],["インカ",0],["メスチーソ",0]],
-     e:"アボリジニ。マオリはニュージーランドの先住民。"},
-    {q:"ニュージーランドの先住民は？",
-     o:[["マオリ",1],["アボリジニ",0],["イヌイット",0],["アイヌ",0]],
-     e:"マオリ。マオリ語は公用語で、国会に議席が確保されている。試合前のハカが有名。"},
-    {q:"1901年に成立したオーストラリア連邦で定められた、白人以外の移民を厳しく制限する政策は？",
-     o:[["白豪主義",1],["アパルトヘイト",0],["多文化主義",0],["鎖国政策",0]],
-     e:"白豪主義。1970年代に撤廃され、現在は多文化社会へと変化した。"},
-    {q:"白豪主義が撤廃されたのはいつ頃？",
-     o:[["1970年代",1],["1901年",0],["1945年",0],["2000年代",0]],
-     e:"1970年代。その後、東南アジアや中国などからの移民が増加した。"},
-    {q:"オーストラリアの牛肉は、何という名前で日本などに輸出されている？",
-     o:[["オージービーフ",1],["ジャパンビーフ",0],["キウイビーフ",0],["カウボーイビーフ",0]],
-     e:"オージービーフ。降水量に恵まれた南東部のフィードロット（肥育場）などで飼育。"},
-    {q:"オーストラリアで多く産出し、北西部のピルバラ地区で開発が進む鉱産資源は？",
-     o:[["鉄鉱石",1],["原油",0],["金",0],["ウラン",0]],
-     e:"鉄鉱石。石炭は北東部・南東部、ボーキサイトも豊富。"},
-    {q:"アルミニウムの原料となる鉱産資源は？",
-     o:[["ボーキサイト",1],["鉄鉱石",0],["石炭",0],["銅",0]],
-     e:"ボーキサイト。オーストラリアに豊富にある。"},
-    {q:"地表を削りながら掘り下げていく、大規模な鉱産資源の採掘方法は？",
-     o:[["露天掘り",1],["坑道掘り",0],["海底掘削",0],["焼畑",0]],
-     e:"露天掘り。鉄鉱石や石炭の大規模採掘に使われる。"},
-    {q:"近年オーストラリアの貿易相手は変化した。今や重要な相手はどの地域？",
-     o:[["アジア（中国・日本など）",1],["ヨーロッパ",0],["アフリカ",0],["南アメリカ",0]],
-     e:"かつてはイギリスが最大だったが、距離が近く人口も多いアジアが重要に。"},
-    {q:"オーストラリアも参加する、アジア太平洋地域の経済協力の枠組みの略称は？",
-     o:[["APEC",1],["ASEAN",0],["EU",0],["NATO",0]],
-     e:"APEC（アジア太平洋経済協力）。"},
-    {q:"一年中適度な雨が降り、牧草がよく育つニュージーランドの気候は？",
-     o:[["西岸海洋性気候",1],["地中海性気候",0],["砂漠気候",0],["熱帯雨林気候",0]],
-     e:"西岸海洋性気候。ヨーロッパ西部と同じで、羊や牛の牧畜が盛ん。"},
-  ]},
-
-  survey: { title:"地域調査・地形図", emo:"🗺️", questions:[
-    {q:"地形図を発行している、日本の国の機関は？",
-     o:[["国土地理院",1],["気象庁",0],["国土交通省だけ",0],["環境省",0]],
-     e:"国土地理院。デジタルの「地理院地図（電子国土Web）」も公開している。"},
-    {q:"実際の距離を縮めた割合のことを何という？",
-     o:[["縮尺",1],["等高線",0],["凡例",0],["方位",0]],
-     e:"縮尺。2万5千分の1や5万分の1などがある。"},
-    {q:"2万5千分の1の地形図で、地図上の1cmは実際の何mにあたる？",
-     o:[["250m",1],["500m",0],["25m",0],["2500m",0]],
-     e:"25000cm＝250m。（1cm×25000＝25000cm＝250m）"},
-    {q:"5万分の1の地形図で、地図上の1cmは実際の何mにあたる？",
-     o:[["500m",1],["250m",0],["50m",0],["5000m",0]],
-     e:"50000cm＝500m。"},
-    {q:"2万5千分の1の地形図で、実際の1km（1000m）は地図上で何cmになる？",
-     o:[["4cm",1],["2cm",0],["10cm",0],["25cm",0]],
-     e:"1000m＝100000cm。100000÷25000＝4cm。"},
-    {q:"同じ範囲を、建物の形などまでより詳しく表せるのはどちらの縮尺？",
-     o:[["2万5千分の1",1],["5万分の1",0],["どちらも同じ",0],["10万分の1",0]],
-     e:"分母が小さい2万5千分の1のほうが詳しい（縮尺が大きい）。"},
-    {q:"土地の同じ高さの所を結んだ線を何という？",
-     o:[["等高線",1],["緯線",0],["経線",0],["等温線",0]],
-     e:"等高線。土地の起伏（高さ）を表す。"},
-    {q:"等高線の間隔が「せまい」とき、その場所の傾斜は？",
-     o:[["急",1],["ゆるやか",0],["平ら",0],["海の中",0]],
-     e:"間隔がせまい＝急。間隔が広い＝ゆるやか。"},
-    {q:"地図記号「文」が表すものは？",
-     o:[["小・中学校",1],["寺院",0],["図書館",0],["役所",0]],
-     e:"「文」は小・中学校。"},
-    {q:"お寺（寺院）を表す地図記号は？",
-     o:[["卍",1],["鳥居の形",0],["〒",0],["文",0]],
-     e:"卍が寺院。鳥居の形は神社。"},
-    {q:"「〒」が表すものは？",
-     o:[["郵便局",1],["警察署",0],["病院",0],["発電所",0]],
-     e:"〒は郵便局。"},
-    {q:"野外に出て観察したり、地域の人から聞き取ったりする調査を何という？",
-     o:[["野外調査（フィールドワーク）",1],["文献調査",0],["統計調査",0],["実験",0]],
-     e:"野外調査。野外観察と聞き取り調査がある。"},
-    {q:"統計資料や市区町村史などの文献を使って調べる調査を何という？",
-     o:[["文献調査",1],["野外観察",0],["聞き取り調査",0],["ルートマップ作成",0]],
-     e:"文献調査。役所のウェブサイトや図書館などを利用する。"},
-    {q:"文献調査で資料を使うとき、記録しておくべき「情報の出どころ」を何という？",
-     o:[["出典",1],["仮説",0],["凡例",0],["縮尺",0]],
-     e:"出典（情報源）。情報が確かか確認するために大切。"},
-    {q:"野外調査の前に、歩く道順や観察する場所を書き入れておく地図を何という？",
-     o:[["ルートマップ",1],["ハザードマップ",0],["白地図",0],["主題図",0]],
-     e:"ルートマップ。できるだけ縮尺の大きい地図でつくると便利。"},
-    {q:"等高線が標高の高い側から見てV字に曲がっている所は？",
-     o:[["谷",1],["尾根",0],["山頂",0],["平地",0]],
-     e:"高い側から見てV字なら谷。逆向きに曲がる所が尾根。"},
-  ]},
-
-  japan: { title:"日本の地形・気候", emo:"🗾", questions:[
-    {q:"地球の表面をおおう、厚さ100kmほどの硬い岩石で、少しずつ動いているものは？",
-     o:[["プレート",1],["マグマ",0],["変動帯",0],["大陸棚",0]],
-     e:"プレート。日本列島周辺は4つのプレートがぶつかる変動帯。"},
-    {q:"日本列島の周辺でぶつかり合っているプレートの数は？",
-     o:[["4つ",1],["2つ",0],["6つ",0],["10",0]],
-     e:"4つ。そのため地震や火山活動が活発。"},
-    {q:"日本の国土に占める山地の割合は約何％？",
-     o:[["約75%",1],["約25%",0],["約50%",0],["約90%",0]],
-     e:"約75%。世界平均（約25%）に比べてとても多い。"},
-    {q:"本州中央部の飛驒山脈・木曽山脈・赤石山脈をまとめて何という？",
-     o:[["日本アルプス",1],["フォッサマグナ",0],["奥羽山脈",0],["中国山地",0]],
-     e:"日本アルプス。3000m級の険しい山々。"},
-    {q:"日本列島ができたときに陥没した、東日本と西日本の境となる大きな溝を何という？",
-     o:[["フォッサマグナ",1],["日本アルプス",0],["南海トラフ",0],["リアス海岸",0]],
-     e:"フォッサマグナ。ラテン語で「大きな溝」の意味。"},
-    {q:"川が山間部から平野に出た所にでき、水はけがよく果樹園に利用される地形は？",
-     o:[["扇状地",1],["三角州",0],["台地",0],["大陸棚",0]],
-     e:"扇状地。粒の大きい砂や石ででき、水が地下にしみこみやすい→桃やぶどうの果樹園。"},
-    {q:"川の河口にでき、粒の小さい砂や泥からなり、古くから水田に利用されてきた地形は？",
-     o:[["三角州",1],["扇状地",0],["台地",0],["リアス海岸",0]],
-     e:"三角州。水がしみこみにくいので水田に向く。"},
-    {q:"周りの平野より一段高くなっていて、水が得にくく畑や住宅地に利用される土地は？",
-     o:[["台地",1],["三角州",0],["扇状地",0],["盆地",0]],
-     e:"台地。水田には適さない。"},
-    {q:"岬と湾が複雑に入り組み、波が穏やかで養殖や良港に利用される海岸を何という？",
-     o:[["リアス海岸",1],["砂浜海岸",0],["人工海岸",0],["サンゴ礁",0]],
-     e:"リアス海岸。湾内は水深が深く、天然の良港になる。"},
-    {q:"大陸の周辺に広がる、水深約200mまでの浅く平らな海底を何という？",
-     o:[["大陸棚",1],["海溝",0],["大洋底",0],["潮目",0]],
-     e:"大陸棚。よい漁場になる。太平洋側の先には水深8000mを超える海溝がある。"},
-    {q:"日本列島の太平洋側を北上する暖流は？",
-     o:[["黒潮（日本海流）",1],["親潮（千島海流）",0],["対馬海流",0],["リマン海流",0]],
-     e:"黒潮（日本海流）。暖流は低緯度から高緯度へ流れる。"},
-    {q:"日本列島の太平洋側を南下する寒流は？",
-     o:[["親潮（千島海流）",1],["黒潮（日本海流）",0],["対馬海流",0],["メキシコ湾流",0]],
-     e:"親潮（千島海流）。寒流は高緯度から低緯度へ流れる。"},
-    {q:"暖流と寒流がぶつかり、プランクトンが集まって好漁場になる場所を何という？",
-     o:[["潮目（潮境）",1],["大陸棚",0],["海溝",0],["扇状地",0]],
-     e:"潮目（潮境）。黒潮と親潮がぶつかる太平洋沖合いが代表。"},
-    {q:"北海道はどの気候帯に属する？",
-     o:[["亜寒帯（冷帯）",1],["温帯",0],["熱帯",0],["乾燥帯",0]],
-     e:"亜寒帯（冷帯）。本州・九州・四国は主に温帯。"},
-    {q:"夏に太平洋から日本に吹く、暖かく湿った季節風の向きは？",
-     o:[["南東",1],["北西",0],["北東",0],["南西",0]],
-     e:"夏は南東の季節風（太平洋側に雨）。冬は北西の季節風（日本海側に雪）。"},
-    {q:"冬に雪が多く降るのは、日本海側と太平洋側のどちら？",
-     o:[["日本海側",1],["太平洋側",0],["内陸",0],["瀬戸内",0]],
-     e:"日本海側。北西季節風が日本海で水分を含み、山地にぶつかって雪を降らせる。"},
-    {q:"中国山地と四国山地にさえぎられ、一年を通して降水量が少ない気候区は？",
-     o:[["瀬戸内の気候",1],["日本海側の気候",0],["太平洋側の気候",0],["南西諸島の気候",0]],
-     e:"瀬戸内の気候。季節風が山地にさえぎられるため降水量が少ない。"},
-  ]},
-
-  disaster: { title:"自然災害・防災", emo:"⚠️", questions:[
-    {q:"地震のとき、砂地などの地面が一時的に液体のようになる現象を何という？",
-     o:[["液状化",1],["土石流",0],["高潮",0],["火砕流",0]],
-     e:"液状化。水と砂を含む地面が、地震の揺れで液体のようになる。"},
-    {q:"海底の地形が変形することで発生し、沿岸部に大きな被害をもたらすものは？",
-     o:[["津波",1],["高潮",0],["液状化",0],["やませ",0]],
-     e:"津波。地震などで海底が変動して起こる。"},
-    {q:"2011年に発生し、沿岸部に大きな津波被害をもたらした地震災害は？",
-     o:[["東日本大震災（東北地方太平洋沖地震）",1],["熊本地震",0],["阪神・淡路大震災",0],["関東大震災",0]],
-     e:"東日本大震災（2011年）。津波からの避難の大切さが教訓に。"},
-    {q:"火山活動による恵みとして利用される、地下の熱を使った発電は？",
-     o:[["地熱発電",1],["火力発電",0],["原子力発電",0],["水力発電",0]],
-     e:"地熱発電。ほかに温泉や美しい景観も火山の恵み。"},
-    {q:"東北地方で夏に吹き、気温が上がらず冷害を引き起こすことがある風は？",
-     o:[["やませ",1],["からっ風",0],["季節風（南東）",0],["偏西風",0]],
-     e:"やませ。冷たい北東風で、稲などの農作物に被害（冷害）が出る。"},
-    {q:"台風などによって海面の水位が上昇する現象を何という？",
-     o:[["高潮",1],["津波",0],["液状化",0],["洪水だけ",0]],
-     e:"高潮。台風などの低気圧や強風で海面が上昇する。"},
-    {q:"静岡県から宮崎県沖に位置し、巨大地震の発生が予測されている海底の溝は？",
-     o:[["南海トラフ",1],["フォッサマグナ",0],["日本アルプス",0],["大陸棚",0]],
-     e:"南海トラフ。東海・東南海・南海地震が繰り返し発生してきた。"},
-    {q:"地震や洪水などの被害を予測し、危険な区域や避難場所を示した地図を何という？",
-     o:[["ハザードマップ",1],["ルートマップ",0],["主題図",0],["白地図",0]],
-     e:"ハザードマップ。被害想定区域や避難先の確認に使う。"},
-    {q:"災害に対して、自分自身や家族を守る行動を何という？",
-     o:[["自助",1],["共助",0],["公助",0],["援助",0]],
-     e:"自助。避難計画を立てる、備蓄するなど自分でできる備え。"},
-    {q:"災害のとき、住民どうしが協力して助け合う行動を何という？",
-     o:[["共助",1],["自助",0],["公助",0],["互助会",0]],
-     e:"共助。地域の人どうしの助け合い。"},
-    {q:"国や都道府県・市区町村などが行う、被災者の救助・支援を何という？",
-     o:[["公助",1],["自助",0],["共助",0],["寄付",0]],
-     e:"公助。自衛隊・消防・警察・海上保安庁などが派遣される。"},
-    {q:"土石流・地すべり・崖崩れなどをまとめて何という？",
-     o:[["土砂災害",1],["気象災害",0],["地震災害",0],["火山災害",0]],
-     e:"土砂災害。大雨などをきっかけに起こることが多い。"},
-    {q:"火山が噴火したときに、高温の火山灰や岩石などが高速で流れ下る現象は？",
-     o:[["火砕流",1],["液状化",0],["高潮",0],["津波",0]],
-     e:"火砕流。人々の生命を危険にさらす火山災害。"},
-  ]},
-};
-
-/* ====== ロジック ====== */
-const $ = id => document.getElementById(id);
-let state = {};
-
-function shuffle(a){
-  a = a.slice();
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
-function bestKey(k){return "best_"+k;}
-
-function renderHome(){
-  $("home").classList.remove("hidden");
-  $("quiz").classList.add("hidden");
-  $("result").classList.add("hidden");
-  const list = $("topicList"); list.innerHTML="";
-  for(const key in QUIZ){
-    const t=QUIZ[key];
-    const best=localStorage.getItem(bestKey(key));
-    const b=document.createElement("button");
-    b.className="topic";
-    b.innerHTML=`<span class="emo">${t.emo}</span>
-      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
-      ${best?`<span class="best">最高 ${best}%</span>`:``}
-      <span class="arrow">▶</span>`;
-    b.onclick=()=>startTopic(key);
-    list.appendChild(b);
-  }
-}
-
-function startTopic(key, subset){
-  const t=QUIZ[key];
-  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
-  state={ key, topicTitle:t.title, items:shuffle(qs), pos:0, score:0, wrong:[] };
-  $("home").classList.add("hidden");
-  $("result").classList.add("hidden");
-  $("quiz").classList.remove("hidden");
-  $("topicName").textContent=t.emo+" "+t.title;
-  renderQuestion();
-}
-
-function renderQuestion(){
-  const it=state.items[state.pos];
-  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
-  $("prog").style.width=(state.pos/state.items.length*100)+"%";
-  $("qtag").textContent="第"+(state.pos+1)+"問";
-  $("qText").textContent=it.q;
-  $("exp").className="exp"; $("exp").innerHTML="";
-  $("nextBtn").classList.add("hidden");
-  const box=$("opts"); box.innerHTML="";
-  const opts=shuffle(it.o);
-  opts.forEach(op=>{
-    const btn=document.createElement("button");
-    btn.className="opt"; btn.textContent=op[0];
-    btn.onclick=()=>answer(btn,op[1]===1,it);
-    box.appendChild(btn);
-  });
-  window.scrollTo(0,0);
-}
-
-function answer(btn, correct, it){
-  const buttons=$("opts").querySelectorAll(".opt");
-  buttons.forEach(b=>{
-    b.disabled=true;
-    if(b.textContent===correctText(it)) b.classList.add("correct");
-  });
-  if(correct){ state.score++; }
-  else{ btn.classList.add("wrong"); state.wrong.push(it); }
-  const exp=$("exp");
-  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
-  exp.classList.add("show");
-  $("nextBtn").classList.remove("hidden");
-}
-function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
-
-$("nextBtn").onclick=()=>{
-  state.pos++;
-  if(state.pos>=state.items.length) renderResult();
-  else renderQuestion();
-};
-
-function renderResult(){
-  $("quiz").classList.add("hidden");
-  $("result").classList.remove("hidden");
-  const total=state.items.length, sc=state.score;
-  const pct=Math.round(sc/total*100);
-  $("scoreNum").textContent=`${sc} / ${total}`;
-  $("scorePct").textContent=`正答率 ${pct}%`;
-  let ring,msg;
-  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
-  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
-  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
-  $("ring").textContent=ring; $("resMsg").textContent=msg;
-
-  // best score 保存（全問のときだけ）
-  if(state.items.length===QUIZ[state.key].questions.length){
-    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
-    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
-  }
-  const rw=$("retryWrong");
-  if(state.wrong.length>0){
-    rw.classList.remove("hidden");
-    $("wrongN").textContent=state.wrong.length;
-    rw.onclick=()=>{
-      const t=QUIZ[state.key];
-      const idx=state.wrong.map(w=>t.questions.indexOf(w));
-      startTopic(state.key, idx);
-    };
-  }else{ rw.classList.add("hidden"); }
-}
-
-$("againBtn").onclick=()=>startTopic(state.key);
-$("homeBtn").onclick=renderHome;
-$("quitBtn").onclick=()=>{ if(confirm("ホームに戻りますか？（今の点数は記録されません）")) renderHome(); };
-
-renderHome();
-</script>
+  <p class="foot">スマホのホーム画面に追加すると、アプリのように使えます 📱</p>
 </body>
 </html>

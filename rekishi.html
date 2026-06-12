@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>歴史 期末対策クイズ</title>
+<style>
+  :root{
+    --bg:#f6f4fb; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#7c3aed; --accent-d:#6d28d9;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#e6e2f0; --shadow:0 4px 14px rgba(40,20,80,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink);
+    line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#ece7f5; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.5;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#f3effc; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef0f6; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>📚 歴史 期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / 教科書 p.76〜97（中世）<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  eurasia: { title:"中世のユーラシア（ヨーロッパ・イスラーム・モンゴル）", emo:"🌍", questions:[
+    {q:"西ローマ帝国がほろびたあと、西ヨーロッパで諸国が争ったこの時代を何という？",
+     o:[["中世",1],["古代",0],["近世",0],["現代",0]],
+     e:"中世。キリスト教が人々の生活に大きな影響をあたえた時代。"},
+    {q:"15世紀まで続いた東ローマ帝国の別名は？",
+     o:[["ビザンツ帝国",1],["オスマン帝国",0],["フランク王国",0],["モンゴル帝国",0]],
+     e:"ビザンツ帝国。15世紀にオスマン帝国にほろぼされた。"},
+    {q:"キリスト教は、ビザンツ帝国と結びついた正教会と、西ヨーロッパの何に分かれた？",
+     o:[["カトリック教会",1],["イスラム教",0],["仏教",0],["ユダヤ教",0]],
+     e:"カトリック教会。頂点にローマ教皇が立った。"},
+    {q:"カトリック教会の頂点に立ち、諸国の王をも従わせる大きな力を持った人物は？",
+     o:[["ローマ教皇",1],["皇帝",0],["将軍",0],["ハン",0]],
+     e:"ローマ教皇。十字軍をよびかけたのもローマ教皇。"},
+    {q:"7世紀にアラビア半島に成立し、急速に勢力を広げた宗教は？",
+     o:[["イスラム教",1],["キリスト教",0],["仏教",0],["ヒンドゥー教",0]],
+     e:"イスラム教。東はイラン、西は北アフリカやイベリア半島まで広がった。"},
+    {q:"聖地エルサレムを取りもどすため、ローマ教皇のよびかけで送られた軍を何という？",
+     o:[["十字軍",1],["元軍",0],["倭寇",0],["御家人",0]],
+     e:"十字軍。13世紀まで何度も派遣されたが、エルサレム奪回には失敗した。"},
+    {q:"十字軍のエルサレム奪回は、結果的にどうなった？",
+     o:[["失敗した",1],["成功して長く支配した",0],["戦わずに終わった",0],["イスラム教に改宗した",0]],
+     e:"失敗した。一方でヨーロッパ人の視野が広がり、イスラーム世界の学問や産物が伝わった。"},
+    {q:"13世紀初め、モンゴル高原の遊牧民を統一して大帝国を築いた初代のハンは？",
+     o:[["チンギス・ハン",1],["フビライ・ハン",0],["マルコ・ポーロ",0],["李成桂",0]],
+     e:"チンギス・ハン。子孫が中国・西アジア・東ヨーロッパへ領土を広げた。"},
+    {q:"国名を中国風の「元」と定め、宋をほろぼしたモンゴル帝国の第5代皇帝は？",
+     o:[["フビライ・ハン",1],["チンギス・ハン",0],["足利義満",0],["北条時宗",0]],
+     e:"フビライ・ハン。大都(現在の北京)を都とした。"},
+    {q:"フビライ・ハンに仕え、日本を「黄金の国ジパング」とヨーロッパに紹介したイタリア人は？",
+     o:[["マルコ・ポーロ",1],["コロンブス",0],["ザビエル",0],["雪舟",0]],
+     e:"マルコ・ポーロ。旅の記録は「世界の記述（東方見聞録）」。"},
+    {q:"マルコ・ポーロが日本などを紹介した書物の名前は？",
+     o:[["世界の記述（東方見聞録）",1],["古事記",0],["分国法",0],["おもろさうし",0]],
+     e:"「世界の記述（東方見聞録）」。"},
+    {q:"モンゴル帝国の分裂後に西アジアで強国となり、15世紀にビザンツ帝国を征服した国は？",
+     o:[["オスマン帝国",1],["ムガル帝国",0],["朝鮮国",0],["琉球王国",0]],
+     e:"オスマン帝国。16世紀にはインドにムガル帝国も成立した。"},
+    {q:"元に勢力範囲をせばめられ、中国南部に拠点を移していた宋を何とよぶ？",
+     o:[["南宋",1],["北宋",0],["高麗",0],["明",0]],
+     e:"南宋。やがて元にほろぼされた。"},
+  ]},
+
+  kamakura: { title:"モンゴルの襲来と鎌倉幕府の滅亡", emo:"⚔️", questions:[
+    {q:"フビライの服従要求を無視し、元の襲来に対応した鎌倉幕府の執権は？",
+     o:[["北条時宗",1],["北条政子",0],["後醍醐天皇",0],["足利尊氏",0]],
+     e:"北条時宗。御家人に防備を命じて元の襲来に備えた。"},
+    {q:"1274年、元軍が初めて九州北部に攻めてきた戦いを何という？",
+     o:[["文永の役",1],["弘安の役",0],["承久の乱",0],["応仁の乱",0]],
+     e:"文永の役（1274年）。元は集団戦法と火薬の武器で幕府軍を苦しめた。"},
+    {q:"1281年、元軍が再び日本に攻めてきた戦いを何という？",
+     o:[["弘安の役",1],["文永の役",0],["平治の乱",0],["保元の乱",0]],
+     e:"弘安の役（1281年）。暴風雨もあって元軍は大損害を受けて引きあげた。"},
+    {q:"文永の役と弘安の役、二度の元の襲来をまとめて何という？",
+     o:[["元寇",1],["元服",0],["下剋上",0],["参勤交代",0]],
+     e:"元寇。二度とも元軍は日本を征服できなかった。"},
+    {q:"元軍が使い、御家人を苦しめた火薬を使った武器は？",
+     o:[["てつはう",1],["鉄砲",0],["大砲",0],["弓矢だけ",0]],
+     e:"てつはう。火薬を使った武器で、長崎県沖の沈没船などから発見されている。"},
+    {q:"弘安の役に備え、博多湾岸に約20kmにわたって築かれたものは？",
+     o:[["防塁（石の防壁）",1],["城下町",0],["環濠",0],["万里の長城",0]],
+     e:"防塁（石の防壁）。元軍の上陸をはばんだ。"},
+    {q:"元寇のあと、生活が苦しくなった御家人を救うため幕府が出した、借金帳消しの命令は？",
+     o:[["（永仁の）徳政令",1],["御成敗式目",0],["分国法",0],["建武の新政",0]],
+     e:"永仁の徳政令（1297年）。効果は限定的で、かえって御家人の不満が高まった。"},
+    {q:"幕府への不満が高まる中、鎌倉幕府をたおそうとした天皇は？",
+     o:[["後醍醐天皇",1],["後鳥羽上皇",0],["聖武天皇",0],["天武天皇",0]],
+     e:"後醍醐天皇。一度は隠岐に流されたが脱出し、武士を味方につけた。"},
+    {q:"後醍醐天皇に味方して鎌倉幕府をたおし、のちに室町幕府を開いた武士は？",
+     o:[["足利尊氏",1],["新田義貞",0],["北条時宗",0],["平清盛",0]],
+     e:"足利尊氏。新田義貞も幕府打倒に活躍した。"},
+    {q:"鎌倉幕府がほろびたのは何年？",
+     o:[["1333年",1],["1192年",0],["1274年",0],["1467年",0]],
+     e:"1333年。後醍醐天皇・足利尊氏・新田義貞らの働きでほろびた。"},
+    {q:"鎌倉時代末、武力で年貢をうばうなど、幕府の命令に従わない武士を何とよんだ？",
+     o:[["悪党",1],["御家人",0],["守護大名",0],["町衆",0]],
+     e:"悪党。荘園領主や幕府の支配に従わなかった。"},
+  ]},
+
+  muromachi: { title:"室町幕府・南北朝・東アジア交流", emo:"🏯", questions:[
+    {q:"後醍醐天皇が始めた、武士の政治を否定し貴族を重視した新しい政治を何という？",
+     o:[["建武の新政",1],["執権政治",0],["摂関政治",0],["院政",0]],
+     e:"建武の新政。武士の不満が高まり、2年ほどでたおれた。"},
+    {q:"京都の北朝と吉野の南朝が並び立って争った約60年間を何という？",
+     o:[["南北朝時代",1],["戦国時代",0],["平安時代",0],["奈良時代",0]],
+     e:"南北朝時代。1392年に足利義満が統一した。"},
+    {q:"足利尊氏が1338年に征夷大将軍に任命されて京都に開いた幕府は？",
+     o:[["室町幕府",1],["鎌倉幕府",0],["江戸幕府",0],["建武の新政",0]],
+     e:"室町幕府。京都に幕府が置かれた時代を室町時代という。"},
+    {q:"南北朝を統一し、3代将軍として室町幕府の力を最も強めた人物は？",
+     o:[["足利義満",1],["足利尊氏",0],["足利義政",0],["足利義昭",0]],
+     e:"足利義満。1392年に南北朝を統一し、太政大臣にもなった。"},
+    {q:"南北朝が統一されたのは何年？",
+     o:[["1392年",1],["1333年",0],["1467年",0],["1185年",0]],
+     e:"1392年。3代将軍足利義満のとき。"},
+    {q:"室町幕府で、将軍の補佐役として置かれた役職は？",
+     o:[["管領",1],["執権",0],["老中",0],["関白",0]],
+     e:"管領。細川氏などの有力な守護大名が任命された。"},
+    {q:"幕府から強い権限をあたえられ、国を支配するようになった守護を何という？",
+     o:[["守護大名",1],["地頭",0],["御家人",0],["戦国大名",0]],
+     e:"守護大名。複数の国をおさめる者もいた。"},
+    {q:"足利義満が明と始めた、勘合という証明書を使う貿易を何という？",
+     o:[["日明貿易（勘合貿易）",1],["朱印船貿易",0],["南蛮貿易",0],["中継貿易",0]],
+     e:"日明貿易（勘合貿易）。日本は刀・銅・硫黄などを輸出し、銅銭・生糸などを輸入した。"},
+    {q:"日明貿易で勘合という証明書が使われたのは、何と区別するため？",
+     o:[["倭寇の船と区別するため",1],["朝鮮の船と区別するため",0],["琉球の船と区別するため",0],["オランダ船と区別するため",0]],
+     e:"倭寇。海ぞいをあらす倭寇と、正式な貿易船を区別するために勘合が使われた。"},
+    {q:"14世紀末に李成桂が高麗をほろぼして建てた国は？",
+     o:[["朝鮮国",1],["明",0],["元",0],["新羅",0]],
+     e:"朝鮮国。独自の文字ハングルを作るなど、独自の文化が発展した。"},
+    {q:"朝鮮で作られた独自の文字は？",
+     o:[["ハングル",1],["かな",0],["漢字",0],["アラビア数字",0]],
+     e:"ハングル。"},
+    {q:"15世紀初め、尚氏が沖縄島を統一して建て、首里を都とした王国は？",
+     o:[["琉球王国",1],["朝鮮国",0],["蝦夷",0],["大和政権",0]],
+     e:"琉球王国。日本・中国・東南アジアと産物をやりとりした。"},
+    {q:"琉球王国が、各地の産物を他へ運んで売ることで栄えた貿易を何という？",
+     o:[["中継貿易",1],["勘合貿易",0],["朝貢貿易だけ",0],["南蛮貿易",0]],
+     e:"中継貿易。那覇港を中心に栄えた。"},
+    {q:"蝦夷地（北海道）で、狩りや漁、本州などとの交易を行っていた民族は？",
+     o:[["アイヌ民族",1],["和人",0],["倭寇",0],["ムスリム商人",0]],
+     e:"アイヌ民族。津軽の十三湊などと交易を行った。"},
+    {q:"15世紀半ば、和人との争いで戦いを起こしたアイヌの首長は？",
+     o:[["コシャマイン",1],["李成桂",0],["尚氏",0],["北条時宗",0]],
+     e:"コシャマイン。一時は和人の館をほとんど攻め落としたが、敗れた。"},
+  ]},
+
+  sangyo: { title:"産業・民衆・応仁の乱・戦国大名", emo:"🌾", questions:[
+    {q:"室町時代に広まった、同じ田畑で米と麦を年に2回作る方法を何という？",
+     o:[["二毛作",1],["二期作",0],["焼畑",0],["輪作",0]],
+     e:"二毛作。かんがい用の水車や牛馬のふんの肥料も使われ、収穫が増えた。"},
+    {q:"商工業者が同業者ごとに作り、税を納めて保護を受け、営業を独占した団体は？",
+     o:[["座",1],["惣",0],["株仲間",0],["町衆",0]],
+     e:"座。武士や貴族、寺社にお金などを納めて営業を独占する権利を認められた。"},
+    {q:"室町時代、物資を運ぶ運送業を兼ねた倉庫業者を何とよんだ？",
+     o:[["馬借・車借",1],["土倉・酒屋",0],["御家人",0],["守護",0]],
+     e:"馬借・車借（問）。交通の盛んな所で活動した。"},
+    {q:"室町時代、お金の貸し付けなどを行った金融業者を何とよんだ？",
+     o:[["土倉・酒屋",1],["馬借・車借",0],["座",0],["惣",0]],
+     e:"土倉・酒屋。商業の発展でお金を貸す業者が栄えた。"},
+    {q:"村で、有力な農民を中心に作られた自治組織を何という？",
+     o:[["惣",1],["座",0],["町衆",0],["管領",0]],
+     e:"惣。用水路の建設や管理、森林の利用などについて村のおきてを定めた。"},
+    {q:"団結した農民が、借金の帳消しなどを求めて起こした行動を何という？",
+     o:[["土一揆",1],["承久の乱",0],["応仁の乱",0],["元寇",0]],
+     e:"土一揆。土倉や酒屋をおそって借金の帳消しなどを求めた。"},
+    {q:"1428年に起き、農民の宣言文が岩に刻まれたことでも知られる土一揆は？",
+     o:[["正長の土一揆",1],["島原の乱",0],["大塩の乱",0],["平将門の乱",0]],
+     e:"正長の土一揆。近畿地方を中心に広がった。"},
+    {q:"京都で町の自治を行い、祇園祭を盛大にもよおした住民の集団を何という？",
+     o:[["町衆",1],["御家人",0],["惣",0],["座",0]],
+     e:"町衆。博多や堺でも自治が行われた。"},
+    {q:"8代将軍足利義政のあとつぎ争いなどから、1467年に起きた大乱は？",
+     o:[["応仁の乱",1],["承久の乱",0],["保元の乱",0],["島原の乱",0]],
+     e:"応仁の乱。細川氏と山名氏が対立し、東軍・西軍に分かれて11年続き、京都は焼け野原になった。"},
+    {q:"応仁の乱が起きたのは何年？",
+     o:[["1467年",1],["1392年",0],["1333年",0],["1543年",0]],
+     e:"1467（応仁元）年。"},
+    {q:"下の身分の者が、実力で上の身分の者に打ち勝つ風潮を何という？",
+     o:[["下剋上",1],["参勤交代",0],["御恩と奉公",0],["朝貢",0]],
+     e:"下剋上。守護大名の家来が大名の地位をうばうこともあった。"},
+    {q:"応仁の乱後、各地で実力によって国を統一して支配した大名を何という？",
+     o:[["戦国大名",1],["守護大名",0],["御家人",0],["地頭",0]],
+     e:"戦国大名。各地で活躍した時代を戦国時代という。"},
+    {q:"戦国大名が、領国の武士や民衆を取りしまるために独自に定めた法を何という？",
+     o:[["分国法",1],["御成敗式目",0],["律令",0],["徳政令",0]],
+     e:"分国法。けんかの両成敗などを定めた。"},
+    {q:"戦国大名が城の周りに家来や商工業者を集めてつくった町を何という？",
+     o:[["城下町",1],["門前町",0],["宿場町",0],["港町",0]],
+     e:"城下町。城を交通に便利な平地に築いて発展させた。"},
+    {q:"浄土真宗（一向宗）の信仰で結びついた武士や農民が起こした一揆は？",
+     o:[["一向一揆",1],["土一揆",0],["国一揆",0],["打ちこわし",0]],
+     e:"一向一揆。加賀（石川県）では守護大名をたおして約100年間自治を行った。"},
+    {q:"戦国大名が保護し、大量の銀を産出して世界の経済にも影響をあたえた島根県の鉱山は？",
+     o:[["石見銀山",1],["佐渡金山",0],["足尾銅山",0],["別子銅山",0]],
+     e:"石見銀山。産出された銀は中国に輸出され、ヨーロッパにも知られた。"},
+  ]},
+
+  bunka: { title:"室町文化", emo:"🎎", questions:[
+    {q:"貴族の文化と、禅宗の影響を受けた武士の文化が混じり合って生まれた文化を何という？",
+     o:[["室町文化",1],["天平文化",0],["国風文化",0],["桃山文化",0]],
+     e:"室町文化。"},
+    {q:"足利義満が京都の北山に建てた、室町文化を代表する建物は？",
+     o:[["金閣",1],["銀閣",0],["平等院鳳凰堂",0],["東大寺",0]],
+     e:"金閣。3代将軍足利義満が別荘として建てた。"},
+    {q:"金閣に代表される、足利義満のころの文化を何という？",
+     o:[["北山文化",1],["東山文化",0],["元禄文化",0],["化政文化",0]],
+     e:"北山文化。金閣が建てられた北山にちなむ。"},
+    {q:"足利義政が京都の東山に建てた、落ち着いた文化を表す建物は？",
+     o:[["銀閣",1],["金閣",0],["法隆寺",0],["姫路城",0]],
+     e:"銀閣。8代将軍足利義政が東山に建てた。"},
+    {q:"銀閣に代表される、足利義政のころの文化を何という？",
+     o:[["東山文化",1],["北山文化",0],["飛鳥文化",0],["天平文化",0]],
+     e:"東山文化。銀閣が建てられた東山にちなむ。"},
+    {q:"複数の人が上の句・下の句をつないでいく文芸を何という？",
+     o:[["連歌",1],["和歌",0],["俳句",0],["狂言",0]],
+     e:"連歌。和歌から生まれ、武士にも広がった。"},
+    {q:"観阿弥・世阿弥の親子が大成した芸能は？",
+     o:[["能",1],["歌舞伎",0],["浄瑠璃",0],["落語",0]],
+     e:"能。猿楽や田楽をもとに大成され、現在まで続く。"},
+    {q:"能の合間に演じられた、民衆の生活や感情をよく表した劇を何という？",
+     o:[["狂言",1],["連歌",0],["水墨画",0],["御伽草子",0]],
+     e:"狂言。"},
+    {q:"明にわたって学び、墨一色で自然を描く絵画を大成した禅宗の僧は？",
+     o:[["雪舟",1],["世阿弥",0],["足利義満",0],["マルコ・ポーロ",0]],
+     e:"雪舟。"},
+    {q:"雪舟が大成した、墨一色で自然の風景を表現する絵画を何という？",
+     o:[["水墨画",1],["浮世絵",0],["大和絵",0],["紅型",0]],
+     e:"水墨画。"},
+    {q:"床の間が設けられた、現在の和室のもとになった住宅の様式を何という？",
+     o:[["書院造",1],["寝殿造",0],["校倉造",0],["数寄屋造",0]],
+     e:"書院造。寺から武士へ広がった。"},
+    {q:"京都の龍安寺などに見られる、石や砂で水の風景を表す庭園を何という？",
+     o:[["枯山水",1],["回遊式庭園",0],["城下町",0],["門前町",0]],
+     e:"枯山水。水を使わずに山水の風景を表現し、禅宗の寺に多く造られた。"},
+    {q:"「一寸法師」などの、絵入りの物語を何という？",
+     o:[["御伽草子",1],["万葉集",0],["源氏物語",0],["おもろさうし",0]],
+     e:"御伽草子。民衆にも広く読まれた。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "rekishi_best_"+k;}
+
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
