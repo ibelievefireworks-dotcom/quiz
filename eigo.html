@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>英語 期末対策クイズ</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#e11d48; --accent-d:#be123c;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#e3e8f0; --shadow:0 4px 14px rgba(20,40,80,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink);
+    line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+
+  /* HOME */
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+
+  /* QUIZ */
+  .bar{height:8px; background:#e7ecf5; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.5;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer;
+    transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#fff1f3; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef1f6; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+
+  /* RESULT */
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a href="index.html" style="display:inline-block;margin-bottom:6px;color:#e11d48;text-decoration:none;font-weight:700;font-size:14px;">← 科目をえらぶ</a>
+  <h1>🔤 英語 期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / NEW HORIZON 2 Unit 0〜3<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてホームに戻る</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">ホームに戻る</button>
+  </div>
+</div>
+
+<script>
+/* ====== 問題データ ====== */
+const QUIZ = {
+  u0: { title:"Unit 0 過去形・あいさつ", emo:"🌸", questions:[
+    {q:"「あなたの休暇はどうでしたか？」を英語で言うと？",
+     o:[["How was your vacation?",1],["How is your vacation?",0],["What do you do on vacation?",0],["When is your vacation?",0]],
+     e:"How was your vacation? 過去のことをたずねるので was（is の過去形）を使う。"},
+    {q:"go の過去形は？",
+     o:[["went",1],["goed",0],["gone",0],["going",0]],
+     e:"go → went（不規則動詞）。"},
+    {q:"eat の過去形は？",
+     o:[["ate",1],["eated",0],["eaten",0],["eating",0]],
+     e:"eat → ate（不規則動詞）。"},
+    {q:"have の過去形は？",
+     o:[["had",1],["haved",0],["has",0],["having",0]],
+     e:"have → had（不規則動詞）。"},
+    {q:"enjoy の過去形は？",
+     o:[["enjoyed",1],["enjoied",0],["enjoys",0],["enjoing",0]],
+     e:"enjoy → enjoyed。y の前が o なので、そのまま ed をつける。"},
+    {q:"「ところで」と話題を変えるときに使う表現は？",
+     o:[["by the way",1],["see you",0],["of course",0],["thank you",0]],
+     e:"by the way（ところで）。"},
+    {q:"actually の意味は？",
+     o:[["実は・実際は",1],["たぶん",0],["いつも",0],["決して",0]],
+     e:"actually＝実は・実際は。"},
+    {q:"same の意味は？",
+     o:[["同じ",1],["別の",0],["特別な",0],["最後の",0]],
+     e:"same＝同じ。We are in the same class!（同じクラスだ！）"},
+    {q:"「I ___ skiing with my brother.（兄とスキーを楽しんだ）」に入る語は？",
+     o:[["enjoyed",1],["enjoy",0],["enjoys",0],["enjoying",0]],
+     e:"過去の話なので enjoyed。"},
+    {q:"「Did you go to Sapporo, too?」に「いいえ、行きませんでした」と答えるには？",
+     o:[["No, I didn't.",1],["No, I don't.",0],["No, I'm not.",0],["No, I wasn't.",0]],
+     e:"Did 〜? には did を使って No, I didn't. と答える。"},
+    {q:"experience の意味は？",
+     o:[["経験",1],["期待",0],["実験",0],["表現",0]],
+     e:"experience＝経験。It was a great experience.（すばらしい経験だった）"},
+    {q:"「I just ___ instant noodles.（インスタントラーメンを食べた）」に入る語は？",
+     o:[["ate",1],["eat",0],["eating",0],["eaten",0]],
+     e:"過去の話なので ate（eat の過去形）。"},
+  ]},
+
+  mirai: { title:"未来表現（be going to / will）", emo:"🔮", questions:[
+    {q:"「私は明日シンガポールを訪れるつもりです」　I'm ___ to visit Singapore tomorrow.",
+     o:[["going",1],["go",0],["went",0],["will",0]],
+     e:"be going to ＋ 動詞の原形。I'm going to visit …。"},
+    {q:"be going to や will のあとに続く動詞の形は？",
+     o:[["動詞の原形",1],["動詞のing形",0],["過去形",0],["過去分詞",0]],
+     e:"どちらも、あとは動詞の原形。"},
+    {q:"「Are you going to visit Singapore tomorrow?」に「はい」と答えるには？",
+     o:[["Yes, I am.",1],["Yes, I do.",0],["Yes, I will.",0],["Yes, I was.",0]],
+     e:"be動詞（are）の文なので、Yes, I am. で答える。"},
+    {q:"「私が予約します（やるという意志）」　I ___ make a reservation.",
+     o:[["will",1],["am",0],["going",0],["do",0]],
+     e:"その場で決めた意志や未来は will ＋ 動詞の原形。"},
+    {q:"be going to が表すのは？",
+     o:[["あらかじめ決めていた予定・未来",1],["過去のできごと",0],["今していること",0],["毎日の習慣",0]],
+     e:"be going to は、あらかじめ決めていた予定や未来のことを表す。"},
+    {q:"「あなたに写真を見せます」　I will ___ you some pictures.",
+     o:[["show",1],["see",0],["look",0],["watch",0]],
+     e:"show（見せる）。see/look/watch は「見る」で意味がちがう。"},
+    {q:"arrive の意味は？",
+     o:[["到着する",1],["出発する",0],["予約する",0],["案内する",0]],
+     e:"arrive＝到着する。My flight arrives at 5 p.m.（5時に到着する）"},
+    {q:"「You'll see the Merlion soon.」の you'll は何の短縮形？",
+     o:[["you will",1],["you all",0],["you well",0],["you shall",0]],
+     e:"you'll＝you will。"},
+    {q:"excited の意味は？",
+     o:[["わくわくした",1],["退屈した",0],["疲れた",0],["怒った",0]],
+     e:"excited＝わくわくした・興奮した。I'm so excited!"},
+    {q:"reservation の意味は？",
+     o:[["予約",1],["案内",0],["会話",0],["到着",0]],
+     e:"reservation＝予約。I'll make a reservation.（予約します）"},
+    {q:"「私たちは昼食を食べる予定です」　we're ___ to have lunch.",
+     o:[["going",1],["go",0],["will",0],["are",0]],
+     e:"be going to の形。we're going to have lunch。"},
+    {q:"soon の意味は？",
+     o:[["まもなく・すぐに",1],["ゆっくり",0],["決して",0],["ときどき",0]],
+     e:"soon＝まもなく・すぐに。See you soon!（またね！）"},
+  ]},
+
+  bunkei: { title:"文型（show型・call A B）", emo:"📐", questions:[
+    {q:"「I will show you some pictures.」の意味は？",
+     o:[["あなたに何枚かの写真を見せます",1],["私はあなたの写真を見ます",0],["あなたは私に写真を見せます",0],["私は写真について話します",0]],
+     e:"show ＋ (人) ＋ (もの)＝「(人)に(もの)を見せる」。SVOO（目的語が2つ）の文。"},
+    {q:"「(人)に(もの)を〜する」という形（SVOO）で使える動詞は？",
+     o:[["show（見せる）",1],["arrive（到着する）",0],["become（〜になる）",0],["enjoy（楽しむ）",0]],
+     e:"show / teach / give / buy / make などは、あとに「(人)＋(もの)」を続けられる。"},
+    {q:"「People call this area Little India.」の意味は？",
+     o:[["人々はこの地域をリトル・インディアと呼ぶ",1],["人々はリトル・インディアでこの地域を呼ぶ",0],["この地域の人々はインドに電話する",0],["人々はこの地域でインドを見る",0]],
+     e:"call ＋ A ＋ B＝「AをBと呼ぶ」。"},
+    {q:"「call ＋ A ＋ B」の意味は？",
+     o:[["AをBと呼ぶ",1],["AにBを与える",0],["AのBを呼ぶ",0],["AはBだ",0]],
+     e:"call A B＝AをBと呼ぶ。A（人・もの）＋ B（名前）の順。"},
+    {q:"「私たちはイヌをポチと呼ぶ」の正しい語順は？",
+     o:[["We call our dog Pochi.",1],["We call Pochi our dog.",0],["We our dog call Pochi.",0],["Our dog we call Pochi.",0]],
+     e:"call のあとは「A（our dog）＋ B（Pochi）」の順。"},
+    {q:"「Jun showed me his guitar.」の意味は？",
+     o:[["ジュンは私に彼のギターを見せた",1],["私はジュンにギターを見せた",0],["ジュンは私のギターを見た",0],["ジュンと私はギターを弾いた",0]],
+     e:"showed ＋ me（私に）＋ his guitar（彼のギターを）。"},
+    {q:"「We call our dog Pochi.」で、our dog ＝ Pochi の関係。Pochi は文法上なに？",
+     o:[["補語",1],["主語",0],["動詞",0],["前置詞",0]],
+     e:"our dog（目的語）の状態を説明する Pochi は補語。SVOC の文。"},
+    {q:"「私を Ken と呼んでください」　Please ___.",
+     o:[["call me Ken",1],["call Ken me",0],["me call Ken",0],["Ken call me",0]],
+     e:"call ＋ me（私を）＋ Ken（ケンと）。"},
+    {q:"「I'll give you some cookies.」の意味は？",
+     o:[["あなたにクッキーをいくつかあげます",1],["あなたは私にクッキーをくれます",0],["私はクッキーをもらいます",0],["クッキーをいっしょに食べます",0]],
+     e:"give ＋ you（あなたに）＋ some cookies（クッキーを）。"},
+  ]},
+
+  setsuzoku: { title:"接続詞（when/if/because/that）", emo:"🔗", questions:[
+    {q:"接続詞 when の意味は？",
+     o:[["〜のとき",1],["もし〜ならば",0],["〜だから",0],["〜ということ",0]],
+     e:"when＝〜のとき（時を表す）。"},
+    {q:"接続詞 if の意味は？",
+     o:[["もし〜ならば",1],["〜のとき",0],["〜だから",0],["〜だけれども",0]],
+     e:"if＝もし〜ならば（条件を表す）。"},
+    {q:"接続詞 because の意味は？",
+     o:[["〜だから（なぜなら）",1],["〜のとき",0],["もし〜ならば",0],["〜ということ",0]],
+     e:"because＝〜だから（理由を表す）。"},
+    {q:"「I think that …」の that の意味は？",
+     o:[["〜ということ",1],["あれ",0],["〜のとき",0],["〜だから",0]],
+     e:"that＝〜ということ（考え・意見を表す）。I think that …＝「…と思う」。"},
+    {q:"「ラーメン店に行くとき、とんこつラーメンを注文する」　___ I go to a ramen restaurant, I order tonkotsu ramen.",
+     o:[["When",1],["If",0],["Because",0],["That",0]],
+     e:"「〜のとき」なので When。"},
+    {q:"「もし時間があれば、来ていいよ」　You can come ___ you have time.",
+     o:[["if",1],["when",0],["because",0],["that",0]],
+     e:"「もし〜ならば」なので if。"},
+    {q:"「スープが濃いので、私は札幌ラーメンが好きだ」　I like Sapporo ramen ___ the soup is thick.",
+     o:[["because",1],["when",0],["if",0],["that",0]],
+     e:"「〜だから」なので because。"},
+    {q:"「I think ___ food travels around the world.（食べ物は世界中を旅すると思う）」",
+     o:[["that",1],["when",0],["if",0],["because",0]],
+     e:"「…と思う」なので I think that …。"},
+    {q:"「I think (that) …」の that は、実際にはどうなることが多い？",
+     o:[["省略される",1],["必ず必要",0],["疑問文になる",0],["過去形になる",0]],
+     e:"that は省略されることが多い。"},
+    {q:"if（条件）の文では、未来のことでも動詞はどの形を使う？",
+     o:[["現在形",1],["未来形（will）",0],["過去形",0],["ing形",0]],
+     e:"条件を表す if のあとでは、未来のことでも動詞は現在形を使う。"},
+    {q:"especially の意味は？",
+     o:[["特に",1],["たぶん",0],["実は",0],["ふつう",0]],
+     e:"especially＝特に。"},
+    {q:"various の意味は？",
+     o:[["さまざまな",1],["同じ",0],["難しい",0],["重要な",0]],
+     e:"various＝さまざまな。various ramen flavors（さまざまなラーメンの味）"},
+  ]},
+
+  futei: { title:"不定詞（to + 動詞の原形）", emo:"🎯", questions:[
+    {q:"不定詞の形は？",
+     o:[["to ＋ 動詞の原形",1],["to ＋ 動詞のing形",0],["to ＋ 過去形",0],["動詞の原形だけ",0]],
+     e:"不定詞は〈to ＋ 動詞の原形〉。"},
+    {q:"「I use a computer to study English.」の to study の意味は？",
+     o:[["英語を勉強するために",1],["英語を勉強すること",0],["勉強すべき英語",0],["英語を勉強して",0]],
+     e:"副詞的用法（目的）＝「〜するために」。"},
+    {q:"不定詞の副詞的用法（目的）の意味は？",
+     o:[["〜するために",1],["〜すること",0],["〜すべき",0],["〜される",0]],
+     e:"副詞的用法（目的）＝「〜するために」。"},
+    {q:"「I am happy to hear that.」の to hear の意味は？",
+     o:[["それを聞いて（うれしい）",1],["それを聞くために",0],["聞くべきこと",0],["聞くこと",0]],
+     e:"副詞的用法（感情の原因）＝「〜して」。happy to hear＝聞いてうれしい。"},
+    {q:"「She has a lot of work to do.」の to do の意味は？",
+     o:[["すべき（するための）仕事",1],["するために",0],["すること",0],["して",0]],
+     e:"形容詞的用法＝前の名詞 work を説明して「すべき仕事」。"},
+    {q:"不定詞の形容詞的用法の意味は？",
+     o:[["〜すべき・〜するための",1],["〜するために",0],["〜すること",0],["〜して",0]],
+     e:"形容詞的用法＝「〜すべき・〜するための」。前の名詞を説明する。"},
+    {q:"「It is important to look at the children's faces.」の意味は？",
+     o:[["子供たちの顔を見ることは大切だ",1],["子供たちの顔は大切に見える",0],["大切な子供の顔を見なさい",0],["子供たちは大切な顔を見る",0]],
+     e:"It is … to 〜＝「〜するのは…です」。It は to 以下の内容を指す。"},
+    {q:"「I want to be a nursery school teacher.」の to be の意味は？",
+     o:[["〜になること",1],["〜になるために",0],["〜になるべき",0],["〜になって",0]],
+     e:"名詞的用法＝「〜すること」。want to be＝「〜になりたい（なることを望む）」。"},
+    {q:"「I got up early to read the book.」の to read の用法は？",
+     o:[["副詞的用法（目的・〜するために）",1],["形容詞的用法",0],["名詞的用法",0],["過去形",0]],
+     e:"「本を読むために早く起きた」＝目的を表す副詞的用法。"},
+    {q:"「I'm happy to see a lot of cars.」の to see の用法は？",
+     o:[["副詞的用法（感情の原因・〜して）",1],["副詞的用法（目的）",0],["形容詞的用法",0],["名詞的用法",0]],
+     e:"「たくさんの車を見てうれしい」＝感情の原因を表す副詞的用法。"},
+    {q:"「It is … to 〜」の意味は？",
+     o:[["〜するのは…です",1],["…するために〜",0],["…という〜",0],["〜すべき…",0]],
+     e:"It is … to 〜＝「〜するのは…です」。"},
+    {q:"「I have many things to study.」の to study の用法は？",
+     o:[["形容詞的用法（前の名詞 things を説明）",1],["副詞的用法（目的）",0],["名詞的用法",0],["感情の原因",0]],
+     e:"things to study＝「勉強すべきこと」。前の名詞を説明する形容詞的用法。"},
+  ]},
+
+  tango: { title:"単語の意味（New Words）", emo:"📖", questions:[
+    {q:"holiday の意味は？",
+     o:[["休日・祝日",1],["平日",0],["週末だけ",0],["仕事",0]],
+     e:"holiday＝休日・祝日。the Golden Week holidays（ゴールデンウィーク）"},
+    {q:"flight の意味は？",
+     o:[["（飛行機の）便・フライト",1],["空港",0],["切符",0],["旅行かばん",0]],
+     e:"flight＝（飛行機の）便。My flight arrives at 5 p.m."},
+    {q:"airport の意味は？",
+     o:[["空港",1],["港",0],["駅",0],["バス停",0]],
+     e:"airport＝空港。"},
+    {q:"seafood の意味は？",
+     o:[["海産物・シーフード",1],["海",0],["食堂",0],["お米",0]],
+     e:"seafood＝海産物・シーフード。"},
+    {q:"language の意味は？",
+     o:[["言語・言葉",1],["国",0],["文字",0],["地図",0]],
+     e:"language＝言語・言葉。different languages（さまざまな言語）"},
+    {q:"culture の意味は？",
+     o:[["文化",1],["農業",0],["自然",0],["祭り",0]],
+     e:"culture＝文化。different cultures（さまざまな文化）"},
+    {q:"surprised の意味は？",
+     o:[["驚いた",1],["疲れた",0],["うれしい",0],["退屈した",0]],
+     e:"surprised＝驚いた。I was surprised.（私は驚いた）"},
+    {q:"foreign の意味は？",
+     o:[["外国の",1],["最初の",0],["有名な",0],["地元の",0]],
+     e:"foreign＝外国の。a foreign food（外国の食べ物）"},
+    {q:"chef の意味は？",
+     o:[["料理人・シェフ",1],["客",0],["店長",0],["農家",0]],
+     e:"chef＝料理人・シェフ。A Japanese chef created Napolitan."},
+    {q:"climate の意味は？",
+     o:[["気候",1],["天気予報",0],["気温計",0],["季節だけ",0]],
+     e:"climate＝気候。different climates（さまざまな気候）"},
+    {q:"career の意味は？",
+     o:[["職業・キャリア",1],["趣味",0],["授業",0],["会社",0]],
+     e:"career＝職業・キャリア。Career Day（職業体験日）"},
+    {q:"important の意味は？",
+     o:[["大切な・重要な",1],["難しい",0],["便利な",0],["有名な",0]],
+     e:"important＝大切な・重要な。"},
+    {q:"necessary の意味は？",
+     o:[["必要な",1],["十分な",0],["簡単な",0],["特別な",0]],
+     e:"necessary＝必要な。It is necessary to …（…することが必要だ）"},
+    {q:"difficult の意味は？",
+     o:[["難しい",1],["簡単な",0],["大切な",0],["楽しい",0]],
+     e:"difficult＝難しい。It was difficult to read …"},
+  ]},
+
+  kaiwa: { title:"会話表現・本文の内容", emo:"💬", questions:[
+    {q:"「May I ask you a favor?」の意味は？",
+     o:[["1つお願いしてもよろしいですか",1],["手伝いましょうか",0],["何かお探しですか",0],["お元気ですか",0]],
+     e:"May I ask you a favor?＝1つお願いしてもよろしいですか（許可を求める表現）。"},
+    {q:"「May I 〜?」はどんなときに使う表現？",
+     o:[["ていねいに許可を求めるとき",1],["過去のことをたずねるとき",0],["道を教えるとき",0],["お礼を言うとき",0]],
+     e:"May I 〜?＝「〜してもよいですか」と許可を求めるとき。"},
+    {q:"「Could you 〜?」はどんなときに使う表現？",
+     o:[["ていねいに依頼（お願い）するとき",1],["許可を求めるとき",0],["道案内するとき",0],["感想を言うとき",0]],
+     e:"Could you 〜?＝「〜してくれませんか」と依頼するとき。"},
+    {q:"「Could you take my picture?」の意味は？",
+     o:[["私の写真を撮ってくれませんか",1],["私の写真を見せましょうか",0],["写真を撮ってもいいですか",0],["写真はどこですか",0]],
+     e:"Could you take my picture?＝私の写真を撮ってくれませんか。"},
+    {q:"「Thank you for your time today.」への返事「どういたしまして」は？",
+     o:[["My pleasure.",1],["You're welcome too.",0],["No problem for you.",0],["See you.",0]],
+     e:"My pleasure.＝どういたしまして（喜んで）。"},
+    {q:"（本文）マーライオン（the Merlion）の高さは？",
+     o:[["8.6メートル",1],["70メートル",0],["650メートル",0],["50メートル",0]],
+     e:"It's 8.6 meters tall, and it weighs 70 tons.（高さ8.6m・重さ70トン）"},
+    {q:"（本文）マーライオンの体と頭は、それぞれ何の形？",
+     o:[["魚の体・ライオンの頭",1],["ライオンの体・魚の頭",0],["鳥の体・ライオンの頭",0],["魚の体・鳥の頭",0]],
+     e:"It has the body of a fish and the head of a lion.（魚の体とライオンの頭）"},
+    {q:"（本文）シンガポールドルに書かれている言語はいくつ？",
+     o:[["4つ（マレー語・中国語・タミル語・英語）",1],["2つ（英語・中国語）",0],["1つ（英語）",0],["3つ（英語・マレー語・タミル語）",0]],
+     e:"Malay, Chinese, Tamil, and English の4言語。"},
+    {q:"（本文）ラーメンはもともとどこから来た食べ物？",
+     o:[["中国",1],["日本",0],["イタリア",0],["シンガポール",0]],
+     e:"Ramen came from China.（ラーメンは中国から来た）"},
+    {q:"（本文）札幌ラーメンのスープは何ベース？",
+     o:[["みそベース",1],["しょうゆベース",0],["とんこつベース",0],["塩ベース",0]],
+     e:"Sapporo ramen uses a miso-based soup.（みそベース）"},
+    {q:"（本文）喜多方（Kitakata）ラーメンのスープは何ベース？",
+     o:[["しょうゆ（soy sauce）ベース",1],["みそベース",0],["とんこつベース",0],["塩ベース",0]],
+     e:"Kitakata ramen uses a soy sauce-based soup.（しょうゆベース）"},
+    {q:"（本文）スパゲッティ・ナポリタンを考え出したのは誰？",
+     o:[["日本の料理人（シェフ）",1],["イタリアの料理人",0],["アメリカの料理人",0],["中国の料理人",0]],
+     e:"a Japanese chef created spaghetti Napolitan in Japan.（日本のシェフが考案）"},
+    {q:"（本文）アナが読み聞かせた絵本「The Very Hungry Caterpillar」の日本語題は？",
+     o:[["はらぺこあおむし",1],["おおきなかぶ",0],["ぐりとぐら",0],["はじめてのおつかい",0]],
+     e:"The Very Hungry Caterpillar＝はらぺこあおむし。"},
+  ]},
+};
+
+/* ====== ロジック ====== */
+const $ = id => document.getElementById(id);
+let state = {};
+
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function bestKey(k){return "eigo_best_"+k;}
+
+function renderHome(){
+  $("home").classList.remove("hidden");
+  $("quiz").classList.add("hidden");
+  $("result").classList.add("hidden");
+  const list = $("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key];
+    const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button");
+    b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}
+      <span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key);
+    list.appendChild(b);
+  }
+}
+
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, topicTitle:t.title, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML="";
+  $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  const opts=shuffle(it.o);
+  opts.forEach(op=>{
+    const btn=document.createElement("button");
+    btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it);
+    box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+
+function answer(btn, correct, it){
+  const buttons=$("opts").querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===correctText(it)) b.classList.add("correct");
+  });
+  if(correct){ state.score++; }
+  else{ btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show");
+  $("nextBtn").classList.remove("hidden");
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+
+$("nextBtn").onclick=()=>{
+  state.pos++;
+  if(state.pos>=state.items.length) renderResult();
+  else renderQuestion();
+};
+
+function renderResult(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score;
+  const pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;
+  $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+
+  // best score 保存（全問のときだけ）
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden");
+    $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{
+      const t=QUIZ[state.key];
+      const idx=state.wrong.map(w=>t.questions.indexOf(w));
+      startTopic(state.key, idx);
+    };
+  }else{ rw.classList.add("hidden"); }
+}
+
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("ホームに戻りますか？（今の点数は記録されません）")) renderHome(); };
+
+renderHome();
+</script>
+</body>
+</html>
