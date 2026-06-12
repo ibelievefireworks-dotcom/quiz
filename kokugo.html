@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>国語 期末対策クイズ</title>
+<style>
+  :root{
+    --bg:#fbf8f4; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#b45309; --accent-d:#92400e;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#efe7da; --shadow:0 4px 14px rgba(80,50,10,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink);
+    line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#f0e7d8; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#fbf3e8; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#f1eee8; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>📖 国語 期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / アイスプラネット・枕草子・クマゼミ・漢字<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  iceplanet: { title:"アイスプラネット（椎名誠）", emo:"🧊", questions:[
+    {q:"『アイスプラネット』の作者はだれ？",
+     o:[["椎名誠",1],["清少納言",0],["沼田英治",0],["夏目漱石",0]],
+     e:"椎名誠。小説家・探検家・映画監督。著書に『岳物語』など。"},
+    {q:"「僕」の家にいそうろうしている、母親の弟のあだ名は？",
+     o:[["ぐうちゃん",1],["ぐうたら",0],["悠君",0],["由起夫さん",0]],
+     e:"ぐうちゃん（本名・津田由起夫、38歳）。"},
+    {q:"「ぐうちゃん」というあだ名がついた理由は？",
+     o:[["ぐうたらしているから",1],["よく食べるから",0],["背が高いから",0],["旅が好きだから",0]],
+     e:"ぐうたらしているから「ぐうちゃん」とよばれている。"},
+    {q:"ぐうちゃんは「僕（悠太）」にとってどんな関係の人？",
+     o:[["母親の弟（おじさん）",1],["父親の兄",0],["近所の人",0],["学校の先生",0]],
+     e:"母親の弟、つまり「僕」のおじさん。"},
+    {q:"ぐうちゃんが「僕」に語って聞かせたのは、どんな話？",
+     o:[["大げさで信じにくい「ほら話」",1],["昔話",0],["こわい怪談",0],["勉強の話",0]],
+     e:"ほら話。アナコンダやナマズ、アイスプラネットなどの話。"},
+    {q:"ぐうちゃんのほら話に出てくる、馬を丸のみにするというアマゾンの大蛇は？",
+     o:[["アナコンダ",1],["ナマズ",0],["ニシキヘビだけ",0],["ワニ",0]],
+     e:"アナコンダ。アマゾンの密林あたりにいる大蛇。"},
+    {q:"題名にもなっている「アイスプラネット」とは何のこと？",
+     o:[["北極の海に浮かぶ氷の惑星（でっかい氷山）",1],["南極の島",0],["大きなナマズ",0],["遠い星",0]],
+     e:"氷の惑星。北極海に浮かぶ、ビルのように大きな氷山のこと。"},
+    {q:"物語の終わりに、外国へ行ったぐうちゃんから「僕」に届いたものは？",
+     o:[["手紙（写真が入っていた）",1],["小包のおみやげ",0],["電話",0],["メール",0]],
+     e:"手紙。中にナマズとアイスプラネットの写真が入っていた。"},
+    {q:"手紙の写真を見て、「僕」はぐうちゃんの話がどうだったと分かった？",
+     o:[["ほんとうの話だった（ほら話ではなかった）",1],["やはり全部うそだった",0],["半分だけ本当だった",0],["わからなかった",0]],
+     e:"でっかいナマズとアイスプラネットの写真があり、ほら話ではなく本当だったと分かった。"},
+    {q:"ぐうちゃんが手紙で「僕」にすすめたことは？",
+     o:[["本をたくさん読んで、いつか自分の目で確かめてほしい",1],["毎日運動をしなさい",0],["早く就職しなさい",0],["旅をやめなさい",0]],
+     e:"「不思議アタマ」をいっぱいにして、本を読み、いつか自分の目で世界を見てほしいというメッセージ。"},
+    {q:"「いそうろう」の意味は？",
+     o:[["他人の家に住まわせてもらうこと",1],["一人で旅をすること",0],["仕事を休むこと",0],["うそをつくこと",0]],
+     e:"居候（いそうろう）。ぐうちゃんは「僕」の家にいそうろうしていた。"},
+    {q:"ぐうちゃんに「就職して早く独立しなさい」と怒っていたのはだれ？",
+     o:[["「僕」の母（ぐうちゃんの姉）",1],["「僕」の父",0],["ぐうちゃん自身",0],["祖父",0]],
+     e:"母。ぐうちゃんがぐうたらしているので、よく怒っていた。"},
+    {q:"「精密」の意味に最も近いのは？",
+     o:[["細かくて正確なこと",1],["とても大きいこと",0],["古くて貴重なこと",0],["速いこと",0]],
+     e:"精密＝細かいところまで正確なようす。"},
+    {q:"「歓迎」の意味は？",
+     o:[["喜んでむかえること",1],["追い返すこと",0],["がっかりすること",0],["静かにすること",0]],
+     e:"歓迎（かんげい）＝喜んでむかえ入れること。"},
+  ]},
+
+  makura: { title:"枕草子（清少納言・古文）", emo:"🌸", questions:[
+    {q:"『枕草子』の作者はだれ？",
+     o:[["清少納言",1],["紫式部",0],["兼好法師",0],["鴨長明",0]],
+     e:"清少納言。一条天皇のきさき定子に仕えた。紫式部は『源氏物語』。"},
+    {q:"『枕草子』が書かれた時代は？",
+     o:[["平安時代",1],["奈良時代",0],["鎌倉時代",0],["室町時代",0]],
+     e:"平安時代。約300の章段からなる。"},
+    {q:"『枕草子』のように、見聞きしたことや感想を自由に書いた文章の種類を何という？",
+     o:[["随筆",1],["物語",0],["和歌",0],["日記だけ",0]],
+     e:"随筆。『徒然草』『方丈記』とともに三大随筆とよばれる。"},
+    {q:"『枕草子』の世界をよく表す、明るく知的な美しさを表す言葉は？",
+     o:[["をかし",1],["あはれ",0],["わび",0],["さび",0]],
+     e:"「をかし」。『源氏物語』の「あはれ」と対比される。"},
+    {q:"第一段で、清少納言が「春は◯◯」とよいとしたのは何の時間帯？",
+     o:[["あけぼの（夜明け）",1],["夜",0],["夕暮れ",0],["つとめて（早朝）",0]],
+     e:"春はあけぼの。だんだん白くなっていく山ぎわが趣深いとした。"},
+    {q:"「あけぼの」の意味は？",
+     o:[["夜明け（明け方）",1],["真夜中",0],["夕方",0],["正午",0]],
+     e:"あけぼの＝夜明け、明け方。"},
+    {q:"清少納言が「夏は◯◯」とよいとしたのは何の時間帯？（蛍が飛ぶ）",
+     o:[["夜",1],["あけぼの",0],["夕暮れ",0],["つとめて",0]],
+     e:"夏は夜。月のころや、蛍が多く飛びかうのがよいとした。"},
+    {q:"「秋は夕暮れ」。では「冬は◯◯」とされたのは？",
+     o:[["つとめて（早朝）",1],["夜",0],["あけぼの",0],["昼",0]],
+     e:"冬はつとめて（早朝）。雪や霜の白さ、火桶の火がよいとした。"},
+    {q:"「やうやう白くなりゆく」の「やうやう」を、現代仮名遣いで書くと？",
+     o:[["ようよう",1],["やうやう",0],["やおやお",0],["よおよお",0]],
+     e:"歴史的仮名遣いの「やう」は「よう」と読む。やうやう→ようよう。"},
+    {q:"「やうやう」の意味は？",
+     o:[["だんだん（しだいに）",1],["とても",0],["すぐに",0],["まったく",0]],
+     e:"やうやう＝だんだん、しだいに。"},
+    {q:"「をかし」の意味は？",
+     o:[["趣がある（風情がある）",1],["おかしくて笑える",0],["かなしい",0],["こわい",0]],
+     e:"古語の「をかし」は、趣がある・風情があるの意味。"},
+    {q:"「うつくしきもの」の「うつくし」は、現代とは意味が少しちがう。その意味は？",
+     o:[["かわいい（かわいらしい）",1],["美しい・きれい",0],["めずらしい",0],["大きい",0]],
+     e:"古語の「うつくし」は「かわいい」。雀の子や幼児のしぐさなどをかわいいとした。"},
+    {q:"「つとめて」の意味は？",
+     o:[["早朝",1],["夕方",0],["真昼",0],["夜中",0]],
+     e:"つとめて＝早朝。"},
+    {q:"歴史的仮名遣いで語の中や終わりにある「は・ひ・ふ・へ・ほ」は、現代仮名遣いでどう読む？",
+     o:[["わ・い・う・え・お",1],["そのまま は・ひ・ふ・へ・ほ",0],["あ・い・う・え・お",0],["ら・り・る・れ・ろ",0]],
+     e:"語中・語尾の「は行」は「わ行」で読む。例：あはれ→あわれ、なほ→なお。"},
+    {q:"「いとをかし」の「いと」の意味は？",
+     o:[["とても",1],["少し",0],["まったく〜ない",0],["ときどき",0]],
+     e:"いと＝とても、たいへん。"},
+  ]},
+
+  kumazemi: { title:"クマゼミ増加の原因を探る（沼田英治）", emo:"🐛", questions:[
+    {q:"『クマゼミ増加の原因を探る』の筆者の職業は？",
+     o:[["昆虫学者",1],["小説家",0],["気象予報士",0],["歴史学者",0]],
+     e:"沼田英治。昆虫学者。"},
+    {q:"筆者が研究のきっかけにした、大阪市で起きた変化は？",
+     o:[["クマゼミが増えた",1],["クマゼミが減った",0],["カエルが増えた",0],["桜が早く咲いた",0]],
+     e:"子ども時代（1960年代）は少なかったクマゼミが、大阪市内で増えていることに気づいた。"},
+    {q:"クマゼミの数や割合を調べるために筆者が行った調査は？",
+     o:[["抜け殻調査",1],["鳴き声の録音",0],["気温の観測だけ",0],["アンケート",0]],
+     e:"抜け殻調査。抜け殻を採集してセミの種類や数の割合を調べた。"},
+    {q:"都市部の気温が周辺地域より高くなる現象を何という？",
+     o:[["ヒートアイランド現象",1],["エルニーニョ現象",0],["フェーン現象",0],["液状化",0]],
+     e:"ヒートアイランド現象。大阪市の年平均気温は約2度上昇していた。"},
+    {q:"筆者が結論づけた、クマゼミ増加の大もとの原因は？",
+     o:[["都市化",1],["農業の発達",0],["天敵の減少だけ",0],["えさの増加",0]],
+     e:"都市化（地表の整備＋ヒートアイランド現象）が原因と考えられた。"},
+    {q:"仮説1「冬の寒さの緩和」は、検証の結果どうなった？",
+     o:[["原因ではないと否定された",1],["最大の原因と確認された",0],["検証できなかった",0],["唯一の原因とされた",0]],
+     e:"クマゼミの卵は寒さに強く、冬の寒さの緩和は増加の原因ではないと分かった。"},
+    {q:"仮説2では、気温上昇でクマゼミの孵化の時期がどう変化した？",
+     o:[["早まって梅雨の時期に重なるようになった",1],["遅くなって秋になった",0],["変わらなかった",0],["冬になった",0]],
+     e:"気温上昇で孵化が早まり、雨の多い梅雨に重なるようになった。"},
+    {q:"孵化が梅雨の時期に重なるとよい理由は？",
+     o:[["雨で土が軟らかく湿り、幼虫が土に潜りやすいから",1],["気温が下がって涼しいから",0],["敵がいなくなるから",0],["えさが増えるから",0]],
+     e:"生まれたばかりの幼虫は乾燥に弱い。雨で土が軟らかく湿っていると土に潜りやすい。"},
+    {q:"仮説3で分かった、クマゼミの幼虫が他のセミより優れている能力は？",
+     o:[["硬い土を掘って地中に潜る力が強い",1],["速く飛べる",0],["寒さに弱い",0],["水中で生きられる",0]],
+     e:"クマゼミの幼虫は土を掘る力が強く、ヒートアイランドで乾いて硬くなった土でも潜れる。"},
+    {q:"地面が硬くなった都市部で、クマゼミだけが増えられたのはなぜ？",
+     o:[["クマゼミの幼虫は硬い土でも潜れるから",1],["クマゼミだけ卵が多いから",0],["他のセミが鳥に食べられたから",0],["クマゼミは土に潜らないから",0]],
+     e:"他のセミは硬い土に潜りにくいが、クマゼミは潜れるため都市部で増えた。"},
+    {q:"この文章で筆者が大切だと述べている、原因を追究する姿勢は？",
+     o:[["科学的な根拠を一歩一歩積み上げること",1],["世間一般の意見にしたがうこと",0],["一つの仮説だけを信じること",0],["結論を急いで出すこと",0]],
+     e:"簡単に関連づけず、実験や観察を重ねて科学的な根拠を積み上げる姿勢が大切と述べている。"},
+    {q:"この文章全体の組み立て（構成）の順序として正しいのは？",
+     o:[["きっかけ→いくつかの仮説と検証→まとめ",1],["まとめ→きっかけ→仮説",0],["仮説→きっかけ→反論",0],["結論だけをくり返す",0]],
+     e:"研究のきっかけ→仮説1〜3の検証→まとめ、という順で説明されている。"},
+    {q:"クマゼミ増加の原因について、筆者はどう考えている？",
+     o:[["原因は一つではなく、複数が関わっている",1],["原因はただ一つだけ",0],["原因は分からなかった",0],["原因は天気だけ",0]],
+     e:"地表の整備とヒートアイランド現象など、複数の要因が積み重なった結果と考えている。"},
+  ]},
+
+  kanji: { title:"漢字の読み（新出漢字）", emo:"✏️", questions:[
+    {q:"「赴任」の読みは？",
+     o:[["ふにん",1],["ふじん",0],["ぶにん",0],["とにん",0]],
+     e:"赴任（ふにん）。「単身赴任」など。"},
+    {q:"「唯一」の読みは？",
+     o:[["ゆいいつ",1],["ただいち",0],["ゆういつ",0],["いいち",0]],
+     e:"唯一（ゆいいつ）。"},
+    {q:"「歓迎」の読みは？",
+     o:[["かんげい",1],["かんむかえ",0],["けいげい",0],["かんこう",0]],
+     e:"歓迎（かんげい）。"},
+    {q:"「極端」の読みは？",
+     o:[["きょくたん",1],["きょくはし",0],["ごくたん",0],["きょくだん",0]],
+     e:"極端（きょくたん）。"},
+    {q:"「羨ましい」の読みは？",
+     o:[["うらやましい",1],["このましい",0],["いさましい",0],["なやましい",0]],
+     e:"羨ましい（うらやましい）。"},
+    {q:"「蛇行」の読みは？",
+     o:[["だこう",1],["へびこう",0],["じゃこう",0],["だぎょう",0]],
+     e:"蛇行（だこう）。川などがくねくね曲がって流れること。"},
+    {q:"「孵化」の読みは？",
+     o:[["ふか",1],["らんか",0],["ぼうか",0],["はか",0]],
+     e:"孵化（ふか）。卵がかえること。"},
+    {q:"「潜る」（土に◯◯）の読みは？",
+     o:[["もぐる",1],["ねむる",0],["くぐる",0],["けずる",0]],
+     e:"潜る（もぐる）。「潜む（ひそむ）」とも読む。"},
+    {q:"「耐える」の読みは？",
+     o:[["たえる",1],["こらえる",0],["ひかえる",0],["かなえる",0]],
+     e:"耐える（たえる）。"},
+    {q:"「湿度」の読みは？",
+     o:[["しつど",1],["しめど",0],["うるおど",0],["かんど",0]],
+     e:"湿度（しつど）。"},
+    {q:"「舗装」の読みは？",
+     o:[["ほそう",1],["ふそう",0],["てんそう",0],["ほうそう",0]],
+     e:"舗装（ほそう）。道路をコンクリートなどで固めること。"},
+    {q:"「顕著」の読みは？",
+     o:[["けんちょ",1],["けんしょ",0],["げんちょ",0],["あらわちょ",0]],
+     e:"顕著（けんちょ）。はっきりと目立つようす。"},
+    {q:"「必須」の読みは？",
+     o:[["ひっす",1],["ひつよう",0],["ひっしゅ",0],["ひっすう",0]],
+     e:"必須（ひっす）。必ず必要なこと。"},
+    {q:"「趣」の読みは？",
+     o:[["おもむき",1],["しゅみ",0],["むき",0],["こころ",0]],
+     e:"趣（おもむき）。「をかし」に通じる、味わい・風情。"},
+    {q:"「水晶」の読みは？",
+     o:[["すいしょう",1],["みずあき",0],["すいせい",0],["みずしょう",0]],
+     e:"水晶（すいしょう）。枕草子「うつくしきもの」に登場。"},
+    {q:"「霜」の読みは？",
+     o:[["しも",1],["ゆき",0],["あめ",0],["こおり",0]],
+     e:"霜（しも）。冬の早朝の情景。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "kokugo_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
