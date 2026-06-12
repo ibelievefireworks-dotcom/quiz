@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>理科 期末対策クイズ</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#0d9488; --accent-d:#0f766e;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#e3e8f0; --shadow:0 4px 14px rgba(20,40,80,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink);
+    line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+
+  /* HOME */
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+
+  /* QUIZ */
+  .bar{height:8px; background:#e7ecf5; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.5;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer;
+    transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#effaf8; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef1f6; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+
+  /* RESULT */
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a href="index.html" style="display:inline-block;margin-bottom:6px;color:#0d9488;text-decoration:none;font-weight:700;font-size:14px;">← 科目をえらぶ</a>
+  <h1>🧪 理科（化学）期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / 教科書 p.140〜207（化学分野）<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてホームに戻る</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">ホームに戻る</button>
+  </div>
+</div>
+
+<script>
+/* ====== 問題データ ====== */
+const QUIZ = {
+  bunkai: { title:"物質の成り立ち（分解）", emo:"⚗️", questions:[
+    {q:"1種類の物質が、2種類以上の物質に分かれる化学変化を何という？",
+     o:[["分解",1],["燃焼",0],["状態変化",0],["蒸発",0]],
+     e:"分解。もとの物質とは性質の異なる別の物質ができるので化学変化の一種。"},
+    {q:"加熱によって物質を分解することを、特に何という？",
+     o:[["熱分解",1],["電気分解",0],["燃焼",0],["蒸留",0]],
+     e:"熱分解。炭酸水素ナトリウムや酸化銀の加熱が代表例。"},
+    {q:"電流を流すことによって物質を分解することを何という？",
+     o:[["電気分解",1],["熱分解",0],["酸化",0],["還元",0]],
+     e:"電気分解。水や塩化銅水溶液に電流を流すと分解する。"},
+    {q:"炭酸水素ナトリウム（重そう）を加熱すると、3つの物質に分かれる。あとに残る白い固体は？",
+     o:[["炭酸ナトリウム",1],["塩化ナトリウム",0],["酸化銅",0],["炭素",0]],
+     e:"炭酸ナトリウム＋二酸化炭素＋水に分解する。固体として残るのが炭酸ナトリウム。"},
+    {q:"炭酸水素ナトリウムを加熱したとき発生し、石灰水を白くにごらせる気体は？",
+     o:[["二酸化炭素",1],["酸素",0],["水素",0],["アンモニア",0]],
+     e:"二酸化炭素。石灰水が白くにごることで確かめられる。"},
+    {q:"発生した気体が二酸化炭素であることを確かめる方法は？",
+     o:[["石灰水に通すと白くにごる",1],["線香を入れると激しく燃える",0],["マッチの火を近づけると音を立てて燃える",0],["赤色リトマス紙が青くなる",0]],
+     e:"石灰水が白くにごれば二酸化炭素。線香が激しく燃える＝酸素、音を立てて燃える＝水素。"},
+    {q:"試験管の口についた液体が「水」であることを確かめるのに使う紙は？",
+     o:[["塩化コバルト紙",1],["リトマス紙",0],["フェノールフタレイン紙",0],["ろ紙",0]],
+     e:"青色の塩化コバルト紙。水につくと赤（桃）色に変化する。"},
+    {q:"青色の塩化コバルト紙に水をつけると、何色に変化する？",
+     o:[["赤（桃）色",1],["青色のまま",0],["緑色",0],["黄色",0]],
+     e:"赤（桃）色。水の検出に使う。"},
+    {q:"炭酸水素ナトリウムを加熱するとき、試験管の口を少し下げておく理由は？",
+     o:[["発生した液体（水）が加熱部に流れて試験管が割れるのを防ぐため",1],["気体がもれないようにするため",0],["反応を速くするため",0],["熱を逃がすため",0]],
+     e:"口についた水が加熱した部分に流れこむと、急に冷えて試験管が割れる危険があるため。"},
+    {q:"炭酸水素ナトリウムと、加熱後にできた炭酸ナトリウム。水によくとけるのはどちら？",
+     o:[["炭酸ナトリウム（加熱後）",1],["炭酸水素ナトリウム",0],["どちらも同じ",0],["どちらもとけない",0]],
+     e:"炭酸ナトリウムのほうが水によくとける。これで別の物質になったとわかる。"},
+    {q:"フェノールフタレイン溶液を加えたとき、より濃い赤色になる（より強いアルカリ性）のはどちら？",
+     o:[["炭酸ナトリウム（加熱後）",1],["炭酸水素ナトリウム",0],["どちらも無色",0],["どちらも同じ",0]],
+     e:"加熱後の炭酸ナトリウムのほうが強いアルカリ性で、濃い赤色になる。"},
+    {q:"酸化銀を加熱すると、銀と何に分解する？",
+     o:[["酸素",1],["二酸化炭素",0],["水素",0],["水",0]],
+     e:"酸化銀 → 銀 ＋ 酸素。加熱後の白い物質は金属（銀）の光沢をもつ。"},
+    {q:"酸化銀の加熱で発生した気体が「酸素」であることを確かめる方法は？",
+     o:[["火のついた線香を入れると激しく燃える",1],["石灰水が白くにごる",0],["塩化コバルト紙が赤くなる",0],["音を立てて燃える",0]],
+     e:"酸素は、ものを燃やすはたらきがあるので、線香が激しく燃える。"},
+    {q:"水を電気分解すると、陰極と陽極にそれぞれ何の気体が発生する？",
+     o:[["陰極＝水素、陽極＝酸素",1],["陰極＝酸素、陽極＝水素",0],["陰極＝水素、陽極＝塩素",0],["両方とも酸素",0]],
+     e:"陰極（−極側）に水素、陽極（＋極側）に酸素。"},
+    {q:"水を電気分解したとき、発生する水素と酸素の体積の比は？",
+     o:[["水素:酸素 ＝ 2:1",1],["水素:酸素 ＝ 1:2",0],["水素:酸素 ＝ 1:1",0],["水素:酸素 ＝ 4:1",0]],
+     e:"水素が酸素の約2倍。化学反応式 2H₂O→2H₂+O₂ の係数とも一致する。"},
+    {q:"塩化銅水溶液を電気分解すると、陰極と陽極にそれぞれ何ができる？",
+     o:[["陰極＝銅、陽極＝塩素",1],["陰極＝塩素、陽極＝銅",0],["陰極＝水素、陽極＝酸素",0],["陰極＝銀、陽極＝酸素",0]],
+     e:"塩化銅 → 銅 ＋ 塩素。陰極に赤色の銅が付着し、陽極からプールの消毒のようなにおいの塩素が発生。"},
+    {q:"気体を、水と置きかえて集める方法を何という？",
+     o:[["水上置換法",1],["上方置換法",0],["下方置換法",0],["ろ過",0]],
+     e:"水上置換法。水にとけにくい気体を集めるのに使う。"},
+  ]},
+
+  genshi: { title:"原子・分子・物質の分類", emo:"⚛️", questions:[
+    {q:"化学変化でそれ以上分けることができない、物質をつくっている最小の粒子は？",
+     o:[["原子",1],["分子",0],["元素",0],["イオン",0]],
+     e:"原子。種類によって質量や大きさが決まっている。"},
+    {q:"1803年に「物質はそれ以上分けられない原子からできている」という原子説を発表した科学者は？",
+     o:[["ドルトン",1],["アボガドロ",0],["メンデレーエフ",0],["プルースト",0]],
+     e:"ドルトン（イギリス）。"},
+    {q:"原子の性質として正しいものは？",
+     o:[["化学変化で、それ以上分けることができない",1],["化学変化で新しくできることがある",0],["化学変化で種類が変わる",0],["すべて同じ質量・大きさである",0]],
+     e:"原子は①化学変化でそれ以上分けられない②新しくできたり種類が変わったり無くなったりしない③種類によって質量・大きさが決まっている。"},
+    {q:"いくつかの原子が結びついてできた、物質の性質のもとになる最小の粒子を何という？",
+     o:[["分子",1],["原子",0],["元素",0],["化合物",0]],
+     e:"分子。酸素分子は酸素原子2個、水分子は水素原子2個と酸素原子1個が結びついたもの。"},
+    {q:"「気体は2個以上の原子が集まった分子からできている」という考えを発表した科学者は？",
+     o:[["アボガドロ",1],["ドルトン",0],["メンデレーエフ",0],["ラボアジエ",0]],
+     e:"アボガドロ（イタリア）。"},
+    {q:"水分子をつくっている原子の組み合わせは？",
+     o:[["水素原子2個と酸素原子1個",1],["水素原子1個と酸素原子2個",0],["水素原子2個と酸素原子2個",0],["水素原子1個と酸素原子1個",0]],
+     e:"水素原子2個＋酸素原子1個で水分子1個（H₂O）。"},
+    {q:"物質を構成する原子の種類のことを何という？",
+     o:[["元素",1],["分子",0],["単体",0],["化合物",0]],
+     e:"元素。例えば水を構成する元素は水素と酸素。約120種類が知られている。"},
+    {q:"元素を表すための、世界共通の記号を何という？",
+     o:[["元素記号",1],["化学式",0],["原子番号",0],["化学反応式",0]],
+     e:"元素記号。アルファベット1文字か2文字で表す。"},
+    {q:"元素を原子番号の順に並べた表を何という？",
+     o:[["周期表",1],["化学式",0],["対照表",0],["分類表",0]],
+     e:"周期表。横の行を周期、縦の列を族という。同じ族には性質の似た元素が並ぶ。"},
+    {q:"現在の周期表のもとを考えたロシアの科学者は？",
+     o:[["メンデレーエフ",1],["ドルトン",0],["アボガドロ",0],["ニュートン",0]],
+     e:"メンデレーエフ。1869年、元素を原子の質量の順に並べると性質の似たものが周期的に現れることを発見した。"},
+    {q:"水素 H₂、酸素 O₂、銀 Ag のように、1種類の元素からできている物質を何という？",
+     o:[["単体",1],["化合物",0],["混合物",0],["分子",0]],
+     e:"単体。1種類の元素だけでできている。これ以上分解できない。"},
+    {q:"水 H₂O や二酸化炭素 CO₂ のように、2種類以上の元素からできている物質を何という？",
+     o:[["化合物",1],["単体",0],["混合物",0],["元素",0]],
+     e:"化合物。2種類以上の元素からできていて、分解できる。"},
+    {q:"食塩水のように、2種類以上の物質が混ざり合ったものを何という？",
+     o:[["混合物",1],["化合物",0],["単体",0],["純物質",0]],
+     e:"混合物。1種類の物質でできているもの（単体・化合物）が純物質。"},
+    {q:"鉄 Fe や酸素 O₂ は単体、塩化ナトリウム NaCl は化合物。では「空気」はどれ？",
+     o:[["混合物",1],["単体",0],["化合物",0],["純物質",0]],
+     e:"空気は窒素・酸素などが混ざった混合物。"},
+    {q:"銀や銅、鉄などの金属は、分子をつくる？つくらない？",
+     o:[["分子をつくらない（1種類の原子がたくさん集まる）",1],["分子をつくる",0],["気体のときだけ分子をつくる",0],["原子が1個で存在する",0]],
+     e:"金属や炭素、塩化ナトリウムなどは分子をつくらない。化学式は代表として元素記号で表す（銀＝Ag）。"},
+    {q:"ダイヤモンドと黒鉛のように、同じ元素（炭素C）からできていても性質が異なる物質を何という？",
+     o:[["同素体",1],["同位体",0],["混合物",0],["化合物",0]],
+     e:"同素体。原子のつながり方が異なるため性質がちがう。酸素O₂とオゾンO₃も同素体。"},
+  ]},
+
+  shiki: { title:"元素記号・化学式・化学反応式", emo:"🔤", questions:[
+    {q:"「水素」の元素記号は？",
+     o:[["H",1],["He",0],["Na",0],["O",0]],
+     e:"H（Hydrogen）。"},
+    {q:"「酸素」の元素記号は？",
+     o:[["O",1],["Au",0],["O₂",0],["C",0]],
+     e:"O（Oxygen）。酸素分子はO₂。"},
+    {q:"「炭素」の元素記号は？",
+     o:[["C",1],["Ca",0],["Cu",0],["Cl",0]],
+     e:"C（Carbon）。"},
+    {q:"「ナトリウム」の元素記号は？",
+     o:[["Na",1],["N",0],["Ni",0],["K",0]],
+     e:"Na（Sodium / ラテン語natron由来）。"},
+    {q:"「鉄」の元素記号は？",
+     o:[["Fe",1],["Te",0],["Pb",0],["Ag",0]],
+     e:"Fe（ラテン語ferrum由来）。"},
+    {q:"「銅」の元素記号は？",
+     o:[["Cu",1],["Co",0],["Ca",0],["C",0]],
+     e:"Cu（Copper / 地中海のキプロス島Cyprus由来）。"},
+    {q:"「マグネシウム」の元素記号は？",
+     o:[["Mg",1],["Ma",0],["Mn",0],["Mo",0]],
+     e:"Mg（Magnesium）。"},
+    {q:"2文字の元素記号の書き方で正しいのは？",
+     o:[["1文字目は大文字、2文字目は小文字（例：Fe）",1],["2文字とも大文字（例：FE）",0],["2文字とも小文字（例：fe）",0],["1文字目は小文字、2文字目は大文字（例：fE）",0]],
+     e:"1文字目だけ大文字。例：Fe、Cu、Mg、Ca、Cl。"},
+    {q:"「水」を化学式で表すと？",
+     o:[["H₂O",1],["HO₂",0],["H₂O₂",0],["OH",0]],
+     e:"H₂O。水素原子2個と酸素原子1個。原子の数は元素記号の右下に小さく書く。"},
+    {q:"「二酸化炭素」を化学式で表すと？",
+     o:[["CO₂",1],["CO",0],["C₂O",0],["CaO",0]],
+     e:"CO₂。炭素原子1個と酸素原子2個。"},
+    {q:"「アンモニア」を化学式で表すと？",
+     o:[["NH₃",1],["NaH",0],["N₃H",0],["NH₄",0]],
+     e:"NH₃。窒素原子1個と水素原子3個。"},
+    {q:"「塩化ナトリウム（食塩）」を化学式で表すと？",
+     o:[["NaCl",1],["ClNa",0],["NaCl₂",0],["Na₂Cl",0]],
+     e:"NaCl。化学式中の金属の元素記号は先に書くので、ClNaは×。"},
+    {q:"化学変化を化学式を使って表したものを何という？",
+     o:[["化学反応式",1],["化学式",0],["元素記号",0],["状態変化",0]],
+     e:"化学反応式。矢印（→）の左辺と右辺で原子の種類と数が等しくなるようにつくる。"},
+    {q:"化学反応式をつくるとき、矢印の左右で等しくなるようにそろえるのは？",
+     o:[["原子の種類と数",1],["分子の大きさ",0],["物質の重さの感じ",0],["色",0]],
+     e:"原子は化学変化でなくなったり新しくできたりしないので、左右で原子の種類と数が等しくなる。"},
+    {q:"水の電気分解の化学反応式　2H₂O → ?　の「?」にあてはまるのは？",
+     o:[["2H₂ + O₂",1],["H₂ + O₂",0],["2H₂ + 2O₂",0],["H₂ + O",0]],
+     e:"2H₂O → 2H₂ + O₂。左右で水素原子4個・酸素原子2個がそろう。"},
+    {q:"化学反応式「2H₂O」の前についている数字「2」は何を表す？",
+     o:[["水分子が2個あること",1],["水素原子が2個あること",0],["酸素原子が2個あること",0],["反応を2回行うこと",0]],
+     e:"化学式の前の数字は、その分子の個数を表す（1個のときは省略）。"},
+  ]},
+
+  sanka: { title:"酸化と燃焼", emo:"🔥", questions:[
+    {q:"物質が酸素と結びつくことを何という？",
+     o:[["酸化",1],["還元",0],["分解",0],["蒸発",0]],
+     e:"酸化。炭素が酸化されると二酸化炭素、銅が酸化されると酸化銅ができる。"},
+    {q:"酸素が結びついてできた物質を何という？",
+     o:[["酸化物",1],["化合物だけ",0],["混合物",0],["単体",0]],
+     e:"酸化物。二酸化炭素や酸化銅、酸化マグネシウムなど。"},
+    {q:"銅の粉末を加熱して、空気中の酸素と結びつくとできる黒い物質は？",
+     o:[["酸化銅",1],["硫化銅",0],["塩化銅",0],["炭酸銅",0]],
+     e:"酸化銅。質量は加熱前より増える（酸素が結びつくため）。"},
+    {q:"銅の酸化を表す化学反応式　2Cu + O₂ → ?",
+     o:[["2CuO",1],["CuO",0],["Cu₂O",0],["2CuO₂",0]],
+     e:"2Cu + O₂ → 2CuO。"},
+    {q:"物質が、激しく熱や光を出しながら酸化される変化を何という？",
+     o:[["燃焼",1],["還元",0],["蒸発",0],["分解",0]],
+     e:"燃焼。ろうそく・マグネシウム・スチールウールの燃焼など。"},
+    {q:"マグネシウムを燃焼させるとできる物質は？",
+     o:[["酸化マグネシウム",1],["硫化マグネシウム",0],["水酸化マグネシウム",0],["塩化マグネシウム",0]],
+     e:"酸化マグネシウム。激しく熱と光を出して燃える。"},
+    {q:"マグネシウムの燃焼を表す化学反応式　2Mg + O₂ → ?",
+     o:[["2MgO",1],["MgO",0],["Mg₂O",0],["2MgO₂",0]],
+     e:"2Mg + O₂ → 2MgO。"},
+    {q:"木炭（炭素）が燃えるとできる物質は？",
+     o:[["二酸化炭素",1],["一酸化炭素だけ",0],["水",0],["酸化炭素",0]],
+     e:"二酸化炭素。C + O₂ → CO₂。"},
+    {q:"鉄が空気中の酸素と結びついて「さび」るとできる物質は？",
+     o:[["酸化鉄",1],["硫化鉄",0],["塩化鉄",0],["炭酸鉄",0]],
+     e:"酸化鉄。鉄が酸化された例。"},
+    {q:"都市ガスの主成分メタンが燃焼すると、二酸化炭素と何ができる？",
+     o:[["水",1],["酸素",0],["水素",0],["炭素",0]],
+     e:"水。CH₄ + 2O₂ → CO₂ + 2H₂O。有機物は炭素のほかに水素をふくむので水もできる。"},
+    {q:"スチールウール（鉄）を酸素を満たした集気びんの中で加熱すると、どうなる？",
+     o:[["激しく熱と光を出して燃える",1],["変化しない",0],["とけて液体になる",0],["気体になる",0]],
+     e:"激しく燃えて酸化鉄になる。加熱後は金属光沢がなくなり、もろくなる。"},
+    {q:"金属のさび（酸化）を防ぐ方法として正しいのは？",
+     o:[["塗装やめっきで酸素や水と直接ふれないようにする",1],["強く加熱する",0],["塩酸につける",0],["こすって磨くだけ",0]],
+     e:"金属が酸素や水と直接接触しないようにする。塗装・めっきなど。ステンレス鋼はさびにくい。"},
+  ]},
+
+  kangen: { title:"いろいろな化学変化・還元", emo:"⚗️", questions:[
+    {q:"鉄と硫黄の混合物を加熱すると、結びついてできる物質は？",
+     o:[["硫化鉄",1],["酸化鉄",0],["塩化鉄",0],["硫化銅",0]],
+     e:"硫化鉄。Fe + S → FeS。熱と光を出して激しく反応する。"},
+    {q:"鉄と硫黄が結びつく反応を表す化学反応式は？",
+     o:[["Fe + S → FeS",1],["2Fe + S → Fe₂S",0],["Fe + 2S → FeS₂",0],["Fe + O₂ → FeO",0]],
+     e:"Fe + S → FeS。硫化鉄は分子をつくらない物質。"},
+    {q:"加熱前の「鉄と硫黄の混合物」に磁石を近づけると、どうなる？",
+     o:[["引きつけられる（鉄の性質が残っている）",1],["引きつけられない",0],["とける",0],["光る",0]],
+     e:"混合物は混ざっているだけなので、鉄の性質が残り磁石につく。"},
+    {q:"加熱後にできた「硫化鉄」に磁石を近づけると、どうなる？",
+     o:[["引きつけられない（別の物質になった）",1],["引きつけられる",0],["燃える",0],["とける",0]],
+     e:"硫化鉄は鉄とは別の物質なので、磁石につきにくい。"},
+    {q:"加熱後の硫化鉄にうすい塩酸を加えると、どんな気体が発生する？",
+     o:[["特有の（卵のくさったような）においのある気体",1],["無臭の気体",0],["気体は発生しない",0],["二酸化炭素",0]],
+     e:"硫化水素という特有のにおいの気体が発生する。加熱前の混合物（鉄）からは無臭の水素が発生する。"},
+    {q:"銅と硫黄が結びつくとできる物質は？",
+     o:[["硫化銅",1],["酸化銅",0],["塩化銅",0],["硫化鉄",0]],
+     e:"硫化銅。Cu + S → CuS。"},
+    {q:"酸化物から酸素をとり除く化学変化を何という？",
+     o:[["還元",1],["酸化",0],["燃焼",0],["分解",0]],
+     e:"還元。酸化と反対の変化。"},
+    {q:"酸化銅と活性炭（炭素）を混ぜて加熱すると、酸化銅は何になる？",
+     o:[["銅（赤色の物質）",1],["鉄",0],["硫化銅",0],["塩化銅",0]],
+     e:"酸化銅が還元されて銅になる。石灰水が白くにごることから二酸化炭素も発生したとわかる。"},
+    {q:"酸化銅の還元を表す化学反応式　2CuO + C → 2Cu + ?",
+     o:[["CO₂",1],["O₂",0],["H₂O",0],["CO",0]],
+     e:"2CuO + C → 2Cu + CO₂。"},
+    {q:"「2CuO + C → 2Cu + CO₂」の反応で、酸化された物質はどれ？",
+     o:[["炭素（C）",1],["酸化銅（CuO）",0],["銅（Cu）",0],["二酸化炭素（CO₂）",0]],
+     e:"炭素が酸素と結びついて二酸化炭素になった＝酸化された。酸化銅は酸素をうばわれて＝還元された。"},
+    {q:"酸化と還元の関係について正しいのは？",
+     o:[["酸化と還元は同時に起こる",1],["還元だけが単独で起こる",0],["酸化が起こると還元は起こらない",0],["どちらも熱を吸収する",0]],
+     e:"一方が酸素をうばう（還元）と、もう一方は酸素と結びつく（酸化）。酸化と還元は同時に起こる。"},
+    {q:"製鉄所で、鉄鉱石（酸化鉄）から鉄をとり出すために利用している化学変化は？",
+     o:[["還元",1],["酸化",0],["燃焼",0],["状態変化",0]],
+     e:"還元。コークス（炭素）からできる一酸化炭素が酸化鉄から酸素をうばい、鉄をとり出す。"},
+  ]},
+
+  shitsuryo: { title:"化学変化と物質の質量", emo:"⚖️", questions:[
+    {q:"化学変化の前後で、反応に関係している物質全体の質量は変わらない。この法則を何という？",
+     o:[["質量保存の法則",1],["定比例の法則",0],["エネルギー保存の法則",0],["フロギストン説",0]],
+     e:"質量保存の法則。フランスのラボアジエが確かめた。"},
+    {q:"化学変化で質量保存の法則が成り立つのは、なぜ？",
+     o:[["反応の前後で原子の種類と数が変わらないから",1],["原子が消えてなくなるから",0],["分子が大きくなるから",0],["熱が出入りするから",0]],
+     e:"化学変化では原子の組み合わせは変わるが、原子の種類と数は変わらないため。"},
+    {q:"密閉した容器の中で、気体が発生する化学変化を起こすと、全体の質量は？",
+     o:[["変わらない",1],["増える",0],["減る",0],["半分になる",0]],
+     e:"気体が外に逃げないので、全体の質量は変化しない。"},
+    {q:"気体が発生する反応のあと、容器のふたをゆるめると全体の質量はどうなる？",
+     o:[["減る（気体が逃げるため）",1],["増える",0],["変わらない",0],["2倍になる",0]],
+     e:"発生した気体の一部が外に出ていくので、全体の質量は減る。"},
+    {q:"うすい塩酸と炭酸水素ナトリウムの反応　NaHCO₃ + HCl → NaCl + H₂O + ?",
+     o:[["CO₂",1],["O₂",0],["H₂",0],["NH₃",0]],
+     e:"NaHCO₃ + HCl → NaCl + CO₂ + H₂O。二酸化炭素が発生する。"},
+    {q:"うすい硫酸とうすい水酸化バリウム水溶液を混ぜると、水にとけにくい白い沈殿ができる。この物質は？",
+     o:[["硫酸バリウム",1],["塩化ナトリウム",0],["炭酸カルシウム",0],["酸化銅",0]],
+     e:"硫酸バリウム。気体の出入りがなく沈殿ができる反応なので、前後で質量は変化しない。"},
+    {q:"銅を加熱して酸化銅にするとき、「銅の質量」と「結びつく酸素の質量」の比は？",
+     o:[["銅:酸素 ＝ 4:1",1],["銅:酸素 ＝ 1:4",0],["銅:酸素 ＝ 3:2",0],["銅:酸素 ＝ 2:1",0]],
+     e:"銅:酸素 = 4:1。これは必ず一定になる。"},
+    {q:"マグネシウムを加熱して酸化マグネシウムにするとき、「マグネシウムの質量」と「結びつく酸素の質量」の比は？",
+     o:[["マグネシウム:酸素 ＝ 3:2",1],["マグネシウム:酸素 ＝ 2:3",0],["マグネシウム:酸素 ＝ 4:1",0],["マグネシウム:酸素 ＝ 1:1",0]],
+     e:"マグネシウム:酸素 = 3:2。"},
+    {q:"銅:酸素 ＝ 4:1 のとき、0.8gの銅を完全に酸化させると、結びつく酸素は何g？",
+     o:[["0.2g",1],["0.4g",0],["0.8g",0],["3.2g",0]],
+     e:"0.8 ×（1/4）＝ 0.2g。"},
+    {q:"銅:酸素 ＝ 4:1 のとき、0.8gの銅を完全に酸化させると、できる酸化銅は何g？",
+     o:[["1.0g",1],["0.2g",0],["1.6g",0],["4.0g",0]],
+     e:"銅0.8g＋酸素0.2g＝1.0g。質量保存の法則より。"},
+    {q:"マグネシウム:酸素 ＝ 3:2 のとき、3.0gのマグネシウムを完全に酸化させると、結びつく酸素は何g？",
+     o:[["2.0g",1],["1.5g",0],["3.0g",0],["4.5g",0]],
+     e:"3.0 ×（2/3）＝ 2.0g。できる酸化マグネシウムは5.0g。"},
+    {q:"マグネシウム:酸素 ＝ 3:2 のとき、1.20gのマグネシウムと結びつく酸素は最大で何g？",
+     o:[["0.80g",1],["0.60g",0],["1.20g",0],["1.80g",0]],
+     e:"1.20 ×（2/3）＝ 0.80g。"},
+    {q:"金属を加熱する回数を増やしていくと、加熱後の質量は最後にはどうなる？",
+     o:[["一定の値になり、それ以上は増えなくなる",1],["どこまでも増え続ける",0],["だんだん減っていく",0],["変化しない",0]],
+     e:"一定量の金属に結びつく酸素の質量には限界がある。すべて酸素と結びつくと、それ以上増えない。"},
+    {q:"加熱をくり返して質量が一定になったのは、なぜ？",
+     o:[["金属がすべて酸素と結びついたから",1],["金属がとけたから",0],["酸素がなくなったから",0],["熱が足りなくなったから",0]],
+     e:"金属の原子がすべて酸素と結びつくと、それ以上は反応しないため質量が一定になる。"},
+    {q:"グラフにすると、「金属の質量」と「結びつく酸素の質量」の関係は？",
+     o:[["原点を通る直線（比例）",1],["原点を通らない直線",0],["曲線",0],["関係がない",0]],
+     e:"比例の関係（原点を通る直線）になる。化学変化に関係する物質の質量の比はつねに一定。"},
+  ]},
+
+  netsu: { title:"化学変化と熱", emo:"🌡️", questions:[
+    {q:"化学変化が起こるときに出入りする熱を、まとめて何という？",
+     o:[["反応熱",1],["気化熱",0],["比熱",0],["潜熱",0]],
+     e:"反応熱。化学変化のときには熱の出入りがともなう。"},
+    {q:"化学変化のとき熱を発生して、まわりの温度が上がる反応を何という？",
+     o:[["発熱反応",1],["吸熱反応",0],["中和反応",0],["分解反応",0]],
+     e:"発熱反応。まわりの温度が上がる。"},
+    {q:"化学変化のとき周囲の熱を吸収して、まわりの温度が下がる反応を何という？",
+     o:[["吸熱反応",1],["発熱反応",0],["燃焼",0],["酸化",0]],
+     e:"吸熱反応。まわりの温度が下がる。"},
+    {q:"化学かいろ（鉄粉が空気中の酸素で酸化される）は、どちらの反応？",
+     o:[["発熱反応",1],["吸熱反応",0],["どちらでもない",0],["状態変化",0]],
+     e:"発熱反応。鉄の酸化で熱が出て温度が上がる。"},
+    {q:"ものの「燃焼」は、発熱反応・吸熱反応のどちら？",
+     o:[["発熱反応",1],["吸熱反応",0],["どちらでもない",0],["分解",0]],
+     e:"発熱反応。激しく熱や光を出す。"},
+    {q:"塩化アンモニウムと水酸化バリウムを混ぜると、温度が下がってアンモニアが発生する。これは？",
+     o:[["吸熱反応",1],["発熱反応",0],["燃焼",0],["酸化",0]],
+     e:"吸熱反応。まわりの熱を吸収して温度が下がる。"},
+    {q:"炭酸水素ナトリウムとクエン酸を反応させる簡易冷却パックは、どちらの反応を利用している？",
+     o:[["吸熱反応",1],["発熱反応",0],["燃焼",0],["還元",0]],
+     e:"吸熱反応。二酸化炭素が発生し、温度が下がる。"},
+    {q:"鉄と硫黄が結びつく反応は、加熱をやめても反応が続く。このとき熱は？",
+     o:[["発生している（発熱反応）",1],["吸収している（吸熱反応）",0],["出入りしない",0],["なくなる",0]],
+     e:"発熱反応。反応で熱が発生し続けるため、加熱をやめても反応が進む。"},
+  ]},
+};
+
+/* ====== ロジック ====== */
+const $ = id => document.getElementById(id);
+let state = {};
+
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function bestKey(k){return "rika_best_"+k;}
+
+function renderHome(){
+  $("home").classList.remove("hidden");
+  $("quiz").classList.add("hidden");
+  $("result").classList.add("hidden");
+  const list = $("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key];
+    const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button");
+    b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}
+      <span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key);
+    list.appendChild(b);
+  }
+}
+
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, topicTitle:t.title, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML="";
+  $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  const opts=shuffle(it.o);
+  opts.forEach(op=>{
+    const btn=document.createElement("button");
+    btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it);
+    box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+
+function answer(btn, correct, it){
+  const buttons=$("opts").querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===correctText(it)) b.classList.add("correct");
+  });
+  if(correct){ state.score++; }
+  else{ btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show");
+  $("nextBtn").classList.remove("hidden");
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+
+$("nextBtn").onclick=()=>{
+  state.pos++;
+  if(state.pos>=state.items.length) renderResult();
+  else renderQuestion();
+};
+
+function renderResult(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score;
+  const pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;
+  $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+
+  // best score 保存（全問のときだけ）
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden");
+    $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{
+      const t=QUIZ[state.key];
+      const idx=state.wrong.map(w=>t.questions.indexOf(w));
+      startTopic(state.key, idx);
+    };
+  }else{ rw.classList.add("hidden"); }
+}
+
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("ホームに戻りますか？（今の点数は記録されません）")) renderHome(); };
+
+renderHome();
+</script>
+</body>
+</html>
