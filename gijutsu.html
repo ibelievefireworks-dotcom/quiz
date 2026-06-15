@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>技術 期末対策クイズ</title>
+<style>
+  :root{
+    --bg:#f5f6fe; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#4f46e5; --accent-d:#4338ca;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#e6e6fb; --shadow:0 4px 14px rgba(40,40,120,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#e7e7fb; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#eef0fe; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eeeef3; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>⚙️ 技術 期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / エネルギー変換・材料と加工・発電・電気の供給<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  henkan: { title:"エネルギー変換と変換効率", emo:"⚡", questions:[
+    {q:"エネルギーの形態を用途に応じて変えることを何という？",
+     o:[["エネルギー変換",1],["エネルギー資源",0],["エネルギー損失",0],["発電",0]],
+     e:"エネルギー変換。例：照明は電気エネルギーを光エネルギーに変えている。"},
+    {q:"現在、エネルギー利用の中心になっているのは何エネルギー？",
+     o:[["電気エネルギー",1],["熱エネルギー",0],["位置エネルギー",0],["音エネルギー",0]],
+     e:"電気エネルギー。供給しやすく、光・熱・動力などに変換しやすいため。"},
+    {q:"エネルギー変換効率(%)を求める式は？",
+     o:[["利用目的に使うエネルギー÷供給されるエネルギー×100",1],["供給÷利用×100",0],["利用＋供給×100",0],["供給−利用×100",0]],
+     e:"変換効率(%)＝利用目的に利用されるエネルギー÷供給されるエネルギー×100。"},
+    {q:"使用目的以外に放出されてしまうエネルギーを何という？",
+     o:[["エネルギー損失",1],["エネルギー資源",0],["変換効率",0],["再生可能エネルギー",0]],
+     e:"エネルギー損失。機器が熱くなるのは目的外のエネルギーが放出されるため。"},
+    {q:"エネルギー変換効率を100%にすることは？",
+     o:[["できない",1],["かんたんにできる",0],["電気だけできる",0],["昔はできた",0]],
+     e:"損失を完全になくす（100%）ことはできない。効率を高める技術開発が進められている。"},
+    {q:"化石燃料・核燃料・水力・風力・太陽光など、エネルギーのもとを何という？",
+     o:[["エネルギー資源",1],["エネルギー損失",0],["変換効率",0],["電力",0]],
+     e:"エネルギー資源。化石燃料・核燃料は埋蔵量に限りがある。"},
+    {q:"燃料電池自動車が走行時に出さないものは？",
+     o:[["二酸化炭素（CO₂）",1],["水",0],["音",0],["熱",0]],
+     e:"水素と酸素の化学反応で発電し、走行時はCO₂を排出しない。"},
+    {q:"タブレットを使うと本体が熱くなるのはなぜ？",
+     o:[["目的外のエネルギーが熱として放出される（損失）から",1],["電気がたまるから",0],["変換効率が100%だから",0],["電池が増えるから",0]],
+     e:"使用目的以外に放出されるエネルギー損失が、熱として出るため。"},
+  ]},
+
+  kakou: { title:"材料と加工（けがき・切断・切削）", emo:"🔨", questions:[
+    {q:"加工する位置を示すために、材料に線を引いたり印をつけたりすることを何という？",
+     o:[["けがき",1],["切断",0],["切削",0],["組み立て",0]],
+     e:"けがき。加工の基準となる線・印をつける作業。"},
+    {q:"木材のけがきで直角の線を引くときに使う、L字の工具は？",
+     o:[["さしがね",1],["けがき針",0],["センタポンチ",0],["かんな",0]],
+     e:"さしがね（直角定規）。長手と妻手があり、直角の線が引ける。"},
+    {q:"金属のけがきで、線を引くために使う先のとがった工具は？",
+     o:[["けがき針",1],["さしがね",0],["やすり",0],["ドレッサ",0]],
+     e:"けがき針（金属用）。鋼尺の縁に密着させ、進行方向に少し傾けて引く。"},
+    {q:"けがきは、材料のどこを基準にして行う？",
+     o:[["基準面",1],["材料の中央",0],["いちばん長い面",0],["裏面だけ",0]],
+     e:"基準面からけがくことが大切。基準面の印は削らない。"},
+    {q:"けがきで目盛りを読むときの正しい方法は？",
+     o:[["真上から読む",1],["斜めから読む",0],["下から読む",0],["遠くから読む",0]],
+     e:"真上から読む。斜めから読むと誤差（視差）が生じる。"},
+    {q:"穴あけの中心に、ハンマでたたいてくぼみをつける工具は？",
+     o:[["センタポンチ",1],["けがき針",0],["弓のこ",0],["クランプ",0]],
+     e:"センタポンチ。先を穴の中心に合わせ、ハンマで軽くたたく。"},
+    {q:"材料取り寸法は、仕上がり寸法に何を加えた長さ？",
+     o:[["切りしろ＋削りしろ",1],["あさり幅",0],["基準面",0],["周波数",0]],
+     e:"材料取り寸法＝仕上がり寸法＋切りしろ＋削りしろ（3〜5mm）。"},
+    {q:"両刃のこぎりで、繊維（木目）の方向に沿って切る刃は？",
+     o:[["縦びき刃",1],["横びき刃",0],["斜めびき刃",0],["弓のこ",0]],
+     e:"縦びき刃。のみのような刃で、繊維に食い込んで切り離す。"},
+    {q:"繊維を横断して切るときに使う刃は？",
+     o:[["横びき刃",1],["縦びき刃",0],["返し刃",0],["あさり",0]],
+     e:"横びき刃。小刀のような刃で、繊維を横断して断ち切る。"},
+    {q:"のこ刃が左右に振り分けられていることを何という？",
+     o:[["あさり",1],["けがき",0],["バリ",0],["変圧",0]],
+     e:"あさり。のこ身より大きなひき溝を作り、摩擦を小さくして動きを軽くする。"},
+    {q:"金属（棒材）を切断するのに使うのこぎりは？",
+     o:[["弓のこ",1],["両刃のこぎり",0],["糸のこ盤",0],["かんな",0]],
+     e:"弓のこ。金属を万力で固定し、フレームと柄を持ってまっすぐ押して切る。"},
+    {q:"材料の表面を削り取り、なめらかに整える工具は？",
+     o:[["かんな",1],["けがき針",0],["センタポンチ",0],["クランプ",0]],
+     e:"かんな（切削）。刃先の出は0.05〜0.1mm程度に調整する。"},
+    {q:"のこぎりびきで「切り終わり」に注意することは？",
+     o:[["材料の端を支える",1],["一気に強く引く",0],["刃を曲げる",0],["目をつぶる",0]],
+     e:"切り終わりを支えないと、材料が欠けてしまう。"},
+    {q:"けがき針を扱うときの安全上の注意は？",
+     o:[["針先を人に向けない",1],["針先を上に向けて運ぶ",0],["手のひらで持つ",0],["濡らして使う",0]],
+     e:"針先を人に向けない。持ち運ぶときは針先を下に向ける。"},
+  ]},
+
+  hatsuden: { title:"発電の仕組みと発電方法", emo:"🔌", questions:[
+    {q:"発電機やモータは、何からできている？",
+     o:[["コイルと磁石",1],["電池と電球",0],["銅板と炭素",0],["歯車とばね",0]],
+     e:"どちらもコイルと磁石でできている。"},
+    {q:"コイルや磁石を動かすと、コイルに電流が流れる現象を何という？",
+     o:[["電磁誘導",1],["静電気",0],["放電",0],["変圧",0]],
+     e:"電磁誘導。発電機はこの仕組みで電気エネルギーを生み出す。"},
+    {q:"電磁誘導を利用した身近な例は？",
+     o:[["自転車のライト・ワイヤレス充電器",1],["乾電池",0],["LED照明",0],["太陽光パネル",0]],
+     e:"自転車のライトやスマホのワイヤレス充電器（送電側・受電側コイル）。"},
+    {q:"ほかのエネルギーを電気エネルギーに変換することを何という？",
+     o:[["発電",1],["変圧",0],["配電",0],["けがき",0]],
+     e:"発電。電気エネルギーは主に発電所で作られる。"},
+    {q:"自然界で絶えず供給され、枯渇しないエネルギーを何という？",
+     o:[["再生可能エネルギー",1],["化石燃料",0],["核燃料",0],["一次エネルギー",0]],
+     e:"再生可能エネルギー。水力・風力・太陽光・地熱・バイオマスなど。"},
+    {q:"次のうち、再生可能エネルギーにあてはまらないのは？",
+     o:[["原子力",1],["太陽光",0],["風力",0],["水力",0]],
+     e:"原子力は核燃料（埋蔵量に限りがある核物質）を使うので再生可能ではない。"},
+    {q:"発電方式別のエネルギー変換効率が最も高いのは？",
+     o:[["水力（約80%）",1],["太陽光（約10%）",0],["風力（約25%）",0],["原子力（約33%）",0]],
+     e:"水力が約80%で最も高い。火力(LNG複合)55%、太陽光10%、地熱8%など。"},
+    {q:"液化天然ガス(LNG)でガスタービンと蒸気タービンを組み合わせる発電は？",
+     o:[["コンバインドサイクル発電（LNG複合）",1],["地熱発電",0],["バイオマス発電",0],["水力発電",0]],
+     e:"コンバインドサイクル発電。変換効率が約55%と火力の中で高い。"},
+    {q:"間伐材・木くず・生ごみなど動植物由来の原料を燃やして発電する方法は？",
+     o:[["バイオマス発電",1],["地熱発電",0],["原子力発電",0],["太陽光発電",0]],
+     e:"バイオマス発電。地域の未利用木材なども利用する。"},
+    {q:"原子力発電のマイナス面（課題）は？",
+     o:[["事故時の安全性や使用済み核燃料の処分",1],["CO₂を大量に出す",0],["発電量が天候に左右される",0],["資源にコストがかかる",0]],
+     e:"CO₂はほぼ出さず安定供給できるが、事故時の安全性・核廃棄物の処分が課題。"},
+    {q:"太陽光発電のマイナス面は？",
+     o:[["発電量が安定しない（日照に左右される）",1],["CO₂を大量に出す",0],["燃料費が高い",0],["騒音が大きい",0]],
+     e:"資源コストはかからずCO₂も少ないが、日射量が少ない場所には適さない。"},
+    {q:"日本のエネルギー自給率（2022年度）は約何%？",
+     o:[["約12.6%",1],["約50%",0],["約80%",0],["約99%",0]],
+     e:"約12.6%。エネルギー資源の多くを海外からの輸入に頼っている。"},
+    {q:"複数の発電方法を組み合わせることを何という？",
+     o:[["エネルギーミックス",1],["エネルギー損失",0],["コンバインド",0],["電磁誘導",0]],
+     e:"エネルギーミックス。2030年度は火力を41%に抑え再エネ・原子力を増やす目標。"},
+    {q:"火力発電が燃やしてCO₂を多く排出するのは、どんな燃料？",
+     o:[["石油・石炭・天然ガス（化石燃料）",1],["水素",0],["ウラン",0],["木くずだけ",0]],
+     e:"化石燃料（石油・石炭・天然ガス）を燃やして蒸気タービンを回すため、CO₂を排出する。"},
+  ]},
+
+  kyokyu: { title:"電気を供給する仕組み", emo:"🔋", questions:[
+    {q:"電圧と電流の向きが時間がたっても変わらない電気を何という？",
+     o:[["直流（DC）",1],["交流（AC）",0],["変圧",0],["周波数",0]],
+     e:"直流（DC）。電池から取り出す電気は直流。"},
+    {q:"電圧と電流の向き・大きさが周期的に変わる電気を何という？",
+     o:[["交流（AC）",1],["直流（DC）",0],["変換効率",0],["損失",0]],
+     e:"交流（AC）。コンセントから供給される電気は交流。"},
+    {q:"コンセントから供給される電気は、直流・交流のどちら？",
+     o:[["交流（AC）",1],["直流（DC）",0],["両方同時",0],["どちらでもない",0]],
+     e:"交流（AC）。一方、乾電池は直流（DC）。"},
+    {q:"交流が遠くの発電所から家庭まで送るのに適している理由は？",
+     o:[["変圧器で電圧を変えやすく、高電圧にすると送電損失が少ないから",1],["向きが変わらないから",0],["電池で作れるから",0],["音が出ないから",0]],
+     e:"高電圧に変圧すると送電線に流れる電流が減り、エネルギー損失が少なくなる。"},
+    {q:"変圧器で電圧を変えることを何という？",
+     o:[["変圧",1],["変換",0],["配電",0],["発電",0]],
+     e:"変圧。交流は変圧器で電圧を簡単に変えられる。"},
+    {q:"使い切りで充電できない電池を何という？",
+     o:[["一次電池",1],["二次電池",0],["蓄電池",0],["燃料電池",0]],
+     e:"一次電池（マンガン乾電池・アルカリ乾電池・リチウム電池など）。"},
+    {q:"充電してくり返し使える電池を何という？",
+     o:[["二次電池",1],["一次電池",0],["乾電池",0],["太陽電池",0]],
+     e:"二次電池（鉛蓄電池・ニッケル水素・リチウムイオン電池など）。"},
+    {q:"発電所から配電用変電所まで電気を送ることを何という？",
+     o:[["送電",1],["配電",0],["変圧",0],["発電",0]],
+     e:"送電。配電用変電所から家庭・工場へ送るのが配電。"},
+    {q:"配電用変電所から家庭や工場へ電気を送ることを何という？",
+     o:[["配電",1],["送電",0],["発電",0],["変換",0]],
+     e:"配電。変電所で電圧を変えて効率的に送る。"},
+    {q:"東日本と西日本で異なる、交流の周波数の組み合わせは？",
+     o:[["東50Hz・西60Hz",1],["東60Hz・西50Hz",0],["どちらも50Hz",0],["どちらも60Hz",0]],
+     e:"東日本50Hz・西日本60Hz。明治時代の発電機の輸入元の違いによる。"},
+    {q:"電流を一定の方向にしか流さない部品は？",
+     o:[["ダイオード",1],["コンデンサ",0],["コイル",0],["スイッチ",0]],
+     e:"ダイオード。整流などに使われる。"},
+    {q:"ACアダプタの働きは？",
+     o:[["交流100Vを直流5〜12Vなどに変換する",1],["直流を交流に変える",0],["電圧を高くして送る",0],["電気をためる",0]],
+     e:"家庭の交流100Vを、機器用の直流（5〜12Vなど）に変換する。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "gijutsu_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
