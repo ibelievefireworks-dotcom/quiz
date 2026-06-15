@@ -78,6 +78,7 @@
   .big-rate{text-align:center; font-size:15px; color:var(--sub); margin:2px 0 4px;}
   .big-rate .num{font-size:44px; font-weight:800; color:var(--accent); display:block; line-height:1;}
 </style>
+<script src="report.js"></script>
 </head>
 <body>
 
@@ -348,6 +349,7 @@ function renderResult(){
   if(weak>0){ rw.classList.remove("hidden"); $("weakN").textContent=weak; rw.onclick=()=>startDeck(st.key,true); }
   else rw.classList.add("hidden");
   $("resLine").onclick=()=>lineShare(unitReport());
+  if(typeof reportUnit==="function" && st.queue.length===DECKS[st.key].cards.length) reportUnit(unitReport());
 }
 function unitReport(){
   const d=DECKS[st.key]; const ok=st.graded.filter(x=>x===2).length, tot=st.graded.length;

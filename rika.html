@@ -79,6 +79,7 @@
   .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
   .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
 </style>
+<script src="report.js"></script>
 </head>
 <body>
 
@@ -526,6 +527,7 @@ function renderResult(){
   if(state.items.length===QUIZ[state.key].questions.length){
     const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
     if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🧪 理科："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
   }
   const rw=$("retryWrong");
   if(state.wrong.length>0){
