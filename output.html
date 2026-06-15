@@ -83,20 +83,20 @@
 
 <!-- HOME -->
 <div id="home">
-  <a class="backlink" href="index.html">← 科目をえらぶ</a>
-  <h1>✍️ アウトプット練習</h1>
+  <a class="backlink" id="homeBack" href="index.html">← 科目をえらぶ</a>
+  <h1 id="homeTitle">✍️ アウトプット練習</h1>
   <p class="lead">書いて・言って答える「再生」トレーニング<br>クイズで覚えた知識を“出せる”か確かめよう</p>
 
   <div class="card">
-    <div class="big-rate"><span class="num" id="homeRate">0%</span>ぜんたいの習得率（✓のわりあい）</div>
+    <div class="big-rate"><span class="num" id="homeRate">0%</span><span id="homeRateLab">ぜんたいの習得率（✓のわりあい）</span></div>
     <div class="bar"><i id="homeBar"></i></div>
     <button class="btn" id="checkBtn">📊 習得状況をくわしく見る（CHECK）</button>
     <button class="btn line" id="lineBtn">📲 今日の結果をLINEで報告</button>
   </div>
 
-  <div class="section-t">✏️ 書いて答える（ノートに書く）</div>
+  <div class="section-t" id="writeSec">✏️ 書いて答える（ノートに書く）</div>
   <div id="writeList"></div>
-  <div class="section-t">🗣️ 口で答える（声に出して説明）</div>
+  <div class="section-t" id="speakSec">🗣️ 口で答える（声に出して説明）</div>
   <div id="speakList"></div>
 
   <p class="foot">※自己採点した記録はこのスマホに保存されます。<br>「もう一度」が0になればテスト範囲はバッチリ！</p>
@@ -222,11 +222,13 @@ const DECKS = {
     {q:"古語「をかし」と「あはれ」の感じ方のちがいを説明して。", a:"「をかし」は明るく知的に趣を感じること。「あはれ」はしみじみと深く心に感じること。", e:"採点：をかし＝明るい・知的、あはれ＝しみじみ・情緒。"},
     {q:"クマゼミの説明文で、筆者が大切だと述べた研究の姿勢は？", a:"簡単に結びつけず、実験や観察を重ねて科学的な根拠を一歩一歩積み上げていく姿勢。", e:"採点：①科学的根拠 ②一歩ずつ／決めつけない。"},
   ]},
-  shakai_say: { title:"社会の記述（説明する）", emo:"🗣️", mode:"speak", subj:"社会", cards:[
+  rekishi_say: { title:"歴史の記述（説明する）", emo:"🗣️", mode:"speak", subj:"歴史", cards:[
     {q:"元（モンゴル）が二度せめてきた戦いをまとめて何という？理由も一言で。", a:"元寇（文永の役・弘安の役）。フビライ＝ハンの服属要求を、執権の北条時宗が断ったため。", e:"採点：①元寇（2回の名前）②時宗が拒否。"},
     {q:"元寇のあと、御家人が幕府に不満をもった理由を説明して。", a:"命がけで戦ったのに、恩賞（領地）が十分にもらえず、生活が苦しくなったから。", e:"採点：①防衛戦で領地が増えない ②恩賞不足で困窮。"},
     {q:"室町幕府を開いた人物と、3代将軍が成しとげたことを説明して。", a:"足利尊氏が開いた。3代義満が南北朝を統一し、明との勘合貿易を始めた。", e:"採点：①尊氏 ②義満・南北朝統一／勘合貿易。"},
     {q:"勘合貿易で「勘合」という合い札を使った理由は？", a:"正式な貿易船と、海賊である倭寇を区別するため。", e:"採点：倭寇との区別。"},
+  ]},
+  chiri_say: { title:"地理の記述（説明する）", emo:"🗣️", mode:"speak", subj:"地理", cards:[
     {q:"ブラジルがさかんに生産する、さとうきびから作るバイオ燃料は？特徴も。", a:"バイオエタノール（バイオ燃料）。植物が育つときCO₂を吸うため、燃やしてもCO₂を増やしにくいとされる。", e:"採点：①バイオエタノール ②CO₂を増やしにくい。"},
     {q:"かつてオーストラリアがとっていた、白人以外の移民を制限する政策は？今は？", a:"白豪主義。現在は多くの民族の文化を尊重する多文化主義（多文化社会）へ変わった。", e:"採点：①白豪主義 ②多文化主義へ転換。"},
     {q:"冬に日本海側で大雪が降るしくみを説明して。", a:"北西の季節風が日本海をわたるときに水分を含み、山地にぶつかって上昇し、雪を降らせるから。", e:"採点：①北西季節風＋日本海の水分 ②山地で雪。"},
@@ -250,6 +252,8 @@ const DECKS = {
 };
 
 const $ = id => document.getElementById(id);
+const SCOPE = new URLSearchParams(location.search).get('subj');   // 科目フィルタ（例: ?subj=国語）
+const SUBJFILE = {"国語":"kokugo.html","英語":"eigo.html","理科":"rika.html","家庭科":"kateika.html","技術":"gijutsu.html","歴史":"rekishi.html","地理":"chiri.html"};
 const MKEY = k => "out_mastery_"+k;            // per-deck mastery {index:level}
 const LKEY = d => "out_log_"+d;                 // per-day practiced count
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
@@ -272,9 +276,20 @@ function overallRate(){
 /* ================= HOME ================= */
 function renderHome(){
   show("home");
-  const r=overallRate(); $("homeRate").textContent=r+"%"; $("homeBar").style.width=r+"%";
+  const keys=Object.keys(DECKS).filter(k=>!SCOPE || DECKS[k].subj===SCOPE);
+  let ok=0,tot=0; keys.forEach(k=>{const s=deckStats(k);ok+=s.ok;tot+=s.total;});
+  const r=tot?Math.round(ok/tot*100):0;
+  $("homeRate").textContent=r+"%"; $("homeBar").style.width=r+"%";
+  if(SCOPE){
+    $("homeBack").textContent="← "+SCOPE+"にもどる";
+    $("homeBack").setAttribute("href", SUBJFILE[SCOPE]||"index.html");
+    $("homeTitle").textContent="✍️ "+SCOPE+"：書く・言う";
+    $("homeRateLab").textContent="「"+SCOPE+"」の習得率（✓のわりあい）";
+    $("checkBtn").style.display="none";
+  }
   const wl=$("writeList"), sl=$("speakList"); wl.innerHTML=""; sl.innerHTML="";
-  for(const k in DECKS){
+  let nw=0, ns=0;
+  keys.forEach(k=>{
     const d=DECKS[k], s=deckStats(k);
     const b=document.createElement("button"); b.className="topic";
     b.innerHTML=`<span class="emo">${d.emo}</span>
@@ -282,8 +297,10 @@ function renderHome(){
       <span class="rate">${s.rate}%<br><small style="color:#9aa6b8;font-weight:600;">✓${s.ok} △${s.mid} ✗${s.ng}</small></span>
       <span class="arrow">▶</span>`;
     b.onclick=()=>startDeck(k,false);
-    (d.mode==="write"?wl:sl).appendChild(b);
-  }
+    if(d.mode==="write"){wl.appendChild(b);nw++;} else {sl.appendChild(b);ns++;}
+  });
+  $("writeSec").style.display = nw?"":"none";
+  $("speakSec").style.display = ns?"":"none";
 }
 function show(id){ ["home","practice","result","dash"].forEach(x=>$(x).classList.add("hidden")); $(id).classList.remove("hidden"); window.scrollTo(0,0); }
 
