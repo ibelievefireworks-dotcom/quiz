@@ -41,6 +41,30 @@
   .kateika .emo{background:#ffe6d3; border-radius:14px; padding:6px 0;}
   .gijutsu .emo{background:#e4e4fb; border-radius:14px; padding:6px 0;}
   .output .emo{background:#d7f5e6; border-radius:14px; padding:6px 0;}
+  .dash{background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:18px 18px 16px; margin-bottom:18px; border:1px solid var(--line);}
+  .dash .dhead{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+  .dash .dtitle{font-weight:800; font-size:15px;}
+  .dash .dtoggle{background:#eef2fb; border:none; color:#3b5bdb; font-weight:700; font-size:12px; border-radius:99px; padding:6px 12px; cursor:pointer;}
+  .dash .drate{display:flex; align-items:baseline; gap:8px; justify-content:center; margin:6px 0 2px;}
+  .dash .drate span{font-size:48px; font-weight:800; line-height:1; color:#3b5bdb;}
+  .dash .drate small{color:var(--sub); font-size:12px;}
+  .dash .dbar{height:12px; background:#e9edf7; border-radius:99px; overflow:hidden; margin:8px 0;}
+  .dash .dbar i{display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#4f86f7,#3b5bdb); transition:width .6s;}
+  .dash .dsub{text-align:center; font-size:13px; color:var(--sub); font-weight:700;}
+  .dash .dmsg{text-align:center; font-size:14px; font-weight:800; margin-top:10px; padding:10px; border-radius:12px;}
+  .dash .ddetail{margin-top:12px; border-top:1px solid var(--line); padding-top:12px;}
+  .drow{margin-bottom:12px;}
+  .drow .dr-top{display:flex; justify-content:space-between; align-items:center; font-size:13px;}
+  .drow .dr-nm{font-weight:700;}
+  .drow .dr-ct{font-weight:800; color:#3b5bdb; font-size:12px;}
+  .drow .dr-bar{height:7px; background:#e9edf7; border-radius:99px; overflow:hidden; margin:4px 0 6px;}
+  .drow .dr-bar i{display:block; height:100%; width:0; background:#3b5bdb; border-radius:99px;}
+  .chips{display:flex; flex-wrap:wrap; gap:5px;}
+  .chip{font-size:10.5px; padding:3px 8px; border-radius:99px; font-weight:700; white-space:nowrap;}
+  .chip.pass{background:#dcfce7; color:#15803d;}
+  .chip.try{background:#fef3c7; color:#b45309;}
+  .chip.none{background:#eef0f4; color:#9aa6b8;}
+  .hidden{display:none;}
   .note{
     background:#fff; border-radius:14px; padding:14px 16px; margin-top:8px;
     box-shadow:var(--shadow); font-size:13px; color:var(--sub);
@@ -54,6 +78,15 @@
     <div class="ico">📖</div>
     <h1>期末対策クイズ</h1>
     <p>1学期末考査（社会・国語・理科・英語・家庭科・技術）/ 教科書範囲<br>4択クイズで覚え、アウトプット練習で“出せる”力に！</p>
+  </div>
+
+  <div class="dash" id="dash">
+    <div class="dhead"><span class="dtitle">🏅 達成状況（合格ライン80%）</span><button class="dtoggle" id="dtoggle">科目ごと ▾</button></div>
+    <div class="drate"><span id="dpct">0%</span><small>の単元が<b>合格</b>🎉<br>（正答80%以上）</small></div>
+    <div class="dbar"><i id="dbar"></i></div>
+    <div class="dsub" id="dsub"></div>
+    <div class="dmsg" id="dmsg"></div>
+    <div class="ddetail hidden" id="ddetail"></div>
   </div>
 
   <a class="subj chiri" href="chiri.html">
@@ -109,5 +142,77 @@
   </div>
 
   <p class="foot">スマホのホーム画面に追加すると、アプリのように使えます 📱</p>
+
+<script>
+/* 全科目の達成状況を集計（4択の最高得点 + 書く・言うの習得率）。合格ライン=80% */
+const Qz = {
+  chiri:{label:"地理",emo:"📘",prefix:"best_",topics:[["samerica","南アメリカ"],["oceania","オセアニア"],["survey","地域調査"],["japan","地形・気候"],["disaster","自然災害"]]},
+  rekishi:{label:"歴史",emo:"📚",prefix:"rekishi_best_",topics:[["eurasia","中世ユーラシア"],["kamakura","モンゴル襲来"],["muromachi","室町幕府"],["sangyo","産業・民衆"],["bunka","室町文化"]]},
+  kokugo:{label:"国語",emo:"📖",prefix:"kokugo_best_",topics:[["iceplanet","アイスプラネット"],["miezai","見えないだけ"],["makura","枕草子"],["kumazemi","クマゼミ"],["bunpo","文法"],["kanji","漢字"]]},
+  rika:{label:"理科",emo:"🧪",prefix:"rika_best_",topics:[["bunkai","成り立ち"],["genshi","原子・分子"],["shiki","化学反応式"],["sanka","酸化・燃焼"],["kangen","還元"],["shitsuryo","質量"],["netsu","化学変化と熱"]]},
+  eigo:{label:"英語",emo:"🔤",prefix:"eigo_best_",topics:[["u0","過去形"],["mirai","未来表現"],["bunkei","文型"],["setsuzoku","接続詞"],["futei","不定詞"],["tango","単語"],["kaiwa","会話・本文"]]},
+  kateika:{label:"家庭科",emo:"🍳",prefix:"kateika_best_",topics:[["yakuwari","食事の役割"],["eiyo","五大栄養素"],["chugakusei","必要な栄養"],["shokuhin","食品群"],["kondate","献立"]]},
+  gijutsu:{label:"技術",emo:"⚙️",prefix:"gijutsu_best_",topics:[["henkan","変換効率"],["kakou","材料と加工"],["hatsuden","発電"],["kyokyu","電気の供給"]]},
+};
+const OUT = {
+  kokugo:[["kanji_write","漢字書き",16],["kokugo_say","記述(言う)",8]],
+  eigo:[["eigo_spell","単語スペル",12],["eigo_write","英作文",11]],
+  rika:[["rika_shiki","化学反応式(書)",11]],
+  rekishi:[["rekishi_say","記述(言う)",4]],
+  chiri:[["chiri_say","記述(言う)",4]],
+  kateika:[["kateika_say","記述(言う)",6]],
+  gijutsu:[["gijutsu_say","記述(言う)",5]],
+};
+function outRate(key,total){ let m={}; try{m=JSON.parse(localStorage.getItem("out_mastery_"+key)||"{}");}catch(e){} const ks=Object.keys(m); if(!ks.length) return {attempted:false,rate:0}; let ok=0; ks.forEach(i=>{if(m[i]===2)ok++;}); return {attempted:true,rate:Math.round(ok/total*100)}; }
+function calc(){
+  const subj=[]; let tU=0,tA=0,tP=0;
+  for(const k in Qz){
+    const s=Qz[k]; const units=[];
+    s.topics.forEach(function(t){
+      const v=parseInt(localStorage.getItem(s.prefix+t[0])||"-1");
+      units.push({title:t[1], attempted:v>=0, pass:v>=80, score:v});
+    });
+    (OUT[k]||[]).forEach(function(d){
+      const r=outRate(d[0],d[2]); units.push({title:d[1], attempted:r.attempted, pass:r.attempted&&r.rate>=80, score:r.rate});
+    });
+    const a=units.filter(function(u){return u.attempted;}).length, p=units.filter(function(u){return u.pass;}).length;
+    subj.push({label:s.label,emo:s.emo,units:units,a:a,p:p,n:units.length});
+    tU+=units.length; tA+=a; tP+=p;
+  }
+  return {subj:subj,tU:tU,tA:tA,tP:tP};
+}
+function renderDash(){
+  const r=calc();
+  const pct=r.tU?Math.round(r.tP/r.tU*100):0;
+  document.getElementById("dpct").textContent=pct+"%";
+  document.getElementById("dbar").style.width=pct+"%";
+  document.getElementById("dsub").textContent="合格 "+r.tP+" / 全"+r.tU+"単元　・　着手 "+r.tA+"単元";
+  const msg=document.getElementById("dmsg"); let t,bg,c;
+  if(pct>=80){t="🏆 合格圏！自信をもって本番へ！";bg="#dcfce7";c="#15803d";}
+  else if(pct>=60){t="🔥 あと少しで合格圏！未合格を仕上げよう";bg="#fef3c7";c="#b45309";}
+  else if(pct>=30){t="💪 いいペース！合格をどんどん増やそう";bg="#e0ecff";c="#1d4ed8";}
+  else if(pct>0){t="🌱 スタート！得意な単元から合格を取ろう";bg="#eef0f4";c="#475569";}
+  else{t="▶ ここから！科目を選んでスタート";bg="#eef0f4";c="#475569";}
+  msg.textContent=t; msg.style.background=bg; msg.style.color=c;
+  const det=document.getElementById("ddetail"); det.innerHTML="";
+  r.subj.forEach(function(s){
+    const sp=s.n?Math.round(s.p/s.n*100):0;
+    const chips=s.units.map(function(u){
+      const cls=u.pass?"pass":(u.attempted?"try":"none");
+      const mark=u.pass?"✓":(u.attempted?u.score+"%":"・");
+      return '<span class="chip '+cls+'">'+u.title+' '+mark+'</span>';
+    }).join("");
+    const row=document.createElement("div"); row.className="drow";
+    row.innerHTML='<div class="dr-top"><span class="dr-nm">'+s.emo+' '+s.label+'</span><span class="dr-ct">合格 '+s.p+'/'+s.n+'</span></div>'+
+      '<div class="dr-bar"><i style="width:'+sp+'%"></i></div><div class="chips">'+chips+'</div>';
+    det.appendChild(row);
+  });
+}
+document.getElementById("dtoggle").onclick=function(){
+  const d=document.getElementById("ddetail"); const nowHidden=d.classList.toggle("hidden");
+  this.textContent = nowHidden ? "科目ごと ▾" : "とじる ▴";
+};
+renderDash();
+</script>
 </body>
 </html>

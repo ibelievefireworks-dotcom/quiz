@@ -130,6 +130,7 @@
   <div class="card">
     <div class="big-rate"><span class="num" id="resNum"></span></div>
     <div class="msg" id="resMsg" style="text-align:center;font-weight:700;margin-bottom:12px;"></div>
+    <button class="btn line" id="resLine">📲 この結果をLINEで送る</button>
     <button class="btn ghost hidden" id="redoWeak">△✗だけ もう一度（<span id="weakN"></span>）</button>
     <button class="btn" id="redoAll">この範囲をもう一度</button>
     <button class="btn gray" id="toHome1">一覧へ</button>
@@ -346,6 +347,13 @@ function renderResult(){
   const rw=$("redoWeak");
   if(weak>0){ rw.classList.remove("hidden"); $("weakN").textContent=weak; rw.onclick=()=>startDeck(st.key,true); }
   else rw.classList.add("hidden");
+  $("resLine").onclick=()=>lineShare(unitReport());
+}
+function unitReport(){
+  const d=DECKS[st.key]; const ok=st.graded.filter(x=>x===2).length, tot=st.graded.length;
+  const pct=tot?Math.round(ok/tot*100):0;
+  return `📚 ${d.subj}：${d.title}\n書く・言う ${tot}問 → ✓完璧 ${ok}（${pct}%）\n`+
+    (pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策";
 }
 $("redoAll").onclick=()=>startDeck(st.key,false);
 $("toHome1").onclick=renderHome;
@@ -386,12 +394,12 @@ function buildReport(){
   lines.push(``, `#莉映の期末対策`);
   return lines.join("\n");
 }
-function sendReport(){
-  const text=buildReport();
-  if(navigator.share){ navigator.share({text}).catch(()=>{}); }
-  else if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>alert("報告内容をコピーしました📋\nLINEに貼り付けて送ってね。\n\n"+text)); }
-  else { alert(text); }
+function lineShare(text){
+  try{ navigator.clipboard && navigator.clipboard.writeText(text); }catch(e){}  // 保険でコピー
+  // LINEアプリ（PCはLINE web）が開き、送る相手＝家族グループを選んで送信できる
+  location.href = "https://line.me/R/share?text=" + encodeURIComponent(text);
 }
+function sendReport(){ lineShare(buildReport()); }
 $("lineBtn").onclick=sendReport;
 $("lineBtn2").onclick=sendReport;
 
