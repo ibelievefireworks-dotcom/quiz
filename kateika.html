@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>家庭科 期末対策クイズ</title>
+<style>
+  :root{
+    --bg:#fff8f3; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#ea580c; --accent-d:#c2410c;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#f3e3d6; --shadow:0 4px 14px rgba(120,60,10,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#f6e6d8; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#fff4ec; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#f3eee8; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🍳 家庭科 期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / 食事の役割・五大栄養素・6つの食品群・献立<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  yakuwari: { title:"食事の役割・朝食", emo:"🍚", questions:[
+    {q:"規則正しい食事がつくる、食事の役割は？",
+     o:[["生活のリズムをつくる",1],["お金をためる",0],["体を小さくする",0],["眠気をさそう",0]],
+     e:"規則正しい食事は生活のリズムをつくる。ほかに体をつくる・エネルギー・心の充実・触れ合い・文化を伝える。"},
+    {q:"郷土料理が次の世代に受け継がれることは、食事のどんな役割？",
+     o:[["文化を伝える",1],["体をつくる",0],["生活のリズムをつくる",0],["エネルギーになる",0]],
+     e:"地域や家庭の郷土料理が受け継がれ、食文化が伝えられる。"},
+    {q:"「朝食」は英語で breakfast。その成り立ちの意味は？",
+     o:[["断食（fast）をやめる（break）",1],["速く（fast）食べる",0],["朝（break）の食事",0],["軽い（fast）食事",0]],
+     e:"break（やめる）＋fast（断食）＝睡眠中の断食をやめて1日をスタートする。"},
+    {q:"朝食には、睡眠中に低下した何を上昇させる働きがある？",
+     o:[["体温",1],["身長",0],["視力",0],["体重",0]],
+     e:"朝食は体温を上げ、午前中の活動に必要なエネルギーを補給する。"},
+    {q:"朝食を抜くと、午前中の学習や運動に影響する。低下するのは？",
+     o:[["活動力や集中力",1],["身長",0],["体温だけ",0],["睡眠時間",0]],
+     e:"朝食を抜くと活動力・集中力が低下する。"},
+    {q:"家族や友達といっしょに食事をすることで深まるのは？",
+     o:[["人との関わり（触れ合い）",1],["勉強の成績",0],["体の大きさ",0],["お金",0]],
+     e:"いっしょに食事や準備・片づけをすることで、人との関わりが深まる（触れ合いの場）。"},
+    {q:"食事をして「おいしい」「楽しい」と感じると、心はどうなる？",
+     o:[["落ち着いて豊かな気持ちになる",1],["不安になる",0],["眠れなくなる",0],["変わらない",0]],
+     e:"心が落ち着いたり、豊かな気持ちになったりする。"},
+  ]},
+
+  eiyo: { title:"五大栄養素と働き", emo:"🥦", questions:[
+    {q:"五大栄養素にあてはまらないものは？",
+     o:[["水",1],["たんぱく質",0],["脂質",0],["ビタミン",0]],
+     e:"五大栄養素＝たんぱく質・脂質・炭水化物・無機質・ビタミン。水は栄養素ではない（が生命維持に不可欠）。"},
+    {q:"主に体（筋肉や臓器など）の組織をつくる栄養素は？",
+     o:[["たんぱく質",1],["炭水化物",0],["脂質",0],["ビタミンC",0]],
+     e:"たんぱく質は主に体の組織をつくる。無機質も体をつくる。"},
+    {q:"主にエネルギー源になる栄養素の組み合わせは？",
+     o:[["炭水化物・脂質・たんぱく質",1],["ビタミン・無機質・水",0],["カルシウム・鉄・ビタミン",0],["食物繊維・水・無機質",0]],
+     e:"炭水化物・脂質・たんぱく質はエネルギー源になる。"},
+    {q:"主に体の調子を整える働きをする栄養素は？",
+     o:[["ビタミン・無機質",1],["炭水化物・脂質",0],["たんぱく質・脂質",0],["水・炭水化物",0]],
+     e:"ビタミンと無機質は体の調子を整える。"},
+    {q:"炭水化物1gが発生するエネルギーは約何kcal？",
+     o:[["約4kcal",1],["約9kcal",0],["約2kcal",0],["約20kcal",0]],
+     e:"炭水化物・たんぱく質＝約4kcal/g、脂質＝約9kcal/g。"},
+    {q:"脂質1gが発生するエネルギーは約何kcal？",
+     o:[["約9kcal",1],["約4kcal",0],["約1kcal",0],["約15kcal",0]],
+     e:"脂質は約9kcal/g。少量で多くのエネルギーがとれる。"},
+    {q:"たんぱく質1gが発生するエネルギーは約何kcal？",
+     o:[["約4kcal",1],["約9kcal",0],["約0kcal",0],["約7kcal",0]],
+     e:"たんぱく質は約4kcal/g。炭水化物と同じ。"},
+    {q:"動物性たんぱく質にバランスよく含まれ、体内で作れないものは？",
+     o:[["必須アミノ酸",1],["カロテン",0],["食物繊維",0],["でんぷん",0]],
+     e:"動物性たんぱく質には、体内で作れない必須アミノ酸がバランスよく含まれる。"},
+    {q:"鉄が不足するとなりやすいのは？",
+     o:[["貧血",1],["虫歯",0],["骨折",0],["かぜ",0]],
+     e:"鉄は血液（ヘモグロビン）をつくるもと。不足すると貧血になりやすい。"},
+    {q:"カルシウムが不足するとどうなる？",
+     o:[["骨や歯の発達が悪くなる",1],["目が悪くなる",0],["貧血になる",0],["太る",0]],
+     e:"カルシウム・リンは骨や歯をつくるもと。不足すると発達が悪くなる。"},
+    {q:"体内に蓄えられる「脂溶性ビタミン」の例は？",
+     o:[["ビタミンA・D",1],["ビタミンB₁・C",0],["ビタミンB₂・C",0],["ビタミンCだけ",0]],
+     e:"脂溶性ビタミン（A・Dなど）は蓄えられる。水溶性（B₁・B₂・C）は過剰分が排出される。"},
+    {q:"炭水化物のうち、消化されないが腸の調子を整え便通をよくするのは？",
+     o:[["食物繊維",1],["糖質",0],["でんぷん",0],["ぶどう糖",0]],
+     e:"炭水化物＝糖質＋食物繊維。食物繊維は腸の調子を整える。"},
+    {q:"水は栄養素ではないが、1日およそ何Lが体を出入りしている？",
+     o:[["約2.5L",1],["約0.5L",0],["約5L",0],["約10L",0]],
+     e:"1日およそ2.5Lの水が出入り。栄養素の運搬・体温調節などを担う。"},
+  ]},
+
+  chugakusei: { title:"中学生に必要な栄養", emo:"📈", questions:[
+    {q:"望ましいエネルギーや栄養素の量の基準を示したものを何という？",
+     o:[["食事摂取基準",1],["食品群",0],["概量",0],["献立",0]],
+     e:"食事摂取基準。1人1日あたりに必要なエネルギー・栄養素量の基準。"},
+    {q:"成長期の中学生が特に十分とる必要がある栄養素は？",
+     o:[["エネルギー・たんぱく質・カルシウム・鉄",1],["脂質・砂糖・塩分",0],["水・食物繊維だけ",0],["ビタミンCだけ",0]],
+     e:"成長期はエネルギー・たんぱく質・カルシウム・鉄などを十分とる必要がある。"},
+    {q:"特に女子が不足しやすく、意識してとりたい無機質は？",
+     o:[["鉄",1],["ナトリウム",0],["カリウム",0],["リン",0]],
+     e:"女子は鉄の必要量が多く、不足しやすい。"},
+    {q:"12〜14歳で、1日に必要なエネルギー量が多いのは？",
+     o:[["男子",1],["女子",0],["同じ",0],["小学生",0]],
+     e:"12〜14歳の推定エネルギー必要量は男子2600kcal・女子2400kcalで男子が多い。"},
+    {q:"部活などでスポーツをよくする人が、より多く必要になるのは？",
+     o:[["エネルギー（と栄養素）",1],["睡眠時間だけ",0],["塩分だけ",0],["水だけ",0]],
+     e:"身体活動量が多いほど、1日に必要なエネルギーや栄養素が多くなる。"},
+    {q:"運動で汗とともに失われ、補うことが重要なものは？",
+     o:[["水分",1],["食物繊維",0],["脂質",0],["砂糖",0]],
+     e:"汗で失われる水分を補うことも、運動時には重要。"},
+  ]},
+
+  shokuhin: { title:"6つの食品群", emo:"🍱", questions:[
+    {q:"1群（魚・肉・卵・豆・豆製品）が多く含む栄養素は？",
+     o:[["たんぱく質",1],["カルシウム",0],["炭水化物",0],["脂質",0]],
+     e:"1群はたんぱく質の供給源。摂取目安は女300g・男330g。"},
+    {q:"2群（牛乳・乳製品・小魚・海藻）が多く含む栄養素は？",
+     o:[["カルシウム",1],["ビタミンC",0],["炭水化物",0],["カロテン",0]],
+     e:"2群はカルシウムを多く含む。摂取目安は400g。"},
+    {q:"3群（緑黄色野菜）が多く含むのは？",
+     o:[["カロテン",1],["たんぱく質",0],["脂質",0],["でんぷん",0]],
+     e:"3群＝緑黄色野菜はカロテンを多く含む。摂取目安は100g。"},
+    {q:"緑黄色野菜の定義（カロテン含量）は？",
+     o:[["可食部100gあたり600μg以上",1],["100gあたり60μg以上",0],["100gあたり6mg以上",0],["1gあたり600μg以上",0]],
+     e:"原則として可食部100gあたりカロテン600μg以上の野菜。"},
+    {q:"4群（その他の野菜・果物・きのこ）が多く含むのは？",
+     o:[["ビタミンC",1],["カルシウム",0],["たんぱく質",0],["脂質",0]],
+     e:"4群はビタミンC・食物繊維などを含む。摂取目安400g（野菜250g・果物150g）。"},
+    {q:"5群（穀類・いも・砂糖）の主な成分は？",
+     o:[["炭水化物",1],["たんぱく質",0],["カルシウム",0],["脂質",0]],
+     e:"5群の主成分は炭水化物。摂取目安は女650g・男700g。"},
+    {q:"6群（油脂・種実）の主な成分は？",
+     o:[["脂質",1],["炭水化物",0],["ビタミン",0],["無機質",0]],
+     e:"6群の主成分は脂質。摂取目安は女20g・男25g。"},
+    {q:"1群・2群の主な働きは？",
+     o:[["主に体の組織をつくる",1],["主にエネルギーになる",0],["主に体の調子を整える",0],["水分を補う",0]],
+     e:"1・2群は主に体の組織をつくる。"},
+    {q:"3群・4群の主な働きは？",
+     o:[["主に体の調子を整える",1],["主に体をつくる",0],["主にエネルギーになる",0],["体を冷やす",0]],
+     e:"3・4群（野菜・果物）は主に体の調子を整える。"},
+    {q:"5群・6群の主な働きは？",
+     o:[["主にエネルギーになる",1],["主に体をつくる",0],["主に調子を整える",0],["消化を止める",0]],
+     e:"5・6群は主にエネルギーになる。"},
+    {q:"わかめ・昆布・のりなどの海藻類は、何群に入る？",
+     o:[["2群",1],["3群",0],["4群",0],["6群",0]],
+     e:"海藻は2群（鉄やカルシウムを多く含む）。"},
+    {q:"食品の概量を、特別な道具なしに手や目で把握する方法は？",
+     o:[["手ばかり・目ばかり",1],["はかり計量だけ",0],["カロリー計算",0],["食事摂取基準",0]],
+     e:"手ばかり・目ばかり。例：緑黄色野菜100g＝両手にのる量。"},
+    {q:"3群（緑黄色野菜）の1日の摂取目安「両手にのる量」は約何g？",
+     o:[["100g",1],["400g",0],["650g",0],["25g",0]],
+     e:"3群＝100g。両手にのるくらいの量が目安。"},
+  ]},
+
+  kondate: { title:"バランスの良い献立作り", emo:"🍽️", questions:[
+    {q:"食事の際の料理の組み合わせなどの計画を何という？",
+     o:[["献立",1],["概量",0],["配膳",0],["食品群",0]],
+     e:"献立（こんだて）。主食・主菜・副菜・汁物の構成で考えると栄養バランスが整いやすい。"},
+    {q:"献立の基本となる4つの構成は？",
+     o:[["主食・主菜・副菜・汁物",1],["前菜・スープ・肉・デザート",0],["朝・昼・夕・間食",0],["1群・2群・3群・4群",0]],
+     e:"主食・主菜・副菜・汁物（飲み物）。"},
+    {q:"主菜の中心となる食品群と、供給する栄養素は？",
+     o:[["1群（魚肉卵豆）・たんぱく質",1],["5群（穀類）・炭水化物",0],["3群（緑黄色野菜）・カロテン",0],["6群（油脂）・脂質",0]],
+     e:"主菜は1群の食品を使い、たんぱく質・脂質の供給源となる料理。"},
+    {q:"主食が主に供給する栄養素は？",
+     o:[["炭水化物",1],["たんぱく質",0],["カルシウム",0],["ビタミンC",0]],
+     e:"主食は米飯・パン・めん類など、炭水化物の供給源。"},
+    {q:"副菜が主に供給する栄養素は？",
+     o:[["ビタミン・無機質・食物繊維",1],["炭水化物だけ",0],["たんぱく質だけ",0],["脂質だけ",0]],
+     e:"副菜は野菜・海藻・きのこ・いもなどを使い、ビタミン・無機質・食物繊維の供給源。"},
+    {q:"献立作りの手順で、ふつう最初に決めるのは？",
+     o:[["主菜",1],["汁物",0],["デザート",0],["副菜",0]],
+     e:"手順例：1主菜→2主食→3副菜→4汁物→5バランス確認（順序は入れ替え可）。"},
+    {q:"主食＋汁物＋主菜＋2種類の副菜を組み合わせた和食の形を何という？",
+     o:[["一汁三菜",1],["一汁一菜",0],["二汁五菜",0],["三色食品群",0]],
+     e:"一汁三菜。バランスよく栄養がとれる和食の基本のかたち。"},
+    {q:"一汁三菜などの現在の和食の原型となった、室町時代に発展した料理は？",
+     o:[["本膳料理",1],["精進料理",0],["懐石料理",0],["ファストフード",0]],
+     e:"室町時代に発展した本膳料理が、一汁三菜などの和食の原型。"},
+    {q:"和食の配膳で、手前の左側に置くのは？",
+     o:[["米飯（主食）",1],["汁物",0],["主菜",0],["副菜",0]],
+     e:"手前左に米飯、手前右に汁物、その奥に副菜・主菜を並べる。"},
+    {q:"和食の配膳で、手前の右側に置くのは？",
+     o:[["汁物",1],["米飯",0],["デザート",0],["副菜",0]],
+     e:"手前右に汁物。箸は右が持ち手になるように置く。"},
+    {q:"献立のバランスを確かめるとき、使う食品が何のどの群に入るか確認する？",
+     o:[["6つの食品群",1],["五大栄養素の色",0],["食事の役割",0],["賞味期限",0]],
+     e:"選んだ食品が6つの食品群のどこに入るかを確かめ、かたよりがないか確認する。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "kateika_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
