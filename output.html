@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>アウトプット練習｜書く・言う</title>
+<style>
+  :root{
+    --bg:#f3fbf6; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#0e9f6e; --accent-d:#0a7a54;
+    --ok:#16a34a; --ok-bg:#dcfce7; --mid:#d97706; --mid-bg:#fef3c7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#dceee5; --shadow:0 4px 14px rgba(10,80,50,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 14px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:13px 14px; margin-bottom:10px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:24px; flex:0 0 auto; width:30px; text-align:center;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:15px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:11.5px;}
+  .topic .rate{font-size:11px; color:var(--accent); font-weight:800; flex:0 0 auto; text-align:right;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .section-t{font-size:13px; font-weight:800; color:var(--sub); margin:14px 4px 8px;}
+  .bar{height:8px; background:#e3f1ea; border-radius:99px; overflow:hidden; margin:6px 0;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:10px;}
+  .modebadge{display:inline-block; font-size:12px; font-weight:800; border-radius:7px; padding:3px 10px; margin-bottom:12px;}
+  .modebadge.write{color:#0a7a54; background:#dcfce7;}
+  .modebadge.speak{color:#9a3412; background:#ffedd5;}
+  .prompt{font-size:20px; font-weight:700; margin:2px 0 14px; line-height:1.5;}
+  .instr{font-size:13px; color:var(--sub); background:#f0f8f4; border-radius:10px; padding:10px 12px; margin-bottom:12px;}
+  .answer{display:none; border-top:1px dashed var(--line); margin-top:6px; padding-top:12px;}
+  .answer.show{display:block;}
+  .answer .alab{font-size:12px; font-weight:800; color:var(--accent);}
+  .answer .atext{font-size:21px; font-weight:800; margin:4px 0 8px; line-height:1.5; word-break:break-word;}
+  .answer .exp{font-size:14px; color:#334; background:#f0f8f4; border-left:4px solid var(--accent); border-radius:8px; padding:10px 12px;}
+  .grade{display:flex; gap:8px; margin-top:14px;}
+  .grade button{flex:1; border:2px solid; border-radius:12px; padding:13px 4px; font-size:15px; font-weight:800; background:#fff; cursor:pointer;}
+  .g-ok{color:var(--ok); border-color:var(--ok);}
+  .g-mid{color:var(--mid); border-color:var(--mid);}
+  .g-ng{color:var(--ng); border-color:var(--ng);}
+  .grade button:active{transform:scale(.97);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:6px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef3f0; color:var(--sub); box-shadow:none;}
+  .btn.line{background:#06c755;}
+  .btn.line:active{background:#05a445;}
+  .hidden{display:none;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:16px;}
+  /* dashboard */
+  .dash-row{margin-bottom:14px;}
+  .dash-row .top{display:flex; justify-content:space-between; align-items:baseline;}
+  .dash-row .nm{font-size:14px; font-weight:700;}
+  .dash-row .pc{font-size:13px; font-weight:800; color:var(--accent);}
+  .pills{display:flex; gap:8px; font-size:11.5px; color:var(--sub); margin-top:2px;}
+  .pill b{font-weight:800;}
+  .pill.ok b{color:var(--ok);} .pill.mid b{color:var(--mid);} .pill.ng b{color:var(--ng);}
+  .big-rate{text-align:center; font-size:15px; color:var(--sub); margin:2px 0 4px;}
+  .big-rate .num{font-size:44px; font-weight:800; color:var(--accent); display:block; line-height:1;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>✍️ アウトプット練習</h1>
+  <p class="lead">書いて・言って答える「再生」トレーニング<br>クイズで覚えた知識を“出せる”か確かめよう</p>
+
+  <div class="card">
+    <div class="big-rate"><span class="num" id="homeRate">0%</span>ぜんたいの習得率（✓のわりあい）</div>
+    <div class="bar"><i id="homeBar"></i></div>
+    <button class="btn" id="checkBtn">📊 習得状況をくわしく見る（CHECK）</button>
+    <button class="btn line" id="lineBtn">📲 今日の結果をLINEで報告</button>
+  </div>
+
+  <div class="section-t">✏️ 書いて答える（ノートに書く）</div>
+  <div id="writeList"></div>
+  <div class="section-t">🗣️ 口で答える（声に出して説明）</div>
+  <div id="speakList"></div>
+
+  <p class="foot">※自己採点した記録はこのスマホに保存されます。<br>「もう一度」が0になればテスト範囲はバッチリ！</p>
+</div>
+
+<!-- PRACTICE -->
+<div id="practice" class="hidden">
+  <div class="card">
+    <div class="meta"><span id="deckName"></span><span id="count"></span></div>
+    <span class="modebadge" id="modeBadge"></span>
+    <p class="prompt" id="promptText"></p>
+    <div class="instr" id="instrText"></div>
+    <button class="btn" id="revealBtn">答えを見る 👀</button>
+    <div class="answer" id="answer">
+      <span class="alab">こたえ</span>
+      <div class="atext" id="aText"></div>
+      <div class="exp" id="aExp"></div>
+      <p style="font-size:13px;color:#6b7686;margin:14px 2px 0;font-weight:700;">自分で採点しよう👇</p>
+      <div class="grade">
+        <button class="g-ok"  id="gOk">✓ 完璧</button>
+        <button class="g-mid" id="gMid">△ おしい</button>
+        <button class="g-ng"  id="gNg">✗ もう一度</button>
+      </div>
+    </div>
+  </div>
+  <button class="btn gray" id="quitBtn">やめて一覧へ</button>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="big-rate"><span class="num" id="resNum"></span></div>
+    <div class="msg" id="resMsg" style="text-align:center;font-weight:700;margin-bottom:12px;"></div>
+    <button class="btn ghost hidden" id="redoWeak">△✗だけ もう一度（<span id="weakN"></span>）</button>
+    <button class="btn" id="redoAll">この範囲をもう一度</button>
+    <button class="btn gray" id="toHome1">一覧へ</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash" class="hidden">
+  <a class="backlink" id="dashBack" href="#">← もどる</a>
+  <h1>📊 習得状況（CHECK）</h1>
+  <p class="lead">親子で確認用。✓完璧／△おしい／✗もう一度</p>
+  <div class="card">
+    <div class="big-rate"><span class="num" id="dashRate"></span>ぜんたいの習得率</div>
+    <div class="bar"><i id="dashBar"></i></div>
+  </div>
+  <div class="card" id="dashList"></div>
+  <button class="btn line" id="lineBtn2">📲 この内容をLINEで報告</button>
+  <button class="btn gray" id="resetBtn">記録をリセット</button>
+</div>
+
+<script>
+const DECKS = {
+  /* ===== ✏️ 書いて答える ===== */
+  kanji_write: { title:"漢字の書き取り", emo:"✏️", mode:"write", subj:"国語", cards:[
+    {q:"こうがい（都市のまわりの地域）", a:"郊外", e:"「郊」＝町はずれ。"},
+    {q:"ゆいいつ（ただ一つ）", a:"唯一", e:"「唯」を「ゆい」と読む。"},
+    {q:"ようち（おさないようす）", a:"幼稚", e:"幼稚園の「幼稚」。"},
+    {q:"たんしんふにん", a:"単身赴任", e:"「赴」＝おもむく。仕事で一人で別の土地へ。"},
+    {q:"かんげい（喜んでむかえる）", a:"歓迎", e:"「歓」の右側に注意。"},
+    {q:"とつぜん（急に）", a:"突然", e:"「突」のうかんむり＋犬。"},
+    {q:"ふうとう（手紙を入れる）", a:"封筒", e:"「封」＝とじる、「筒」＝つつ。"},
+    {q:"したく（用意・準備）", a:"支度", e:"「仕度」とも書くが「支度」が一般的。"},
+    {q:"ゆうべん（よどみなく話す）", a:"雄弁", e:"「雄」＝おす・力強い。"},
+    {q:"おおまた（大きな歩はば）", a:"大股", e:"「股」＝もも・また。"},
+    {q:"うらやましい（送りがなも）", a:"羨ましい", e:"送りがなは「ましい」。"},
+    {q:"あわてる（送りがなも）", a:"慌てる", e:"りっしんべん＋荒。送りがな「てる」。"},
+    {q:"はいじょ（おしのけて取りのぞく）", a:"排除", e:"「排」＝おしのける。"},
+    {q:"かんわ（きびしさをやわらげる）", a:"緩和", e:"「緩」＝ゆるい。"},
+    {q:"だこう（くねくね流れる）", a:"蛇行", e:"「蛇」＝へび。"},
+    {q:"ほそう（道路を固める）", a:"舗装", e:"「舗」＝みせ・しく。"},
+  ]},
+  eigo_spell: { title:"英単語スペル", emo:"🔡", mode:"write", subj:"英語", cards:[
+    {q:"なぜなら（接続詞）", a:"because", e:"つづりのうしろ -ause に注意。"},
+    {q:"いっしょに", a:"together", e:"to-get-her と覚える。"},
+    {q:"未来・将来", a:"future", e:"-ture でおわる。"},
+    {q:"〜の間に（前置詞）", a:"during", e:"during the summer など。"},
+    {q:"訪れる・訪問する", a:"visit", e:"s は1つ、t は1つ。"},
+    {q:"外国の（形容詞）", a:"foreign", e:"g を忘れずに。発音しない g。"},
+    {q:"言語・言葉", a:"language", e:"-guage の部分に注意。"},
+    {q:"大切な・重要な", a:"important", e:"im-por-tant。"},
+    {q:"経験", a:"experience", e:"ex-per-i-ence。"},
+    {q:"練習する", a:"practice", e:"語尾 -ice。"},
+    {q:"招待する", a:"invite", e:"in-vite。"},
+    {q:"外国へ・海外へ", a:"abroad", e:"go abroad（海外へ行く）。a-broad。"},
+  ]},
+  eigo_write: { title:"英作文（文をつくる）", emo:"📝", mode:"write", subj:"英語", cards:[
+    {q:"私は明日サッカーをするつもりです。", a:"I am going to play soccer tomorrow.", e:"be going to ＋動詞の原形。am を忘れずに。"},
+    {q:"明日は晴れるでしょう。", a:"It will be sunny tomorrow.", e:"will ＋動詞の原形。be 動詞は原形 be。"},
+    {q:"もし明日雨が降ったら、私は家にいます。", a:"If it rains tomorrow, I will stay home.", e:"if（条件）の中は未来でも現在形 rains。"},
+    {q:"子どもの頃、私は京都に住んでいました。", a:"When I was a child, I lived in Kyoto.", e:"when ＝〜のとき。過去形 was / lived。"},
+    {q:"彼は忙しいので来られません。", a:"He can't come because he is busy.", e:"because ＝〜なので。理由をあらわす。"},
+    {q:"私はあなたに私の写真を見せましょう。", a:"I will show you my pictures.", e:"show ＋人＋もの（SVOO）。"},
+    {q:"私たちは彼をケンと呼びます。", a:"We call him Ken.", e:"call ＋A＋B（AをBと呼ぶ／SVOC）。"},
+    {q:"私はサッカーをするのが好きです。", a:"I like to play soccer.", e:"to ＋動詞の原形（名詞的用法・〜すること）。"},
+    {q:"私は宿題をするために早く起きた。", a:"I got up early to do my homework.", e:"to ＋原形（副詞的用法・〜するために）。"},
+    {q:"私には読む本がたくさんあります。", a:"I have many books to read.", e:"to ＋原形（形容詞的用法・〜するための）。名詞を後ろから修飾。"},
+    {q:"私は彼が正しいと思います。", a:"I think (that) he is right.", e:"接続詞 that（〜ということ）。省略可。"},
+  ]},
+  rika_shiki: { title:"化学反応式・計算", emo:"🧪", mode:"write", subj:"理科", cards:[
+    {q:"水の電気分解を化学反応式で。", a:"2H₂O → 2H₂ + O₂", e:"水→水素＋酸素。係数2・2・1。"},
+    {q:"酸化銀を加熱したときの分解。", a:"2Ag₂O → 4Ag + O₂", e:"銀と酸素に分かれる。"},
+    {q:"炭酸水素ナトリウムを加熱したとき。", a:"2NaHCO₃ → Na₂CO₃ + H₂O + CO₂", e:"炭酸ナトリウム＋水＋二酸化炭素。"},
+    {q:"鉄と硫黄が結びつく反応。", a:"Fe + S → FeS", e:"硫化鉄ができる。係数はすべて1。"},
+    {q:"炭素が燃える（酸化）。", a:"C + O₂ → CO₂", e:"二酸化炭素ができる。"},
+    {q:"水素が燃える。", a:"2H₂ + O₂ → 2H₂O", e:"水ができる。係数2・1・2。"},
+    {q:"マグネシウムが燃える。", a:"2Mg + O₂ → 2MgO", e:"酸化マグネシウム。"},
+    {q:"酸化銅を炭素で還元する。", a:"2CuO + C → 2Cu + CO₂", e:"銅が還元され、炭素が酸化される。"},
+    {q:"【計算】銅0.8gを完全に酸化すると酸化銅1.0g。銅:酸素の質量比は？", a:"4:1", e:"酸素＝1.0−0.8＝0.2g。0.8:0.2＝4:1。"},
+    {q:"【計算】マグネシウム3gが酸化して酸化マグネシウム5gに。Mg:酸素の比は？", a:"3:2", e:"酸素＝5−3＝2g。3:2。"},
+    {q:"【計算】銅:酸素＝4:1のとき、銅1.2gと結びつく酸素は何g？", a:"0.3g", e:"1.2÷4＝0.3。"},
+  ]},
+  /* ===== 🗣️ 口で答える ===== */
+  kokugo_say: { title:"国語の記述（説明する）", emo:"🗣️", mode:"speak", subj:"国語", cards:[
+    {q:"「僕」がぐうちゃんの話を信じるようになったきっかけを説明して。", a:"手紙に入っていたナマズとアイスプラネット（氷山）の写真を見て、ぐうちゃんの話がほら話ではなく本当だったとわかったから。", e:"採点ポイント：①手紙の写真 ②ほら話だと思っていた→本当だった、の2点。"},
+    {q:"ぐうちゃんが手紙で「僕」に伝えたかったことは？", a:"本をたくさん読んで「不思議アタマ」をいっぱいにして、いつか自分の目で世界を確かめてほしいということ。", e:"採点：①本を読む／好奇心 ②自分の目で確かめる、の2点。"},
+    {q:"詩『見えないだけ』の主題（作者が伝えたいこと）を一言で。", a:"今は見えなくても、希望や新しい出会いは確かに存在しているということ。", e:"採点：「見えない＝無い」ではない、という前向きな主題。"},
+    {q:"枕草子「秋は夕暮れ」がよいとされる情景を説明して。", a:"夕日がさして、烏や雁が連れ立って飛び急ぐ様子。日が沈んでからの風の音や虫の音にも趣がある。", e:"採点：①夕日と鳥の視覚 ②日没後の風・虫の音（聴覚）。"},
+    {q:"クマゼミが梅雨の時期に孵化すると有利な理由を40字程度で。", a:"雨で土が軟らかく湿り、乾燥に弱い幼虫が土に潜りやすくなるから。", e:"採点：①土が軟らかく湿る ②幼虫が潜りやすい。字数を意識して言おう。"},
+    {q:"筆者がクマゼミ増加の原因として結論づけたことを説明して。", a:"都市化（ヒートアイランドで孵化が早まり梅雨に重なること、硬い土でも潜れる能力があること）が複数重なって増えたと考えた。", e:"採点：①都市化 ②原因は一つでなく複数。"},
+    {q:"古語「をかし」と「あはれ」の感じ方のちがいを説明して。", a:"「をかし」は明るく知的に趣を感じること。「あはれ」はしみじみと深く心に感じること。", e:"採点：をかし＝明るい・知的、あはれ＝しみじみ・情緒。"},
+    {q:"クマゼミの説明文で、筆者が大切だと述べた研究の姿勢は？", a:"簡単に結びつけず、実験や観察を重ねて科学的な根拠を一歩一歩積み上げていく姿勢。", e:"採点：①科学的根拠 ②一歩ずつ／決めつけない。"},
+  ]},
+  shakai_say: { title:"社会の記述（説明する）", emo:"🗣️", mode:"speak", subj:"社会", cards:[
+    {q:"元（モンゴル）が二度せめてきた戦いをまとめて何という？理由も一言で。", a:"元寇（文永の役・弘安の役）。フビライ＝ハンの服属要求を、執権の北条時宗が断ったため。", e:"採点：①元寇（2回の名前）②時宗が拒否。"},
+    {q:"元寇のあと、御家人が幕府に不満をもった理由を説明して。", a:"命がけで戦ったのに、恩賞（領地）が十分にもらえず、生活が苦しくなったから。", e:"採点：①防衛戦で領地が増えない ②恩賞不足で困窮。"},
+    {q:"室町幕府を開いた人物と、3代将軍が成しとげたことを説明して。", a:"足利尊氏が開いた。3代義満が南北朝を統一し、明との勘合貿易を始めた。", e:"採点：①尊氏 ②義満・南北朝統一／勘合貿易。"},
+    {q:"勘合貿易で「勘合」という合い札を使った理由は？", a:"正式な貿易船と、海賊である倭寇を区別するため。", e:"採点：倭寇との区別。"},
+    {q:"ブラジルがさかんに生産する、さとうきびから作るバイオ燃料は？特徴も。", a:"バイオエタノール（バイオ燃料）。植物が育つときCO₂を吸うため、燃やしてもCO₂を増やしにくいとされる。", e:"採点：①バイオエタノール ②CO₂を増やしにくい。"},
+    {q:"かつてオーストラリアがとっていた、白人以外の移民を制限する政策は？今は？", a:"白豪主義。現在は多くの民族の文化を尊重する多文化主義（多文化社会）へ変わった。", e:"採点：①白豪主義 ②多文化主義へ転換。"},
+    {q:"冬に日本海側で大雪が降るしくみを説明して。", a:"北西の季節風が日本海をわたるときに水分を含み、山地にぶつかって上昇し、雪を降らせるから。", e:"採点：①北西季節風＋日本海の水分 ②山地で雪。"},
+    {q:"地震のとき、砂地の地盤が水を含んでどろどろになる現象は？", a:"液状化（現象）。うめ立て地など砂地で起こりやすい。", e:"採点：液状化。起こりやすい場所も言えると◎。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+const MKEY = k => "out_mastery_"+k;            // per-deck mastery {index:level}
+const LKEY = d => "out_log_"+d;                 // per-day practiced count
+function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function getMastery(k){ try{return JSON.parse(localStorage.getItem(MKEY(k))||"{}");}catch(e){return {};} }
+function setMastery(k,m){ localStorage.setItem(MKEY(k), JSON.stringify(m)); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* ---- counts: returns {ok,mid,ng,untouched,total,rate} ---- */
+function deckStats(k){
+  const d=DECKS[k], m=getMastery(k); let ok=0,mid=0,ng=0;
+  d.cards.forEach((_,i)=>{ const v=m[i]; if(v===2)ok++; else if(v===1)mid++; else if(v===0)ng++; });
+  const total=d.cards.length, untouched=total-ok-mid-ng;
+  return {ok,mid,ng,untouched,total,rate:Math.round(ok/total*100)};
+}
+function overallRate(){
+  let ok=0,tot=0; for(const k in DECKS){ const s=deckStats(k); ok+=s.ok; tot+=s.total; }
+  return tot?Math.round(ok/tot*100):0;
+}
+
+/* ================= HOME ================= */
+function renderHome(){
+  show("home");
+  const r=overallRate(); $("homeRate").textContent=r+"%"; $("homeBar").style.width=r+"%";
+  const wl=$("writeList"), sl=$("speakList"); wl.innerHTML=""; sl.innerHTML="";
+  for(const k in DECKS){
+    const d=DECKS[k], s=deckStats(k);
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${d.emo}</span>
+      <span class="tt"><b>${d.title}</b><small>${d.subj}・全${s.total}問</small></span>
+      <span class="rate">${s.rate}%<br><small style="color:#9aa6b8;font-weight:600;">✓${s.ok} △${s.mid} ✗${s.ng}</small></span>
+      <span class="arrow">▶</span>`;
+    b.onclick=()=>startDeck(k,false);
+    (d.mode==="write"?wl:sl).appendChild(b);
+  }
+}
+function show(id){ ["home","practice","result","dash"].forEach(x=>$(x).classList.add("hidden")); $(id).classList.remove("hidden"); window.scrollTo(0,0); }
+
+/* ================= PRACTICE ================= */
+let st={};
+function startDeck(key, onlyWeak){
+  const d=DECKS[key], m=getMastery(key);
+  let idx=d.cards.map((_,i)=>i);
+  if(onlyWeak) idx=idx.filter(i=>m[i]===0||m[i]===1);
+  if(idx.length===0){ alert("復習する問題はありません🎉"); return; }
+  st={ key, queue:shuffle(idx), pos:0, graded:[] };
+  show("practice"); renderCard();
+}
+function renderCard(){
+  const d=DECKS[st.key], i=st.queue[st.pos], c=d.cards[i];
+  $("deckName").textContent=d.emo+" "+d.title;
+  $("count").textContent=`${st.pos+1} / ${st.queue.length}`;
+  const mb=$("modeBadge");
+  if(d.mode==="write"){ mb.className="modebadge write"; mb.textContent="✏️ 書いて答える"; $("instrText").innerHTML="ノートに<b>手で書いてから</b>「答えを見る」を押そう。"; }
+  else { mb.className="modebadge speak"; mb.textContent="🗣️ 口で答える"; $("instrText").innerHTML="<b>声に出して説明してから</b>「答えを見る」を押そう。"; }
+  $("promptText").textContent=c.q;
+  $("aText").textContent=c.a; $("aExp").textContent=c.e;
+  $("answer").classList.remove("show"); $("revealBtn").classList.remove("hidden");
+}
+$("revealBtn").onclick=()=>{ $("answer").classList.add("show"); $("revealBtn").classList.add("hidden"); window.scrollTo(0,document.body.scrollHeight); };
+function grade(level){
+  const i=st.queue[st.pos]; const m=getMastery(st.key); m[i]=level; setMastery(st.key,m);
+  st.graded.push(level);
+  const d=todayStr(); const n=parseInt(localStorage.getItem(LKEY(d))||"0")+1; localStorage.setItem(LKEY(d),n);
+  st.pos++;
+  if(st.pos>=st.queue.length) renderResult(); else renderCard();
+}
+$("gOk").onclick=()=>grade(2); $("gMid").onclick=()=>grade(1); $("gNg").onclick=()=>grade(0);
+$("quitBtn").onclick=()=>{ if(confirm("一覧にもどりますか？（ここまでの採点は保存ずみ）")) renderHome(); };
+
+/* ================= RESULT ================= */
+function renderResult(){
+  show("result");
+  const ok=st.graded.filter(x=>x===2).length, tot=st.graded.length;
+  $("resNum").textContent=`✓ ${ok} / ${tot}`;
+  const weak=st.graded.filter(x=>x<2).length;
+  $("resMsg").textContent = weak===0 ? "全部「完璧」！この範囲はバッチリ🎉" : `「もう一度」と「おしい」が ${weak} 問。くり返せば定着するよ💪`;
+  const rw=$("redoWeak");
+  if(weak>0){ rw.classList.remove("hidden"); $("weakN").textContent=weak; rw.onclick=()=>startDeck(st.key,true); }
+  else rw.classList.add("hidden");
+}
+$("redoAll").onclick=()=>startDeck(st.key,false);
+$("toHome1").onclick=renderHome;
+
+/* ================= DASHBOARD ================= */
+function renderDash(){
+  show("dash");
+  const r=overallRate(); $("dashRate").textContent=r+"%"; $("dashBar").style.width=r+"%";
+  const list=$("dashList"); list.innerHTML="";
+  for(const k in DECKS){
+    const d=DECKS[k], s=deckStats(k);
+    const row=document.createElement("div"); row.className="dash-row";
+    row.innerHTML=`<div class="top"><span class="nm">${d.emo} ${d.title}</span><span class="pc">${s.rate}%</span></div>
+      <div class="bar"><i style="width:${s.rate}%"></i></div>
+      <div class="pills">
+        <span class="pill ok">✓完璧 <b>${s.ok}</b></span>
+        <span class="pill mid">△おしい <b>${s.mid}</b></span>
+        <span class="pill ng">✗もう一度 <b>${s.ng}</b></span>
+        <span class="pill">未 <b>${s.untouched}</b></span>
+      </div>`;
+    list.appendChild(row);
+  }
+}
+$("checkBtn").onclick=renderDash;
+$("dashBack").onclick=(e)=>{ e.preventDefault(); renderHome(); };
+$("resetBtn").onclick=()=>{ if(confirm("すべての習得記録を消しますか？（元にもどせません）")){ for(const k in DECKS) localStorage.removeItem(MKEY(k)); renderDash(); } };
+
+/* ================= LINE 報告 ================= */
+function buildReport(){
+  const d=todayStr(); const today=parseInt(localStorage.getItem(LKEY(d))||"0");
+  let lines=[`📚 学習報告 ${d}`, `今日やった数：${today}問`, `ぜんたい習得率：${overallRate()}%`, ``];
+  const weak=[];
+  for(const k in DECKS){ const dk=DECKS[k], s=deckStats(k);
+    lines.push(`${dk.emo}${dk.title}：✓${s.ok} △${s.mid} ✗${s.ng}（${s.rate}%）`);
+    if(s.ng+s.mid>0) weak.push(dk.title);
+  }
+  if(weak.length){ lines.push(``, `▼まだ苦手：${weak.join("、")}`); }
+  lines.push(``, `#莉映の期末対策`);
+  return lines.join("\n");
+}
+function sendReport(){
+  const text=buildReport();
+  if(navigator.share){ navigator.share({text}).catch(()=>{}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>alert("報告内容をコピーしました📋\nLINEに貼り付けて送ってね。\n\n"+text)); }
+  else { alert(text); }
+}
+$("lineBtn").onclick=sendReport;
+$("lineBtn2").onclick=sendReport;
+
+renderHome();
+</script>
+</body>
+</html>
