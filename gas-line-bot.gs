@@ -2,10 +2,10 @@
    莉映の期末対策クイズ → 家族LINEグループ「1日1回まとめて」自動投稿
    ---------------------------------------------------------------------
    ・クイズから届く各単元の結果は、その都度ためておく（無料）。
-   ・毎晩1回（既定21時）に、その日の分をまとめて1通だけ送る（課金はここだけ）。
+   ・1日3回（18時・20時・23時）に、たまっている分をまとめて1通だけ送る（課金はここだけ）。
    使い方は「LINE設定ガイド.md」を参照。
    CHANNEL_ACCESS_TOKEN に Messaging API の「チャネルアクセストークン（長期）」を貼る。
-   設定後、関数 setupDailyTrigger を一度だけ実行（毎日まとめ送信を予約）。
+   設定後、関数 setupDailyTrigger を一度だけ実行（1日3回のまとめ送信を予約）。
    ===================================================================== */
 
 var CHANNEL_ACCESS_TOKEN = "ここに_チャネルアクセストークン_を貼る";
@@ -25,7 +25,7 @@ function doPost(e){
       if (gid) {
         PROPS.setProperty("GROUP_ID", gid);
         if (ev.replyToken) {
-          reply(ev.replyToken, "✅ このグループを登録しました。毎晩、その日の学習まとめが届きます！");
+          reply(ev.replyToken, "✅ このグループを登録しました。1日3回（18時・20時・23時）に学習まとめが届きます！");
         }
       }
     });
@@ -57,15 +57,15 @@ function appendToBuffer(text){
   }
 }
 
-/* 毎晩1回：その日ためた分をまとめて1通だけ送る（トリガーで自動実行） */
+/* 1日3回（18/20/23時）：たまっている分をまとめて1通だけ送る（トリガーで自動実行） */
 function sendDailyDigest(){
   var gid = PROPS.getProperty("GROUP_ID");
   var buf = PROPS.getProperty("BUFFER") || "";
-  if (!gid || !buf) { return; }                    // 学習が無い日は送らない＝無料枠を節約
+  if (!gid || !buf) { return; }                    // 新しい分が無ければ送らない＝無料枠を節約
 
   var lines = buf.split("\n");
   var passCount = lines.filter(function(l){ return l.indexOf("✅") >= 0; }).length;
-  var header = "📚 今日の学習まとめ（" + lines.length + "単元 ・ 合格" + passCount + "）";
+  var header = "📚 学習まとめ（" + lines.length + "単元 ・ 合格" + passCount + "）";
   var msg = header + "\n――――――――――\n" + buf +
             "\n――――――――――\nこの調子でいこう！ #莉映の期末対策";
 
@@ -73,12 +73,14 @@ function sendDailyDigest(){
   PROPS.deleteProperty("BUFFER");                  // 送ったら今日分はリセット
 }
 
-/* 毎日まとめ送信を予約（一度だけ実行する）。既定は21時。 */
+/* 1日3回（18時・20時・23時）のまとめ送信を予約（一度だけ実行する） */
 function setupDailyTrigger(){
   ScriptApp.getProjectTriggers().forEach(function(t){
     if (t.getHandlerFunction() === "sendDailyDigest") ScriptApp.deleteTrigger(t);
   });
-  ScriptApp.newTrigger("sendDailyDigest").timeBased().everyDays(1).atHour(21).create();
+  [18, 20, 23].forEach(function(h){
+    ScriptApp.newTrigger("sendDailyDigest").timeBased().everyDays(1).atHour(h).create();
+  });
 }
 
 /* ---- LINE送信ヘルパー ---- */
