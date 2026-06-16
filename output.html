@@ -92,7 +92,6 @@
     <div class="big-rate"><span class="num" id="homeRate">0%</span><span id="homeRateLab">ぜんたいの習得率（✓のわりあい）</span></div>
     <div class="bar"><i id="homeBar"></i></div>
     <button class="btn" id="checkBtn">📊 習得状況をくわしく見る（CHECK）</button>
-    <button class="btn line" id="lineBtn">📲 今日の結果をLINEで報告</button>
   </div>
 
   <div class="section-t" id="writeSec">✏️ 書いて答える（ノートに書く）</div>
@@ -131,7 +130,6 @@
   <div class="card">
     <div class="big-rate"><span class="num" id="resNum"></span></div>
     <div class="msg" id="resMsg" style="text-align:center;font-weight:700;margin-bottom:12px;"></div>
-    <button class="btn line" id="resLine">📲 この結果をLINEで送る</button>
     <button class="btn ghost hidden" id="redoWeak">△✗だけ もう一度（<span id="weakN"></span>）</button>
     <button class="btn" id="redoAll">この範囲をもう一度</button>
     <button class="btn gray" id="toHome1">一覧へ</button>
@@ -148,7 +146,6 @@
     <div class="bar"><i id="dashBar"></i></div>
   </div>
   <div class="card" id="dashList"></div>
-  <button class="btn line" id="lineBtn2">📲 この内容をLINEで報告</button>
   <button class="btn gray" id="resetBtn">記録をリセット</button>
 </div>
 
@@ -348,7 +345,6 @@ function renderResult(){
   const rw=$("redoWeak");
   if(weak>0){ rw.classList.remove("hidden"); $("weakN").textContent=weak; rw.onclick=()=>startDeck(st.key,true); }
   else rw.classList.add("hidden");
-  $("resLine").onclick=()=>lineShare(unitReport());
   if(typeof reportUnit==="function" && st.queue.length===DECKS[st.key].cards.length) reportUnit(unitReport());
 }
 function unitReport(){
@@ -401,10 +397,6 @@ function lineShare(text){
   // LINEアプリ（PCはLINE web）が開き、送る相手＝家族グループを選んで送信できる
   location.href = "https://line.me/R/share?text=" + encodeURIComponent(text);
 }
-function sendReport(){ lineShare(buildReport()); }
-$("lineBtn").onclick=sendReport;
-$("lineBtn2").onclick=sendReport;
-
 renderHome();
 </script>
 </body>

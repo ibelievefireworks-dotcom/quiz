@@ -131,12 +131,6 @@
     <span class="go">›</span>
   </a>
 
-  <a class="subj output" href="output.html">
-    <span class="emo">✍️</span>
-    <span class="t"><b>アウトプット練習（書く・言う）</b><small>漢字書き・英作文・化学反応式は「書く」／各科目ページからも入れます。国語・社会・家庭科・技術の記述は「言う」。自己採点して習得状況をCHECK・LINE報告／全77問</small></span>
-    <span class="go">›</span>
-  </a>
-
   <div class="note">
     <b>使い方</b>：科目 → テーマを選ぶと、4択クイズが始まります。タップで答えると正誤と解説が出ます。最後に正答率（<b>80%で合格ライン</b>）と「まちがえた問題だけ復習」が表示されます。すきま時間に何度でもどうぞ！
   </div>
@@ -192,8 +186,8 @@ function renderDash(){
   else if(pct>=60){t="🔥 あと少しで合格圏！未合格を仕上げよう";bg="#fef3c7";c="#b45309";}
   else if(pct>=30){t="💪 いいペース！合格をどんどん増やそう";bg="#e0ecff";c="#1d4ed8";}
   else if(pct>0){t="🌱 スタート！得意な単元から合格を取ろう";bg="#eef0f4";c="#475569";}
-  else{t="▶ ここから！科目を選んでスタート";bg="#eef0f4";c="#475569";}
-  msg.textContent=t; msg.style.background=bg; msg.style.color=c;
+  if(pct>0){ msg.style.display=""; msg.textContent=t; msg.style.background=bg; msg.style.color=c; }
+  else{ msg.style.display="none"; }
   const det=document.getElementById("ddetail"); det.innerHTML="";
   r.subj.forEach(function(s){
     const sp=s.n?Math.round(s.p/s.n*100):0;
