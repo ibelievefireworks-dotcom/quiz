@@ -5,7 +5,7 @@
    空のままなら自動投稿はオフ（手動の「LINEで送る」は引き続き使えます）。
    設定手順は LINE設定ガイド.md を参照。
    ========================================================= */
-window.REPORT_URL = "";   // 例: "https://script.google.com/macros/s/XXXX/exec"
+window.REPORT_URL = "https://script.google.com/macros/s/AKfycbxnm5y4op4QNH0bbZonrrMB_Bob46CWHS_6uqN78zNHmJW2K19pNiz1H7EM7n0O3yCL/exec";
 
 window.reportUnit = function(text){
   if(!window.REPORT_URL) return;              // 未設定なら何もしない（既存機能は無傷）
