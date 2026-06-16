@@ -22,7 +22,7 @@ function doPost(e){
   if (json && json.events) {
     json.events.forEach(function(ev){
       var gid = ev.source && ev.source.groupId;
-      if (gid) {
+      if (gid && PROPS.getProperty("GROUP_ID") !== gid) {   // ★初回（未登録）のときだけ登録＆返信
         PROPS.setProperty("GROUP_ID", gid);
         if (ev.replyToken) {
           reply(ev.replyToken, "✅ このグループを登録しました。1日3回（18時・20時・23時）に学習まとめが届きます！");
