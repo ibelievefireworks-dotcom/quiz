@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>音楽 期末対策クイズ</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#fdf4f9; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#db2777; --accent-d:#be185d;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#f6dce9; --shadow:0 4px 14px rgba(150,30,90,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#fbe3ef; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#fdf2f8; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#f3eef1; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🎵 音楽 期末対策クイズ</h1>
+  <p class="lead">1学期末考査 / 交響曲第5番（運命）・オーケストラ・指揮・音楽記号<br>テーマを選んでスタート！</p>
+  <a href="output.html?subj=音楽" style="display:block;text-align:center;text-decoration:none;font-weight:700;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent);border-radius:14px;padding:12px;margin:2px 0 14px;background:#fff;">✍️ 書く・言うで仕上げる（記述で説明）→</a>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  beethoven: { title:"交響曲第5番とベートーヴェン", emo:"🎼", questions:[
+    {q:"『交響曲第5番 ハ短調』を作曲したのはだれ？",
+     o:[["ベートーヴェン",1],["モーツァルト",0],["バッハ",0],["チャイコフスキー",0]],
+     e:"ベートーヴェン（1770〜1827）。"},
+    {q:"ベートーヴェンが生まれた国は？",
+     o:[["ドイツ",1],["オーストリア",0],["イタリア",0],["フランス",0]],
+     e:"ドイツのボンで生まれた。"},
+    {q:"『交響曲第5番 ハ短調』は、日本では何と呼ばれている？",
+     o:[["運命",1],["英雄",0],["未完成",0],["新世界",0]],
+     e:"「運命」とよばれる。"},
+    {q:"ベートーヴェンが音楽家として、晩年に失っていったものは？",
+     o:[["聴力（耳が聞こえなくなった）",1],["視力",0],["記憶",0],["声",0]],
+     e:"耳がほとんど聞こえなくなったが、それを乗り越えて作曲を続けた。"},
+    {q:"『交響曲第5番』は、いくつの楽章からできている？",
+     o:[["4つ",1],["1つ",0],["2つ",0],["6つ",0]],
+     e:"全部で4つの楽章からなる。"},
+    {q:"第1楽章で用いられている形式は？",
+     o:[["ソナタ形式",1],["複合三部形式",0],["主題と変奏",0],["ロンド形式",0]],
+     e:"第1楽章はソナタ形式（Allegro con brio）。"},
+    {q:"第1楽章の速度標語「Allegro con brio」の意味は？",
+     o:[["速く生き生きと",1],["ゆっくり歩くように",0],["静かに悲しく",0],["とても遅く",0]],
+     e:"アレグロ コン ブリオ＝速く、生き生きと。"},
+    {q:"「このように運命は扉をたたく」と語ったとされるのはだれ？",
+     o:[["ベートーヴェン",1],["指揮者の山田和樹",0],["モーツァルト",0],["ハイドン",0]],
+     e:"第1楽章冒頭の動機について、ベートーヴェン自身が語ったとされる言葉。"},
+    {q:"交響曲とはどんな楽曲？",
+     o:[["オーケストラ（管弦楽）のための大規模な楽曲",1],["ピアノ独奏曲",0],["合唱曲",0],["短い舞曲",0]],
+     e:"交響曲はオーケストラのための大規模な楽曲で、多くは4つの楽章からなる。"},
+    {q:"第2楽章の形式は？",
+     o:[["主題と変奏",1],["ソナタ形式",0],["複合三部形式",0],["フーガ",0]],
+     e:"第2楽章は主題と変奏（Andante con moto）。"},
+    {q:"「変奏」とはどういう意味？",
+     o:[["主題をさまざまな方法で変化させること",1],["主題をくり返すこと",0],["主題を止めること",0],["速く演奏すること",0]],
+     e:"変奏＝主題をさまざまな方法で変化させること。"},
+    {q:"第3楽章の形式は？",
+     o:[["複合三部形式（A−B−A）",1],["ソナタ形式",0],["主題と変奏",0],["二部形式",0]],
+     e:"第3楽章は複合三部形式（A→B→A）。第4楽章へ切れ目なく続く。"},
+    {q:"第4楽章の形式は？",
+     o:[["ソナタ形式",1],["複合三部形式",0],["主題と変奏",0],["ロンド",0]],
+     e:"第4楽章は第1楽章と同じソナタ形式。"},
+    {q:"次のうち、交響曲を作曲していないのはだれ？",
+     o:[["（全員が作曲している）",0],["ハイドン",0],["モーツァルト",0],["ブラームス",0]],
+     e:"ハイドン「時計」、モーツァルト「40番ト短調」、ブラームス「1番」など、いずれも有名な交響曲を残している。"},
+  ]},
+
+  sonata: { title:"楽曲の形式・用語", emo:"🎵", questions:[
+    {q:"ソナタ形式の4つのまとまりは？",
+     o:[["提示部・展開部・再現部・コーダ",1],["A・B・C・D",0],["序・破・急・結",0],["前奏・主題・間奏・終奏",0]],
+     e:"提示部→展開部→再現部→コーダ（終結部）。コーダがない場合もある。"},
+    {q:"「動機」とは何のこと？",
+     o:[["旋律のもととなる最も小さなまとまり",1],["曲全体のこと",0],["楽器の名前",0],["速さの記号",0]],
+     e:"動機（モチーフ）＝旋律のもととなる最も小さなまとまり。"},
+    {q:"第5番第1楽章冒頭の「ジャジャジャジャーン」は何とよばれる？",
+     o:[["（運命の）動機",1],["主題と変奏",0],["コーダ",0],["予備拍",0]],
+     e:"この動機がさまざまな所に用いられて曲がつくられている。"},
+    {q:"ソナタ形式で、第1主題・第2主題が最初に現れる部分は？",
+     o:[["提示部",1],["展開部",0],["再現部",0],["コーダ",0]],
+     e:"提示部で第1主題と第2主題が示される。"},
+    {q:"提示部で示された主題が、さまざまに展開される部分は？",
+     o:[["展開部",1],["提示部",0],["再現部",0],["コーダ",0]],
+     e:"展開部。主題が変化しながら発展する。"},
+    {q:"提示部とほぼ同じ形で、主題が再び現れる部分は？",
+     o:[["再現部",1],["展開部",0],["コーダ",0],["序奏",0]],
+     e:"再現部。提示部と比べて響きの違いを味わう。"},
+    {q:"曲の最後を締めくくる部分（終結部）を何という？",
+     o:[["コーダ",1],["提示部",0],["動機",0],["主題",0]],
+     e:"コーダ＝終結部。"},
+    {q:"複合三部形式の構成は？",
+     o:[["A−B−A",1],["A−B−C",0],["A−A−B",0],["A−B",0]],
+     e:"複合三部形式はA→B→Aの3つの部分からなる。"},
+    {q:"曲の中心となる旋律のまとまりを何という？",
+     o:[["主題",1],["動機",0],["コーダ",0],["拍子",0]],
+     e:"主題（テーマ）。第1主題・第2主題のように使う。"},
+  ]},
+
+  gakki: { title:"オーケストラの楽器", emo:"🎻", questions:[
+    {q:"フルート・オーボエ・クラリネット・ファゴットは、何楽器の仲間？",
+     o:[["木管楽器",1],["金管楽器",0],["弦楽器",0],["打楽器",0]],
+     e:"木管楽器。ピッコロ・コントラファゴットも木管楽器の仲間。"},
+    {q:"ホルン・トランペット・トロンボーン・チューバは、何楽器？",
+     o:[["金管楽器",1],["木管楽器",0],["弦楽器",0],["打楽器",0]],
+     e:"金管楽器。唇の振動で音を出す。"},
+    {q:"ヴァイオリン・ヴィオラ・チェロ・コントラバスは、何楽器？",
+     o:[["弦楽器",1],["木管楽器",0],["金管楽器",0],["打楽器",0]],
+     e:"弦楽器。弦をこすったりはじいたりして音を出す。"},
+    {q:"ティンパニ・シンバルは、何楽器？",
+     o:[["打楽器",1],["弦楽器",0],["金管楽器",0],["木管楽器",0]],
+     e:"打楽器。たたいて音を出す。"},
+    {q:"オーケストラ（管弦楽）の主な楽器は、大きく4つに分けられる。その分類は？",
+     o:[["木管・金管・弦・打楽器",1],["高音・中音・低音・無音",0],["強・弱・速・遅",0],["主・副・伴・独",0]],
+     e:"木管楽器・金管楽器・弦楽器・打楽器の4つ。"},
+    {q:"弦楽器の中で、最も低い音域をうけもつのは？",
+     o:[["コントラバス",1],["ヴァイオリン",0],["ヴィオラ",0],["チェロ",0]],
+     e:"コントラバスが最も大きく、低い音域。"},
+    {q:"次のうち、金管楽器はどれ？",
+     o:[["ホルン",1],["クラリネット",0],["ヴィオラ",0],["フルート",0]],
+     e:"ホルンは金管楽器。クラリネット・フルートは木管。"},
+    {q:"ヴァイオリンより少し大きく、低めの音をもつ弦楽器は？",
+     o:[["ヴィオラ",1],["チェロ",0],["コントラバス",0],["ハープ",0]],
+     e:"ヴィオラ。ヴァイオリンとチェロの中間の音域。"},
+    {q:"次のうち、木管楽器の仲間はどれ？",
+     o:[["ファゴット",1],["トランペット",0],["トロンボーン",0],["チューバ",0]],
+     e:"ファゴットは木管楽器。残りは金管楽器。"},
+    {q:"指揮者の前で演奏する、多くの楽器が集まった大きな合奏団を何という？",
+     o:[["オーケストラ（管弦楽）",1],["吹奏楽だけ",0],["合唱団",0],["独奏",0]],
+     e:"オーケストラ（管弦楽団）。"},
+  ]},
+
+  shiki: { title:"指揮", emo:"🎬", questions:[
+    {q:"曲が始まる直前の拍を何という？",
+     o:[["予備拍",1],["強拍",0],["弱拍",0],["休拍",0]],
+     e:"予備拍。その振り上げによって出だしのタイミングを合わせる。"},
+    {q:"指揮で、特にはっきり示すことが大切なのはどの拍？",
+     o:[["1拍目",1],["最後の拍だけ",0],["休符",0],["すべて同じ",0]],
+     e:"1拍目の位置をはっきり分かるように示すことが大切。"},
+    {q:"強い所は大きく、弱い所は小さく振って伝えるのは何？",
+     o:[["強弱",1],["拍子",0],["予備拍",0],["音色",0]],
+     e:"強弱。小さく振るときは肘から先、大きく振るときは肩から腕全体を使う。"},
+    {q:"はずむ部分は切れ味よく、滑らかな部分は柔らかく振って伝えるのは？",
+     o:[["曲想",1],["拍子",0],["速度",0],["調",0]],
+     e:"曲想。顔の表情や体全体の動きでも伝えられる。"},
+    {q:"教科書で『交響曲第5番』の指揮について語っていた指揮者は？",
+     o:[["山田和樹",1],["小澤征爾",0],["ベートーヴェン",0],["佐渡裕",0]],
+     e:"指揮者の山田和樹さん。"},
+    {q:"指揮で強弱を「大きく振る」とき、体のどこから動かすとよい？",
+     o:[["肩から腕全体",1],["指先だけ",0],["足から",0],["首から",0]],
+     e:"大きく振るときは肩から腕全体、小さく振るときは肘から先を使う。"},
+  ]},
+
+  kigou: { title:"音楽記号（速度・強弱・奏法・反復）", emo:"🎶", questions:[
+    {q:"「リタルダンド（rit.）」の意味は？",
+     o:[["だんだん遅く",1],["だんだん速く",0],["もとの速さで",0],["だんだん強く",0]],
+     e:"リタルダンド＝だんだん遅く。"},
+    {q:"「アッチェレランド」の意味は？",
+     o:[["だんだん速く",1],["だんだん遅く",0],["だんだん弱く",0],["もとの速さで",0]],
+     e:"アッチェレランド＝だんだん速く。"},
+    {q:"「ア テンポ（a tempo）」の意味は？",
+     o:[["もとの速さで",1],["だんだん遅く",0],["とても速く",0],["自由に",0]],
+     e:"ア テンポ＝もとの速さで。"},
+    {q:"「クレシェンド（cresc.）」の意味は？",
+     o:[["だんだん強く",1],["だんだん弱く",0],["だんだん速く",0],["短く切って",0]],
+     e:"クレシェンド＝だんだん強く。"},
+    {q:"「デクレシェンド／ディミヌエンド（dim.）」の意味は？",
+     o:[["だんだん弱く",1],["だんだん強く",0],["だんだん速く",0],["もとの速さで",0]],
+     e:"どちらも「だんだん弱く」。"},
+    {q:"「スタッカート」の意味は？",
+     o:[["その音を短く切って",1],["その音を十分に保って",0],["滑らかに",0],["強調して",0]],
+     e:"スタッカート＝その音を短く切って。"},
+    {q:"「テヌート」の意味は？",
+     o:[["その音の長さをじゅうぶんに保って",1],["短く切って",0],["だんだん弱く",0],["延ばして",0]],
+     e:"テヌート＝その音の長さをじゅうぶんに保って。"},
+    {q:"「アクセント」の意味は？",
+     o:[["その音を目立たせて、強調して",1],["短く切って",0],["滑らかに",0],["弱く",0]],
+     e:"アクセント＝その音を目立たせて強調して。"},
+    {q:"「フェルマータ」の意味は？",
+     o:[["その音符（休符）をほどよく延ばして",1],["短く切って",0],["もとの速さで",0],["くり返して",0]],
+     e:"フェルマータ＝その音符（休符）をほどよく延ばして。"},
+    {q:"「タイ」の意味は？",
+     o:[["隣り合った同じ高さの音符をつなぎ、1つの音にする",1],["高さの違う音を滑らかに",0],["短く切る",0],["くり返す",0]],
+     e:"タイ＝隣り合った同じ高さの音符をつなぎ、1つの音にする。"},
+    {q:"「スラー」の意味は？",
+     o:[["高さの違う2つ以上の音符を滑らかに",1],["同じ高さの音をつなぐ",0],["短く切る",0],["強調する",0]],
+     e:"スラー＝高さの違う2つ以上の音符を滑らかに演奏する。"},
+    {q:"「D.C.（ダ・カーポ）」の意味は？",
+     o:[["始めから",1],["セーニョから",0],["終わり",0],["結び",0]],
+     e:"D.C.（ダ・カーポ）＝始めにもどってもう一度。"},
+    {q:"「D.S.（ダル・セーニョ）」の意味は？",
+     o:[["セーニョ（𝄋）から",1],["始めから",0],["終わり",0],["次のコーダへ",0]],
+     e:"D.S.（ダル・セーニョ）＝セーニョ記号の所にもどる。"},
+    {q:"「Fine（フィーネ）」の意味は？",
+     o:[["終わり",1],["始め",0],["くり返し",0],["だんだん強く",0]],
+     e:"Fine（フィーネ）＝（くり返したあと）ここで終わり。"},
+    {q:"「Coda（コーダ）」の意味は？",
+     o:[["結び（終わりのまとまり）",1],["始め",0],["だんだん遅く",0],["主題",0]],
+     e:"Coda（コーダ）＝結びの部分。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "ongaku_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🎵 音楽："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>

@@ -248,11 +248,18 @@ const DECKS = {
     {q:"再生可能エネルギーとは何か、例を2つ挙げて説明して。", a:"自然界で絶えず供給され、枯渇しないエネルギー。例：太陽光・風力・水力・地熱・バイオマスなど。", e:"採点：①枯渇しない ②具体例2つ。"},
     {q:"火力発電と水力発電のプラス面・マイナス面を、CO₂に注目して説明して。", a:"火力は安定供給できるが化石燃料を燃やしCO₂を多く出す。水力は安定供給でCO₂はほとんど出ないが、ダム建設で自然環境を破壊するおそれがある。", e:"採点：火力＝安定だがCO₂多い／水力＝CO₂少ないが自然破壊。"},
   ]},
+  ongaku_say: { title:"音楽の記述（説明する）", emo:"🗣️", mode:"speak", subj:"音楽", cards:[
+    {q:"ソナタ形式の流れを、4つの部分の名前で説明して。", a:"提示部→展開部→再現部→コーダ（終結部）の順。提示部で第1・第2主題が示され、展開部で発展、再現部で再び現れ、コーダで締めくくる。", e:"採点：①4つの名前を順に ②各部の役割を一言。"},
+    {q:"「動機」とは何か、交響曲第5番の例で説明して。", a:"旋律のもととなる最も小さなまとまり。冒頭の「ジャジャジャジャーン」が動機で、さまざまな所に用いられ曲全体に統一感を与える。", e:"採点：①最小のまとまり ②冒頭の例・全曲で使われる。"},
+    {q:"ベートーヴェンについて、出身と特徴を説明して。", a:"ドイツのボン生まれ（1770〜1827）。耳がほとんど聞こえなくなっても作曲を続けた。交響曲第5番は「運命」とよばれる。", e:"採点：①ドイツ出身 ②聴力を失っても作曲 ③運命。"},
+    {q:"オーケストラの主な楽器を、4つのグループに分けて説明して。", a:"木管楽器（フルート等）・金管楽器（トランペット等）・弦楽器（ヴァイオリン等）・打楽器（ティンパニ等）の4つ。", e:"採点：4分類の名前＋各1例。"},
+    {q:"交響曲第5番の第1〜第4楽章の形式を説明して。", a:"第1楽章＝ソナタ形式、第2楽章＝主題と変奏、第3楽章＝複合三部形式、第4楽章＝ソナタ形式。", e:"採点：4楽章それぞれの形式。"},
+  ]},
 };
 
 const $ = id => document.getElementById(id);
 const SCOPE = new URLSearchParams(location.search).get('subj');   // 科目フィルタ（例: ?subj=国語）
-const SUBJFILE = {"国語":"kokugo.html","英語":"eigo.html","理科":"rika.html","家庭科":"kateika.html","技術":"gijutsu.html","歴史":"rekishi.html","地理":"chiri.html"};
+const SUBJFILE = {"国語":"kokugo.html","英語":"eigo.html","理科":"rika.html","家庭科":"kateika.html","技術":"gijutsu.html","歴史":"rekishi.html","地理":"chiri.html","音楽":"ongaku.html"};
 const MKEY = k => "out_mastery_"+k;            // per-deck mastery {index:level}
 const LKEY = d => "out_log_"+d;                 // per-day practiced count
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }

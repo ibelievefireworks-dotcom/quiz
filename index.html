@@ -40,6 +40,7 @@
   .eigo .emo{background:#ffe1e7; border-radius:14px; padding:6px 0;}
   .kateika .emo{background:#ffe6d3; border-radius:14px; padding:6px 0;}
   .gijutsu .emo{background:#e4e4fb; border-radius:14px; padding:6px 0;}
+  .ongaku .emo{background:#fbe0ee; border-radius:14px; padding:6px 0;}
   .output .emo{background:#d7f5e6; border-radius:14px; padding:6px 0;}
   .dash{background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:18px 18px 16px; margin-bottom:18px; border:1px solid var(--line);}
   .dash .dhead{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
@@ -77,7 +78,7 @@
   <div class="hero">
     <div class="ico">📖</div>
     <h1>期末対策クイズ</h1>
-    <p>1学期末考査（社会・国語・理科・英語・家庭科・技術）/ 教科書範囲<br>4択クイズで覚え、アウトプット練習で“出せる”力に！</p>
+    <p>1学期末考査（社会・国語・理科・英語・家庭科・技術・音楽）/ 教科書範囲<br>4択クイズで覚え、アウトプット練習で“出せる”力に！</p>
   </div>
 
   <div class="dash" id="dash">
@@ -131,6 +132,12 @@
     <span class="go">›</span>
   </a>
 
+  <a class="subj ongaku" href="ongaku.html">
+    <span class="emo">🎵</span>
+    <span class="t"><b>音楽</b><small>交響曲第5番ハ短調（運命）・ベートーヴェン・ソナタ形式と楽曲の用語・オーケストラの楽器・指揮・音楽記号（速度/強弱/奏法/反復）／全54問</small></span>
+    <span class="go">›</span>
+  </a>
+
   <div class="note">
     <b>使い方</b>：科目 → テーマを選ぶと、4択クイズが始まります。タップで答えると正誤と解説が出ます。最後に正答率（<b>80%で合格ライン</b>）と「まちがえた問題だけ復習」が表示されます。すきま時間に何度でもどうぞ！
   </div>
@@ -147,6 +154,7 @@ const Qz = {
   eigo:{label:"英語",emo:"🔤",prefix:"eigo_best_",topics:[["u0","過去形"],["mirai","未来表現"],["bunkei","文型"],["setsuzoku","接続詞"],["futei","不定詞"],["tango","単語"],["kaiwa","会話・本文"]]},
   kateika:{label:"家庭科",emo:"🍳",prefix:"kateika_best_",topics:[["yakuwari","食事の役割"],["eiyo","五大栄養素"],["chugakusei","必要な栄養"],["shokuhin","食品群"],["kondate","献立"]]},
   gijutsu:{label:"技術",emo:"⚙️",prefix:"gijutsu_best_",topics:[["henkan","変換効率"],["kakou","材料と加工"],["hatsuden","発電"],["kyokyu","電気の供給"]]},
+  ongaku:{label:"音楽",emo:"🎵",prefix:"ongaku_best_",topics:[["beethoven","交響曲第5番"],["sonata","形式・用語"],["gakki","楽器"],["shiki","指揮"],["kigou","音楽記号"]]},
 };
 const OUT = {
   kokugo:[["kanji_write","漢字書き",16],["kokugo_say","記述(言う)",8]],
@@ -156,6 +164,7 @@ const OUT = {
   chiri:[["chiri_say","記述(言う)",4]],
   kateika:[["kateika_say","記述(言う)",6]],
   gijutsu:[["gijutsu_say","記述(言う)",5]],
+  ongaku:[["ongaku_say","記述(言う)",5]],
 };
 function outRate(key,total){ let m={}; try{m=JSON.parse(localStorage.getItem("out_mastery_"+key)||"{}");}catch(e){} const ks=Object.keys(m); if(!ks.length) return {attempted:false,rate:0}; let ok=0; ks.forEach(i=>{if(m[i]===2)ok++;}); return {attempted:true,rate:Math.round(ok/total*100)}; }
 function calc(){
