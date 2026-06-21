@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>期末対策クイズ｜科目をえらぶ</title>
+<script src="report.js"></script>
 <style>
   :root{
     --bg:#f4f6fb; --card:#fff; --ink:#1f2733; --sub:#6b7686;
@@ -210,6 +211,12 @@ function renderDash(){
       '<div class="dr-bar"><i style="width:'+sp+'%"></i></div><div class="chips">'+chips+'</div>';
     det.appendChild(row);
   });
+  if(typeof pushSnapshot==="function"){
+    const sl=["📊 莉映くんの達成状況","全体：合格 "+r.tP+" / "+r.tU+"単元（"+pct+"%）","――――――――――"];
+    r.subj.forEach(function(s){ const sp=s.n?Math.round(s.p/s.n*100):0; sl.push(s.emo+s.label+" "+sp+"%（"+s.p+"/"+s.n+"）"); });
+    sl.push("――――――――――","（80%以上で合格）#莉映の期末対策");
+    pushSnapshot({overall:pct, text:sl.join("\n")});
+  }
 }
 document.getElementById("dtoggle").onclick=function(){
   const d=document.getElementById("ddetail"); const nowHidden=d.classList.toggle("hidden");

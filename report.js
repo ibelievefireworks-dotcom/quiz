@@ -18,3 +18,16 @@ window.reportUnit = function(text){
     });
   }catch(e){ /* 失敗しても学習はそのまま続行 */ }
 };
+
+// 達成状況スナップショットをGASへ保存（LINEで「進捗」と送ると親が確認できる）
+window.pushSnapshot = function(obj){
+  if(!window.REPORT_URL) return;
+  try{
+    fetch(window.REPORT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: "#SNAPSHOT#" + JSON.stringify(obj)
+    });
+  }catch(e){ }
+};

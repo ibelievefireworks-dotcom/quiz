@@ -15,17 +15,32 @@ var PROPS = PropertiesService.getScriptProperties();
 /* クイズ／LINEからのPOST受け口 */
 function doPost(e){
   var body = (e && e.postData) ? e.postData.contents : "";
+
+  // ⓪ 達成状況スナップショットの保存（クイズのトップページから届く）
+  if (body.indexOf("#SNAPSHOT#") === 0) {
+    PROPS.setProperty("SNAPSHOT", body.substring(10));
+    return ContentService.createTextOutput("ok");
+  }
+
   var json = null;
   try { json = JSON.parse(body); } catch (err) {}
 
-  // ① LINEのWebhook → グループIDを自動登録し、確認を返信
+  // ① LINEのWebhook
   if (json && json.events) {
     json.events.forEach(function(ev){
       var gid = ev.source && ev.source.groupId;
-      if (gid && PROPS.getProperty("GROUP_ID") !== gid) {   // ★初回（未登録）のときだけ登録＆返信
+      // 初回（未登録）のときだけグループ登録＆返信
+      if (gid && PROPS.getProperty("GROUP_ID") !== gid) {
         PROPS.setProperty("GROUP_ID", gid);
         if (ev.replyToken) {
           reply(ev.replyToken, "✅ このグループを登録しました。1日3回（18時・20時・23時）に学習まとめが届きます！");
+        }
+      }
+      // 「進捗」「状況」と送られたら、現在の達成状況を返信
+      if (ev.type === "message" && ev.message && ev.message.type === "text" && ev.replyToken) {
+        var t = ev.message.text || "";
+        if (t.indexOf("進捗") >= 0 || t.indexOf("状況") >= 0 || t.indexOf("しんちょく") >= 0) {
+          reply(ev.replyToken, progressText());
         }
       }
     });
@@ -35,6 +50,22 @@ function doPost(e){
   // ② クイズの結果（プレーンテキスト）→ すぐ送らず“ためる”だけ
   if (body) { appendToBuffer(body); }
   return ContentService.createTextOutput("ok");
+}
+
+/* 「進捗」コマンドへの返信文（保存済みスナップショット） */
+function progressText(){
+  var snap = PROPS.getProperty("SNAPSHOT");
+  if (!snap) return "📊 まだ達成状況の記録がありません。\n本人がトップページを開くと記録されます。";
+  try { var o = JSON.parse(snap); return o.text || "📊 記録を読み取れませんでした。"; }
+  catch (e) { return "📊 記録を読み取れませんでした。"; }
+}
+
+/* 動きが無かったときのリマインド文 */
+function reminderText(){
+  var add = "";
+  var snap = PROPS.getProperty("SNAPSHOT");
+  if (snap) { try { var o = JSON.parse(snap); if (o.overall != null) add = "\n今の達成率：" + o.overall + "%（合格は80%以上）"; } catch (e) {} }
+  return "📣 前回の報告から学習の記録がありません。\n莉映くん、もう1単元いこう💪" + add + "\n#莉映の期末対策";
 }
 
 /* 受け取った結果を1行に要約してバッファに追記 */
@@ -60,8 +91,9 @@ function appendToBuffer(text){
 /* 1日3回（18/20/23時）：たまっている分をまとめて1通だけ送る（トリガーで自動実行） */
 function sendDailyDigest(){
   var gid = PROPS.getProperty("GROUP_ID");
+  if (!gid) { return; }
   var buf = PROPS.getProperty("BUFFER") || "";
-  if (!gid || !buf) { return; }                    // 新しい分が無ければ送らない＝無料枠を節約
+  if (!buf) { push(gid, reminderText()); return; }  // 前回以降に動きが無い → リマインドを送る
 
   var lines = buf.split("\n");
   var passCount = lines.filter(function(l){ return l.indexOf("✅") >= 0; }).length;
