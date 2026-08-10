@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>地理 期末対策クイズ（2学期）</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#f0f7fd; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#2563eb; --accent-d:#1d4ed8;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#d9e8f8; --shadow:0 4px 14px rgba(30,80,180,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#e0ecfa; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#ecf4fd; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef2f8; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🗾 地理 期末対策クイズ（2学期）</h1>
+  <p class="lead">資源・エネルギーと産業・交通通信＋九州地方（p.152〜183）<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  shigen: { title:"資源・エネルギー", emo:"⚡", questions:[
+    {q:"日本の鉱産資源（原油・石炭・鉄鉱石など）の特徴は？",
+     o:[["ほとんどを輸入に頼っている",1],["ほぼ自給できている",0],["半分を国内で産出する",0],["輸出が中心である",0]],
+     e:"日本は鉱産資源に乏しく、大部分を輸入に頼る。原油は西アジア（サウジアラビアなど）からが中心。"},
+    {q:"現在の日本の発電の中心は？",
+     o:[["火力発電",1],["水力発電",0],["原子力発電",0],["風力発電",0]],
+     e:"かつては水力中心だったが、電力消費量の増加に伴い、原油・石炭・天然ガスを燃料とする火力発電が中心になった。"},
+    {q:"火力発電の燃料でないものは？",
+     o:[["ウラン",1],["原油",0],["石炭",0],["天然ガス",0]],
+     e:"ウランは原子力発電の燃料。"},
+    {q:"水力・風力・太陽光・地熱・バイオマスなど、資源の輸入に頼らないエネルギーをまとめて何という？",
+     o:[["再生可能エネルギー",1],["化石燃料",0],["鉱産資源",0],["原子力エネルギー",0]],
+     e:"再生可能エネルギー。地球温暖化対策として拡大が目指されている。"},
+    {q:"再生可能エネルギーの課題として正しいのは？",
+     o:[["発電量が天候などに左右され、コストも高い",1],["二酸化炭素を大量に出す",0],["燃料の輸入が必要",0],["課題は特にない",0]],
+     e:"天候・立地に左右され安定供給が難しく、発電コストが高い。利点（CO₂を出さない・国産）とセットで記述頻出。"},
+    {q:"使用済みの電子機器にふくまれる金属資源が多いことから、都市が何とよばれる？",
+     o:[["都市鉱山",1],["都市油田",0],["リサイクル都市",0],["metropolitan",0]],
+     e:"都市鉱山。携帯電話などから金・銀・レアメタルを回収できる。"},
+    {q:"火山の熱を利用する発電は？",
+     o:[["地熱発電",1],["水力発電",0],["火力発電",0],["潮力発電",0]],
+     e:"地熱発電。火山の多い九州（大分県の八丁原など）が代表的。"},
+    {q:"地球温暖化の主な原因とされる気体は？",
+     o:[["二酸化炭素",1],["酸素",0],["窒素",0],["ヘリウム",0]],
+     e:"二酸化炭素（CO₂）など温室効果ガス。化石燃料の燃焼で発生する。"},
+    {q:"原子力発電の説明として正しいのは？",
+     o:[["ウランを燃料とし、少ない燃料で大量の電力を作れるが、事故や廃棄物の課題がある",1],["二酸化炭素を大量に排出する",0],["天候に左右される",0],["日本では使われたことがない",0]],
+     e:"東日本大震災の原子力発電所の事故以降、安全性が大きな課題になっている。"},
+  ]},
+
+  nougyou: { title:"日本の農業・食料", emo:"🌾", questions:[
+    {q:"日本の農業を大きく3つに分けると？",
+     o:[["稲作・畑作・畜産",1],["稲作・漁業・林業",0],["畑作・工業・商業",0],["畜産・養殖・栽培",0]],
+     e:"稲作・畑作・畜産。産出額が最も多いのは畜産。"},
+    {q:"大都市の周辺で、新鮮な野菜などを出荷する農業を何という？",
+     o:[["近郊農業",1],["促成栽培",0],["抑制栽培",0],["二毛作",0]],
+     e:"近郊農業。輸送費が安く、新鮮なまま出荷できる利点がある。"},
+    {q:"ビニールハウスなどを使って出荷時期を早める栽培方法は？",
+     o:[["促成栽培",1],["抑制栽培",0],["二毛作",0],["輪作",0]],
+     e:"促成栽培。ほかの産地と時期をずらし、価格が高い時期に出荷するのが目的。宮崎平野や高知平野が有名。"},
+    {q:"促成栽培とは反対に、出荷時期を遅らせる栽培方法は？",
+     o:[["抑制栽培",1],["近郊農業",0],["混合農業",0],["施設園芸",0]],
+     e:"抑制栽培。長野県の高原野菜（レタスなど）が代表例。どちらも「高く売れる時期に出荷」が狙い。"},
+    {q:"畜産が特に盛んな地方は？",
+     o:[["北海道地方と九州地方",1],["近畿地方と四国地方",0],["関東地方と東北地方",0],["中部地方と中国地方",0]],
+     e:"北海道と九州（鹿児島・宮崎など）で大規模経営。ただし飼料の多くは輸入に頼る。"},
+    {q:"国内で消費される食料のうち、国内生産でまかなえる割合を何という？",
+     o:[["食料自給率",1],["耕地利用率",0],["エンゲル係数",0],["貿易依存度",0]],
+     e:"食料自給率。輸入食品が増えたことで低下が問題になっている。"},
+    {q:"同じ土地で1年に2種類の作物を作ることを何という？",
+     o:[["二毛作",1],["二期作",0],["輪作",0],["混作",0]],
+     e:"二毛作。筑紫平野では稲作の後に小麦や大麦を栽培。二期作は同じ作物を2回。"},
+    {q:"日本の食料自給率が低下した理由として正しいのは？",
+     o:[["安い輸入食品が増えたから",1],["人口が減ったから",0],["農地が増えたから",0],["米を輸入していないから",0]],
+     e:"貿易の自由化で安い外国産の食料の輸入が増え、国内の生産が押された。"},
+    {q:"農業の課題と対策の組み合わせとして正しいのは？",
+     o:[["働き手の高齢化 → ICTやロボット技術の活用",1],["生産過剰 → 輸入拡大",0],["人手不足 → 農地の放棄",0],["自給率低下 → 農業をやめる",0]],
+     e:"高齢化・後継者不足に対し、先端技術（スマート農業）の活用が進められている。"},
+  ]},
+
+  kougyou: { title:"日本の工業・商業", emo:"🏭", questions:[
+    {q:"関東地方から九州北部にかけて、工業地帯・地域が帯状に連なる地域を何という？",
+     o:[["太平洋ベルト",1],["瀬戸内工業地域",0],["京浜工業地帯",0],["シリコンロード",0]],
+     e:"太平洋ベルト。原料の輸入と製品の輸出に便利な臨海部に発達した。"},
+    {q:"原料を輸入し、製品を作って輸出する貿易を何という？",
+     o:[["加工貿易",1],["中継貿易",0],["自由貿易",0],["朱印船貿易",0]],
+     e:"加工貿易。かつての日本の工業発展を支えた形。"},
+    {q:"企業が工場を海外に移し、国内の生産が衰退することを何という？",
+     o:[["産業の空洞化",1],["過疎化",0],["ドーナツ化現象",0],["貿易摩擦",0]],
+     e:"産業の空洞化。人件費の安い海外への移転が原因。"},
+    {q:"近年、内陸部にも工場が増えた理由は？",
+     o:[["高速道路網の発達で輸送が便利になったから",1],["土地の値段が上がったから",0],["港が使えなくなったから",0],["原料が内陸で採れるから",0]],
+     e:"高速交通網の発達で、高速道路沿いや空港周辺にIC（集積回路）工場などが立地。"},
+    {q:"IC（集積回路）などの軽くて高価な製品の輸送に使われるのは？",
+     o:[["航空機やトラック",1],["大型タンカー",0],["コンテナ船のみ",0],["鉄道のみ",0]],
+     e:"軽量・高価→航空輸送でも採算が合う。重い原料や自動車は海上輸送（船）。"},
+    {q:"商業やサービス業は第何次産業？",
+     o:[["第3次産業",1],["第1次産業",0],["第2次産業",0],["第4次産業",0]],
+     e:"第3次産業。第1次＝農林水産業、第2次＝鉱工業・建設業。"},
+    {q:"日本の働く人のうち、第3次産業で働く人の割合はおよそ？",
+     o:[["約3分の2",1],["約3分の1",0],["約10分の1",0],["ほぼ全員",0]],
+     e:"約3分の2。大都市圏や、観光業が盛んな北海道・沖縄県で特に高い。"},
+    {q:"インターネットやスマートフォンなどの技術をまとめて何という？",
+     o:[["情報通信技術（ICT）",1],["AI",0],["IoT",0],["バイオテクノロジー",0]],
+     e:"ICT。商業（ネットショッピングなど）や農業・工業の形を変えている。"},
+    {q:"重くてかさばる貨物（原油・自動車など）の輸送の中心は？",
+     o:[["海上輸送（船）",1],["航空輸送",0],["自転車",0],["パイプラインのみ",0]],
+     e:"海上輸送。コンテナ船・タンカーなど。安く大量に運べるが時間がかかる。"},
+    {q:"交通網・通信網の発達がもたらした変化として正しいのは？",
+     o:[["地域間の結びつきが強まった",1],["人の移動が減った",0],["都市が消滅した",0],["貿易がなくなった",0]],
+     e:"新幹線・高速道路・ICTの発達で人・もの・情報の移動が速く活発になった。"},
+  ]},
+
+  kyushu_shizen: { title:"九州地方の自然と暮らし", emo:"🌋", questions:[
+    {q:"火山の噴火などによってできた、大きなくぼ地を何という？",
+     o:[["カルデラ",1],["シラス台地",0],["扇状地",0],["リアス海岸",0]],
+     e:"カルデラ。周りを囲む山を外輪山、水がたまるとカルデラ湖という。"},
+    {q:"世界最大級のカルデラがある九州の火山は？",
+     o:[["阿蘇山",1],["桜島",0],["雲仙岳",0],["霧島山",0]],
+     e:"阿蘇山（熊本県）。カルデラの中に町や田畑、鉄道まである。"},
+    {q:"鹿児島市の市街地から約10kmにあり、頻繁に噴火する火山は？",
+     o:[["桜島（御岳）",1],["阿蘇山",0],["富士山",0],["屋久島",0]],
+     e:"桜島。天気予報で降灰予報が伝えられ、住民は火山灰と共に暮らす工夫をしている。"},
+    {q:"九州南部に広がる、火山の噴出物が積もってできた台地を何という？",
+     o:[["シラス台地",1],["カルデラ",0],["筑紫平野",0],["リアス台地",0]],
+     e:"シラス台地。水を通しやすく稲作に不向き。"},
+    {q:"シラス台地の農業の説明として正しいのは？",
+     o:[["ダムや農業用水の整備後、畑作や畜産が盛んになった",1],["昔から稲作の中心地だった",0],["農業はいっさい行われていない",0],["りんごの栽培が盛ん",0]],
+     e:"戦後、水が得られるようになり、さつまいも・茶などの畑作と豚・鶏などの畜産が発展した。"},
+    {q:"九州で最大の稲作地帯で、二毛作が盛んな平野は？",
+     o:[["筑紫平野",1],["宮崎平野",0],["熊本平野",0],["関東平野",0]],
+     e:"筑紫平野（佐賀県・福岡県）。稲作の後に小麦・大麦を作る二毛作。"},
+    {q:"宮崎平野で盛んな、ビニールハウスを使ってピーマンやきゅうりを冬に出荷する農業は？",
+     o:[["促成栽培",1],["抑制栽培",0],["近郊農業",0],["二毛作",0]],
+     e:"温暖な気候を生かした促成栽培。価格の高い時期に出荷できる。"},
+    {q:"九州地方の気候の特徴は？",
+     o:[["温暖で、梅雨から台風の時期に雨が特に多い",1],["一年中雪が多い",0],["雨がほとんど降らない",0],["夏は寒く冬は暑い",0]],
+     e:"梅雨〜台風期に集中豪雨（近年は線状降水帯も）。大雨による災害への備えが重要。"},
+    {q:"火山がもたらす恵みとして正しいのは？",
+     o:[["温泉や地熱発電",1],["降灰",0],["火砕流",0],["土石流",0]],
+     e:"別府温泉・湯布院などの温泉は観光資源に、地熱は発電に。災害（降灰・噴火）と恵みの両面をおさえる。"},
+    {q:"1993年に世界自然遺産に登録された、縄文杉で有名な島は？",
+     o:[["屋久島",1],["種子島",0],["奄美大島",0],["対馬",0]],
+     e:"屋久島（鹿児島県）。自然保護と観光産業の両立に取り組んでいる。"},
+    {q:"九州南部で豚や鶏の飼育が特に盛んな県は？",
+     o:[["鹿児島県・宮崎県",1],["福岡県・佐賀県",0],["長崎県・大分県",0],["熊本県・沖縄県",0]],
+     e:"シラス台地の広がる鹿児島県・宮崎県。黒豚などブランド化も進む。"},
+    {q:"桜島の火山灰への備えとして行われていることは？",
+     o:[["降灰予報の放送や克灰袋での回収",1],["島全体の立ち入り禁止",0],["火山灰の輸出",0],["特に何もしていない",0]],
+     e:"天気予報で降灰予報を伝え、住民が集めた灰を市が回収。災害と共に生きる工夫の代表例。"},
+  ]},
+
+  kyushu_sangyo: { title:"九州の工業・公害克服と沖縄", emo:"🏝️", questions:[
+    {q:"1901年に操業を開始した官営の製鉄所は？",
+     o:[["八幡製鉄所",1],["富岡製糸場",0],["別子銅山",0],["石見銀山",0]],
+     e:"官営八幡製鉄所（福岡県北九州市）。鉄鋼業を中心に北九州工業地帯へと発展した。"},
+    {q:"八幡製鉄所が北九州に作られた理由は？",
+     o:[["筑豊炭田の石炭と中国からの鉄鉱石の調達に便利だったから",1],["人口が日本一多かったから",0],["地震が少なかったから",0],["米の産地だったから",0]],
+     e:"鉄鋼の製造には石炭と鉄鉱石が必要。原料の調達に適した立地だった。記述頻出。"},
+    {q:"エネルギー革命（石炭→石油）の後、北九州工業地帯はどうなった？",
+     o:[["工業生産が停滞した",1],["さらに発展し日本一になった",0],["すぐに消滅した",0],["変化はなかった",0]],
+     e:"エネルギー源が石炭から石油に変わり地位が低下。水質汚濁などの公害問題も起きた。"},
+    {q:"現在、九州北部に進出している工場は？",
+     o:[["IC（集積回路)や自動車の工場",1],["製糸工場",0],["造船所だけ",0],["繊維工場だけ",0]],
+     e:"IC工場と大規模な自動車組み立て工場。港からアジアや北アメリカへ輸出される。"},
+    {q:"高度経済成長期、熊本県の八代海沿岸で発生した公害病は？",
+     o:[["水俣病",1],["イタイイタイ病",0],["四日市ぜんそく",0],["新潟水俣病",0]],
+     e:"水俣病。工場排水中のメチル水銀が原因で、神経や筋肉が侵された。四大公害病の一つ。"},
+    {q:"公害を克服した北九州市が現在認定されているのは？",
+     o:[["環境モデル都市",1],["政令指定都市のみ",0],["世界遺産都市",0],["経済特区",0]],
+     e:"環境モデル都市。リサイクル工場を集めたエコタウン事業は海外からの視察も多い。"},
+    {q:"沖縄県で栽培が盛んな、乾燥や台風に強い作物は？",
+     o:[["さとうきび",1],["りんご",0],["小麦",0],["ぶどう",0]],
+     e:"さとうきび。ほかに菊（電照菊）やパイナップルの栽培も盛ん。"},
+    {q:"沖縄県で特に割合が高い産業は？",
+     o:[["第3次産業（観光業など）",1],["第1次産業",0],["第2次産業",0],["鉱業",0]],
+     e:"美しいさんご礁の海などを生かした観光業が中心で、第3次産業の割合が全国的にも高い。"},
+    {q:"かつて琉球王国の城で、沖縄の独自文化を象徴する史跡は？",
+     o:[["首里城",1],["熊本城",0],["名古屋城",0],["姫路城",0]],
+     e:"首里城（那覇市）。琉球王国は中継貿易で栄え、独自の文化を開花させた。"},
+    {q:"沖縄島の課題として正しいのは？",
+     o:[["アメリカ軍基地が広い面積を占めている",1],["火山の噴火が多い",0],["雪害が深刻",0],["人口減少が日本一",0]],
+     e:"沖縄島の約15%をアメリカ軍施設が占め、移設・返還が大きな課題になっている。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "chiri2_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🗾 地理(2学期)："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>

@@ -124,7 +124,13 @@
 
   <a class="subj rekishi" href="rekishi2.html">
     <span class="emo">🏯</span>
-    <span class="t"><b>歴史（2学期）</b><small>4章 近世：大航海時代・信長と秀吉・江戸幕府・鎖国・産業と三都・幕政改革・元禄と化政文化（p.98〜150）／全66問</small></span>
+    <span class="t"><b>歴史（2学期）</b><small>4章 近世：大航海時代・信長と秀吉・江戸幕府・鎖国・産業と三都・幕政改革・元禄と化政文化（p.98〜150）／全68問</small></span>
+    <span class="go">›</span>
+  </a>
+
+  <a class="subj chiri" href="chiri2.html">
+    <span class="emo">🗾</span>
+    <span class="t"><b>地理（2学期）</b><small>資源・エネルギー・日本の農業/工業/商業・交通通信＋九州地方（自然・農業・工業・沖縄）（p.152〜183）／全50問</small></span>
     <span class="go">›</span>
   </a>
 
@@ -200,6 +206,7 @@ const Qz = {
   rika2:{label:"理科2学期",emo:"🌱",prefix:"rika2_best_",topics:[["saibou","細胞と顕微鏡"],["kougousei","光合成と呼吸"],["mizu","水の通り道"],["shouka","消化と吸収"],["junkan","血液・排出"],["shinkei","刺激と反応"]]},
   kokugo2:{label:"国語2学期",emo:"📖",prefix:"kokugo2_best_",topics:[["tanka","短歌"],["kotoba","言葉の力・語彙"],["hagaki","字のない葉書"],["keigo","敬語"],["moai","モアイは語る"],["tegami","手紙・メール"]]},
   rekishi2:{label:"歴史2学期",emo:"🏯",prefix:"rekishi2_best_",topics:[["europe","大航海時代"],["tenka","信長・秀吉"],["edo","江戸幕府"],["sakoku","鎖国と窓口"],["sangyo","産業と三都"],["kaikaku","幕政の改革"],["bunka","元禄・化政文化"]]},
+  chiri2:{label:"地理2学期",emo:"🗾",prefix:"chiri2_best_",topics:[["shigen","資源・エネルギー"],["nougyou","日本の農業"],["kougyou","日本の工業・商業"],["kyushu_shizen","九州の自然と暮らし"],["kyushu_sangyo","九州の工業・沖縄"]]},
 };
 const OUT = {
   kokugo:[["kanji_write","漢字書き",16],["kokugo_say","記述(言う)",8]],
@@ -215,6 +222,7 @@ const OUT = {
   rika2:[["rika2_write","用語・記述(書く)",15]],
   kokugo2:[["kokugo2_say","記述(言う)",8]],
   rekishi2:[["rekishi2_say","記述(言う)",6]],
+  chiri2:[["chiri2_say","記述(言う)",6]],
 };
 function outRate(key,total){ let m={}; try{m=JSON.parse(localStorage.getItem("out_mastery_"+key)||"{}");}catch(e){} const ks=Object.keys(m); if(!ks.length) return {attempted:false,rate:0}; let ok=0; ks.forEach(i=>{if(m[i]===2)ok++;}); return {attempted:true,rate:Math.round(ok/total*100)}; }
 function calc(){
