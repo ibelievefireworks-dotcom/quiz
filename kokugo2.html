@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>国語 期末対策クイズ（2学期）</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#f7f5fc; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#7c3aed; --accent-d:#6d28d9;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#e6dff5; --shadow:0 4px 14px rgba(80,50,150,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#ece5f8; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#f4effc; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#f0edf6; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>📖 国語 期末対策クイズ（2学期）</h1>
+  <p class="lead">短歌・言葉の力・字のない葉書・敬語・モアイは語る<br>テーマを選んでスタート！</p>
+  <a href="output.html?subj=国語" style="display:block;text-align:center;text-decoration:none;font-weight:700;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent);border-radius:14px;padding:12px;margin:2px 0 14px;background:#fff;">✍️ 書いて仕上げる（漢字・記述）→</a>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  tanka: { title:"短歌に親しむ・味わう", emo:"🌸", questions:[
+    {q:"短歌の音数の形式は？",
+     o:[["五・七・五・七・七",1],["五・七・五",0],["七・五・七・五・七",0],["五・五・七・七・七",0]],
+     e:"合計三十一音。「みそひともじ（三十一文字）」ともよばれる。"},
+    {q:"短歌で、決まった音数より多いものを何という？",
+     o:[["字余り",1],["字足らず",0],["句切れ",0],["破調",0]],
+     e:"多い＝字余り、少ない＝字足らず。"},
+    {q:"短歌の意味や調子の切れ目を何という？",
+     o:[["句切れ",1],["段落",0],["行分け",0],["休符",0]],
+     e:"初句切れ・二句切れ…とよぶ。「や」「かな」「けり」や言い切りの形が目印。"},
+    {q:"「白鳥はかなしからずや空の青海のあをにも染まずただよふ」の作者は？",
+     o:[["若山牧水",1],["石川啄木",0],["俵万智",0],["栗木京子",0]],
+     e:"若山牧水（歌集『別離』）。青（空・海）と白（白鳥）の色の対比が特徴。"},
+    {q:"「不来方のお城の草に寝ころびて空に吸はれし十五の心」の作者は？",
+     o:[["石川啄木",1],["若山牧水",0],["佐佐木幸綱",0],["木下龍也",0]],
+     e:"石川啄木（歌集『一握の砂』）。不来方＝岩手県盛岡の古称。"},
+    {q:"石川啄木の短歌の書き表し方の特徴は？",
+     o:[["短歌を三行で書き表す",1],["すべてカタカナで書く",0],["一行で続けて書く",0],["五行に分けて書く",0]],
+     e:"三行書き。教科書の脚注でも紹介されている啄木独自のスタイル。"},
+    {q:"「観覧車回れよ回れ想ひ出は君には一日我には一生」の作者は？",
+     o:[["栗木京子",1],["河野裕子",0],["馬場あき子",0],["俵万智",0]],
+     e:"栗木京子。「君には一日、我には一生」の対比が切ない。解説文「短歌を楽しむ」の筆者でもある。"},
+    {q:"「鯨の世紀恐竜の世紀いづれにも戻れぬ地球の水仙の白」の作者は？",
+     o:[["馬場あき子",1],["俵万智",0],["若山牧水",0],["木下龍也",0]],
+     e:"馬場あき子。壮大な時間が「水仙の白」という一瞬に回収される歌。"},
+    {q:"「蛇行する川には蛇行の理由あり急げばいいってもんじゃないよと」の作者は？",
+     o:[["俵万智",1],["栗木京子",0],["河野裕子",0],["馬場あき子",0]],
+     e:"俵万智（歌集『サラダ記念日』）。話し言葉の口調が温かさを生む。"},
+    {q:"「のぼり坂のペダル踏みつつ子は叫ぶ『まっすぐ？』そうだ、どんどんのばせ」の作者は？",
+     o:[["佐佐木幸綱",1],["石川啄木",0],["木下龍也",0],["若山牧水",0]],
+     e:"佐佐木幸綱。子どもの言葉をそのまま取り入れた会話体の歌。"},
+    {q:"「ぽぽぽぽと秋の雲浮き子供らはどこか遠くへ遊びに行けり」の作者は？",
+     o:[["河野裕子",1],["馬場あき子",0],["栗木京子",0],["俵万智",0]],
+     e:"河野裕子（歌集『ひるがほ』）。「ぽぽぽぽ」というオノマトペ（擬態語）が印象的。"},
+    {q:"名詞（体言）で歌を言い終える表現技法は？",
+     o:[["体言止め",1],["倒置法",0],["直喩",0],["反復法",0]],
+     e:"体言止め。「〜水仙の白」など、余韻を残す効果がある。"},
+  ]},
+
+  kotoba: { title:"言葉の力・類義語/対義語/多義語", emo:"💬", questions:[
+    {q:"『言葉の力』の筆者は？",
+     o:[["大岡信",1],["向田邦子",0],["安田喜憲",0],["栗木京子",0]],
+     e:"大岡信（詩人）。染織家・志村ふくみさんの話をもとに言葉の本質を語る随筆。"},
+    {q:"志村ふくみさんの桜色の糸は、何から取り出した色？",
+     o:[["桜の皮",1],["桜の花びら",0],["桜の葉",0],["桜の根",0]],
+     e:"筆者は花びらだと思ったが、実際は皮（樹皮）。ここが文章の転換点。"},
+    {q:"桜色の話から筆者が気づいたことは？",
+     o:[["桜は木全体・全身で春のピンクになっている",1],["花びらだけが美しい",0],["色は人工的に作るべきだ",0],["桜は染め物に向かない",0]],
+     e:"花びらは全身のピンクの「ほんの尖端」。言葉も同じで、人間全体が言葉の一つ一つに反映する。"},
+    {q:"筆者の考える「言葉の本質」とは？",
+     o:[["発する人間全体の世界を背負っている",1],["語彙の多さで決まる",0],["文法の正しさで決まる",0],["声の大きさで決まる",0]],
+     e:"言葉は口先だけのもの・語彙だけのものではない。美しい言葉＝美しく生きている人間の言葉。"},
+    {q:"意味がよく似た言葉どうしを何という？",
+     o:[["類義語",1],["対義語",0],["多義語",0],["同音異義語",0]],
+     e:"類義語。例：「目標」と「目的」など。"},
+    {q:"意味が反対の関係や対の関係にある二語を何という？",
+     o:[["対義語",1],["類義語",0],["多義語",0],["複合語",0]],
+     e:"対義語。例：「兄」⇔「弟」「姉」。"},
+    {q:"一つの言葉が複数の意味をもつものを何という？",
+     o:[["多義語",1],["類義語",0],["対義語",0],["外来語",0]],
+     e:"多義語。「あまい」（味・考え・basketのシュート…）など。意味ごとに類義語・対義語をもつ。"},
+    {q:"「知っている言葉の数や範囲」を表す言葉は？",
+     o:[["語彙",1],["語感",0],["語幹",0],["語源",0]],
+     e:"語彙（ごい）。「彙」は漢字テストの頻出。語感＝言葉から受ける感じ。"},
+  ]},
+
+  hagaki: { title:"字のない葉書", emo:"📮", questions:[
+    {q:"『字のない葉書』の筆者は？",
+     o:[["向田邦子",1],["大岡信",0],["安田喜憲",0],["河野裕子",0]],
+     e:"向田邦子。脚本家・作家。父と妹の思い出をつづった随筆。"},
+    {q:"『字のない葉書』の文章の種類は？",
+     o:[["随筆",1],["小説",0],["説明文",0],["詩",0]],
+     e:"随筆（エッセイ）。実際の体験をもとに思いをつづった文章。"},
+    {q:"死んだ父はどんな人だったと書かれている？",
+     o:[["筆まめな人",1],["無口な人",0],["手紙嫌いな人",0],["旅行好きな人",0]],
+     e:"書き出しは「死んだ父は筆まめな人であった。」三日にあげず手紙をよこした。"},
+    {q:"父からの手紙の表書きに書かれていた宛名は？",
+     o:[["向田邦子殿",1],["邦子へ",0],["向田邦子様",0],["おい、邦子！",0]],
+     e:"「向田邦子殿」。日頃「おい、邦子！」と呼び捨てにする父の変わりように、こそばゆい気分になった。"},
+    {q:"手紙の中の父はどんな父親だった？",
+     o:[["威厳と愛情にあふれた非の打ちどころのない父親",1],["ふだんどおりの乱暴な父親",0],["冷たく事務的な父親",0],["冗談ばかりの父親",0]],
+     e:"ふだんは暴君だが、手紙では「威厳と愛情にあふれた非の打ちどころのない父親」だった。"},
+    {q:"父が娘に他人行儀な手紙しか書けなかった理由として筆者が考えたことは？",
+     o:[["暴君だが照れ性だったから",1],["字が下手だったから",0],["忙しかったから",0],["娘が嫌いだったから",0]],
+     e:"「暴君ではあったが、反面照れ性でもあった父は、他人行儀という形でしか十三歳の娘に手紙が書けなかったのであろう。」"},
+    {q:"下の妹が疎開するとき、父が持たせたものは？",
+     o:[["宛名だけ書いた葉書の束",1],["白い便せん",0],["日記帳",0],["絵はがき",0]],
+     e:"「元気な日はマルを書いて、毎日一枚ずつポストに入れなさい。」妹はまだ字が書けなかった。"},
+    {q:"妹から届いた最初の葉書に書かれていたのは？",
+     o:[["紙いっぱいはみ出すほどの赤鉛筆の大マル",1],["小さな黒鉛筆のマル",0],["バツ",0],["妹の名前",0]],
+     e:"威勢のいい赤鉛筆の大マル。地元婦人会が赤飯やぼた餅で歓迎してくれた日。"},
+    {q:"その後、葉書のマルはどうなっていった？",
+     o:[["急激に小さくなり、ついにバツに変わった",1],["ずっと大マルのままだった",0],["だんだん大きくなった",0],["二重マルになった",0]],
+     e:"大マル→小マル→バツ→やがて葉書も来なくなる。マルの変化＝妹の元気の変化。"},
+    {q:"妹が帰ってくる日、「私」と弟がしたことは？",
+     o:[["家庭菜園のかぼちゃを全部収穫して客間に並べた",1],["ごちそうを作った",0],["駅まで迎えに行った",0],["手紙を書いた",0]],
+     e:"大物からうらなりまで二十数個を一列に。「これぐらいしか妹を喜ばせる方法がなかったのだ。」"},
+    {q:"やせた妹を見た父はどうした？",
+     o:[["肩を抱き、声を上げて泣いた",1],["笑って迎えた",0],["黙って家に入った",0],["妹を叱った",0]],
+     e:"はだしで表へ飛び出し、防火用水桶の前で泣いた。「私は父が、大人の男が声を立てて泣くのを初めて見た。」"},
+    {q:"題名「字のない葉書」の「字のない」が指すものは？",
+     o:[["字が書けない妹がマルやバツで近況を伝えた葉書",1],["父が白紙で送った葉書",0],["宛名のない葉書",0],["消えてしまった文字",0]],
+     e:"字は書けなくても、マル・バツに妹の状態と家族の思いが表れている。それが題名の意味。"},
+  ]},
+
+  keigo: { title:"敬語", emo:"🙇", questions:[
+    {q:"動作をする人（相手）を高めて敬意を表す敬語は？",
+     o:[["尊敬語",1],["謙譲語",0],["丁寧語",0],["美化語",0]],
+     e:"尊敬語。「お話しになる」「いらっしゃる」など、相手の行為を高める。"},
+    {q:"自分や身内の行為をへりくだって、行為の向かう先に敬意を表す敬語は？",
+     o:[["謙譲語",1],["尊敬語",0],["丁寧語",0],["美化語",0]],
+     e:"謙譲語。「ご案内する」「伺う」など。"},
+    {q:"「です」「ます」「ございます」は何という敬語？",
+     o:[["丁寧語",1],["尊敬語",0],["謙譲語",0],["丁重語",0]],
+     e:"丁寧語。聞き手への丁寧な気持ちを表す。"},
+    {q:"「行く・来る」の尊敬語は？",
+     o:[["いらっしゃる",1],["参る",0],["伺う",0],["おる",0]],
+     e:"尊敬語＝いらっしゃる・おいでになる。参る・伺うは謙譲語。ここを逆にするのが最頻出ミス。"},
+    {q:"「言う」の謙譲語は？",
+     o:[["申す・申しあげる",1],["おっしゃる",0],["言われる",0],["お言いになる",0]],
+     e:"謙譲語＝申す・申しあげる。尊敬語＝おっしゃる。"},
+    {q:"「見る」の尊敬語は？",
+     o:[["ご覧になる",1],["拝見する",0],["見ます",0],["見せる",0]],
+     e:"尊敬語＝ご覧になる、謙譲語＝拝見する。"},
+    {q:"「食べる」の謙譲語は？",
+     o:[["いただく",1],["召しあがる",0],["お食べになる",0],["食べられる",0]],
+     e:"謙譲語＝いただく、尊敬語＝召しあがる。"},
+    {q:"「する」の尊敬語と謙譲語の正しい組み合わせは？",
+     o:[["尊敬語＝なさる／謙譲語＝いたす",1],["尊敬語＝いたす／謙譲語＝なさる",0],["どちらも「される」",0],["どちらも「いたす」",0]],
+     e:"先生がなさる／私がいたします。"},
+    {q:"「×本田先生が、私の絵を拝見する」の正しい直し方は？",
+     o:[["本田先生が、私の絵をご覧になる",1],["本田先生が、私の絵を拝見なさる",0],["本田先生が、私の絵を見ます",0],["直す必要はない",0]],
+     e:"先生の行為なので尊敬語「ご覧になる」。謙譲語「拝見する」を先生に使うのは誤り（教科書の例）。"},
+    {q:"「×お母さんが、中野先生にお会いになる」の正しい直し方は？",
+     o:[["母が、中野先生にお会いする",1],["お母様が、先生にお会いになる",0],["お母さんが、先生に会う",0],["直す必要はない",0]],
+     e:"身内（母）に尊敬語は使わない。「お母さん」→「母」、謙譲語「お会いする」に（教科書の例）。"},
+    {q:"「×お客様がスープをお召しあがりになられる」の誤りは？",
+     o:[["敬語を重ねすぎている（二重敬語）",1],["謙譲語を使っている",0],["丁寧語がない",0],["誤りはない",0]],
+     e:"「召しあがる」だけで十分。敬語を重ねすぎない（教科書の例）。"},
+    {q:"「お鍋」「お盆」のように、自分の言葉を美しく表現する言い方を何という？",
+     o:[["美化語",1],["丁重語",0],["尊敬語",0],["謙譲語",0]],
+     e:"美化語。誰に対する敬意でもない。「参る・申す」のように聞き手への敬意を表す謙譲語は丁重語という。"},
+  ]},
+
+  moai: { title:"モアイは語る―地球の未来", emo:"🗿", questions:[
+    {q:"『モアイは語る』の筆者は？",
+     o:[["安田喜憲",1],["向田邦子",0],["大岡信",0],["俵万智",0]],
+     e:"安田喜憲（環境考古学者）。イースター島の歴史から地球の未来を論じる説明的文章。"},
+    {q:"モアイ像がある島は？",
+     o:[["イースター島",1],["種子島",0],["ハワイ島",0],["ガラパゴス諸島",0]],
+     e:"南太平洋の絶海の孤島イースター島（チリ領）。種子島の半分にも満たない火山島。"},
+    {q:"モアイを作ったのは誰だと判明した？",
+     o:[["ポリネシア人",1],["宇宙人",0],["南米のインカ人",0],["ヨーロッパ人",0]],
+     e:"墓の化石人骨やヒョウタンなど栽培作物の分析から、西方から島伝いに来たポリネシア人と判明。"},
+    {q:"ポリネシア人が島に来た時期と、モアイ製造が始まった時期は？",
+     o:[["五世紀頃に到来、十一世紀頃に製造開始",1],["十一世紀に到来、十七世紀に製造開始",0],["紀元前に到来、五世紀に製造開始",0],["十五世紀に到来、すぐ製造開始",0]],
+     e:"炭化物の測定で到来は五世紀頃。十一世紀頃、突然巨大なモアイの製造が始まる。"},
+    {q:"モアイの多くが作られた石切り場は？",
+     o:[["ラノ・ララク",1],["アフ",0],["ラパ・ヌイ",0],["モアイ谷",0]],
+     e:"島の東部のラノ・ララク。モアイ作りに適した軟らかい凝灰岩が露出していた。"},
+    {q:"モアイは何という岩から削り出された？",
+     o:[["凝灰岩",1],["黒曜石",0],["花こう岩",0],["石灰岩",0]],
+     e:"軟らかく加工しやすい凝灰岩。削るのに使ったのは硬い溶岩や黒曜石の石器。"},
+    {q:"モアイが陸の方を向いて立てられた理由と考えられているのは？",
+     o:[["集落の祖先神・守り神だったから",1],["海が嫌いだったから",0],["日光を避けるため",0],["敵を見張るため",0]],
+     e:"アフ（台座）の上で陸向き＝人々はモアイの目に見守られながら生活していた。"},
+    {q:"「森は本当にあったのか」の謎を解いたのは何の分析？",
+     o:[["花粉の分析",1],["石器の分析",0],["海水の分析",0],["モアイの成分分析",0]],
+     e:"筆者たちの花粉分析で、かつて島が豊かなヤシの森に覆われていたことがわかった。"},
+    {q:"数十トンのモアイを運ぶのに必要不可欠だったものは？",
+     o:[["木のころ",1],["クレーン",0],["牛や馬",0],["氷の道",0]],
+     e:"木のころ（丸太）と支柱。だから森の木が大量に必要だった。"},
+    {q:"イースター島の文明が崩壊した根本的原因は？",
+     o:[["森の消滅",1],["火山の噴火",0],["外国からの侵略",0],["伝染病",0]],
+     e:"森の消滅→表層土壌が雨で流失→食料危機→部族間抗争→十七世紀後半〜十八世紀前半に崩壊。"},
+    {q:"森が消滅して土壌が流失すると、なぜ食料危機になる？",
+     o:[["主食のバナナやタロイモを栽培できず、船も造れず魚も捕れないから",1],["雨が降らなくなるから",0],["気温が下がるから",0],["モアイが作れなくなるから",0]],
+     e:"農業（バナナ・タロイモ）と漁業（船の材料の木）の両方を失った。"},
+    {q:"筆者の主張として最も適切なのは？",
+     o:[["有限の資源を効率よく長期にわたって利用する方策を考えるべきだ",1],["モアイをもっと研究するべきだ",0],["人口を今すぐ減らすべきだ",0],["イースター島に移住するべきだ",0]],
+     e:"絶海の孤島＝宇宙に浮かぶ地球。「森林は、文明を守る生命線」。それが人類の生き延びる道。"},
+  ]},
+
+  tegami: { title:"手紙・電子メールの形式", emo:"✉️", questions:[
+    {q:"手紙の「拝啓」のような書き出しの言葉を何という？",
+     o:[["頭語",1],["結語",0],["前文",0],["時候の挨拶",0]],
+     e:"頭語。結びの「敬具」（結語）とセットで使う。"},
+    {q:"「拝啓」と組み合わせる結語は？",
+     o:[["敬具",1],["草々",0],["かしこ",0],["以上",0]],
+     e:"拝啓─敬具。「前略」なら「草々」。"},
+    {q:"頭語の後に続ける、季節に触れた挨拶を何という？",
+     o:[["時候の挨拶",1],["安否の挨拶",0],["結びの挨拶",0],["自己紹介",0]],
+     e:"時候の挨拶。父の手紙も「折り目正しい時候の挨拶」で始まっていた（字のない葉書）。"},
+    {q:"手紙の最後に書く「日付・署名・宛名」の部分を何という？",
+     o:[["後付け",1],["前文",0],["主文",0],["末文",0]],
+     e:"手紙の構成＝前文→主文→末文→後付け。"},
+    {q:"電子メールで、内容がひと目でわかるように必ず書くものは？",
+     o:[["件名",1],["時候の挨拶",0],["頭語と結語",0],["住所",0]],
+     e:"メールは件名＋名乗りが基本。手紙ほど形式ばらないが、相手への配慮は同じ。"},
+    {q:"先生への手紙で正しい書き方は？",
+     o:[["敬語を適切に使い、宛名に「様」や「先生」を付ける",1],["友達と同じ話し言葉で書く",0],["宛名は呼び捨てでよい",0],["絵文字を多用する",0]],
+     e:"目上の人への手紙は敬語＋正しい形式。教科書でも恩師への手紙の敬語の直しを練習する。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "kokugo2_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("📖 国語(2学期)："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>

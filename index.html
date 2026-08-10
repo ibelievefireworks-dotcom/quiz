@@ -116,6 +116,12 @@
     <span class="go">›</span>
   </a>
 
+  <a class="subj kokugo" href="kokugo2.html">
+    <span class="emo">📖</span>
+    <span class="t"><b>国語（2学期）</b><small>短歌・言葉の力・字のない葉書・敬語・モアイは語る・手紙の形式（p.62〜138）／全62問</small></span>
+    <span class="go">›</span>
+  </a>
+
   <div class="term">📘 1学期の復習（学年末は年間総合。ここも財産！）</div>
 
   <a class="subj chiri" href="chiri.html">
@@ -186,6 +192,7 @@ const Qz = {
   sugaku:{label:"数学",emo:"📐",prefix:"sugaku_best_",topics:[["teigi","1次関数とは"],["wariai","変化の割合"],["graph","グラフ"],["shiki","式の求め方"],["hoteishiki","方程式とグラフ"],["riyou","利用"]]},
   eigo2:{label:"英語2学期",emo:"🔤",prefix:"eigo2_best_",topics:[["haveto","have to/must"],["doumeishi","動名詞"],["gimonto","疑問詞+to"],["jodoushi","助動詞"],["tango","単語"]]},
   rika2:{label:"理科2学期",emo:"🌱",prefix:"rika2_best_",topics:[["saibou","細胞と顕微鏡"],["kougousei","光合成と呼吸"],["mizu","水の通り道"],["shouka","消化と吸収"],["junkan","血液・排出"],["shinkei","刺激と反応"]]},
+  kokugo2:{label:"国語2学期",emo:"📖",prefix:"kokugo2_best_",topics:[["tanka","短歌"],["kotoba","言葉の力・語彙"],["hagaki","字のない葉書"],["keigo","敬語"],["moai","モアイは語る"],["tegami","手紙・メール"]]},
 };
 const OUT = {
   kokugo:[["kanji_write","漢字書き",16],["kokugo_say","記述(言う)",8]],
@@ -199,6 +206,7 @@ const OUT = {
   sugaku:[["sugaku_calc","計算(書く)",15]],
   eigo2:[["eigo2_write","スペル・暗写(書く)",15]],
   rika2:[["rika2_write","用語・記述(書く)",15]],
+  kokugo2:[["kokugo2_say","記述(言う)",8]],
 };
 function outRate(key,total){ let m={}; try{m=JSON.parse(localStorage.getItem("out_mastery_"+key)||"{}");}catch(e){} const ks=Object.keys(m); if(!ks.length) return {attempted:false,rate:0}; let ok=0; ks.forEach(i=>{if(m[i]===2)ok++;}); return {attempted:true,rate:Math.round(ok/total*100)}; }
 function calc(){
