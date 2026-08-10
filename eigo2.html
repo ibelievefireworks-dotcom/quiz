@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>英語 期末対策クイズ（2学期）</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#fdf5f7; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#be123c; --accent-d:#9f1239;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#f7dde3; --shadow:0 4px 14px rgba(150,30,60,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#f8e4e9; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#fdf1f4; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#f5eef0; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🔤 英語 期末対策クイズ（2学期）</h1>
+  <p class="lead">NEW HORIZON 2　Unit 4〜6（p.37〜72）<br>テーマを選んでスタート！</p>
+  <a href="output.html?subj=英語" style="display:block;text-align:center;text-decoration:none;font-weight:700;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent);border-radius:14px;padding:12px;margin:2px 0 14px;background:#fff;">✍️ 書いて仕上げる（スペル・基本文の暗写）→</a>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  haveto: { title:"have to / must（Unit 4）", emo:"🏠", questions:[
+    {q:"「あなたは英語を話さなければならない」You（　）speak English.",
+     o:[["have to",1],["having to",0],["has to",0],["to have",0]],
+     e:"主語がYouなので have to＋動詞の原形。You have to speak English.（教科書本文）"},
+    {q:"「彼は早く起きなければならない」He（　）get up early.",
+     o:[["has to",1],["have to",0],["had to",0],["having to",0]],
+     e:"主語が三人称単数（He）のときは has to になる。"},
+    {q:"「完璧な英語を話す必要はない」You（　）speak perfect English.",
+     o:[["do not have to",1],["must not",0],["are not",0],["will not",0]],
+     e:"don't have to＝〜する必要はない。You do not have to speak perfect English.（教科書本文）"},
+    {q:"「私たちは今、家に帰らなければならない」を英語で？",
+     o:[["We must go home now.",1],["We must going home now.",0],["We must to go home now.",0],["We go must home now.",0]],
+     e:"must＋動詞の原形。We must go home now.（教科書の例文）"},
+    {q:"「火を起こしてはいけません」You（　）make a fire.",
+     o:[["must not",1],["don't have to",0],["have to",0],["may",0]],
+     e:"must not＝〜してはいけない（禁止）。You must not make a fire.（教科書本文）"},
+    {q:"must not の短縮形は？",
+     o:[["mustn't",1],["mayn't",0],["don't must",0],["haven't to",0]],
+     e:"must not → mustn't。"},
+    {q:"⚠️最重要⚠️「don't have to」と「must not」の意味の違いは？",
+     o:[["don't have to＝する必要がない／must not＝してはいけない（禁止）",1],["どちらも「してはいけない」",0],["どちらも「する必要がない」",0],["don't have to＝禁止／must not＝不要",0]],
+     e:"テスト頻出！ don't have to＝不要（してもよい）、must not＝禁止（絶対ダメ）。意味が全く違う。"},
+    {q:"「私はお弁当を持っていく必要はない」I（　）bring my lunch.",
+     o:[["don't have to",1],["must not",0],["am not",0],["haven't",0]],
+     e:"「必要がない」は don't have to。禁止ではないので must not は不可。"},
+    {q:"「あなたは家に入るとき、くつを脱がなければならない」You must（　）your shoes.",
+     o:[["take off",1],["take on",0],["put off",0],["get off",0]],
+     e:"take off＝脱ぐ。You must take off your shoes.（教科書の場面）"},
+    {q:"have to の過去形「〜しなければならなかった」は？",
+     o:[["had to",1],["have too",0],["must-ed",0],["has to",0]],
+     e:"have to の過去形は had to。mustには過去形がないので had to を使う。"},
+    {q:"疑問文「私は地図を持っていく必要がありますか」は？",
+     o:[["Do I have to take a map?",1],["Must I to take a map?",0],["Have I to take a map?",0],["Do I must take a map?",0]],
+     e:"have to の疑問文は Do/Does を使う。答え方：No, you don't have to.（教科書の例）"},
+    {q:"「あなたは私たちと一緒にいなければならない」を英語で？",
+     o:[["You must stay with us.",1],["You must staying with us.",0],["You stay must with us.",0],["You must to stay with us.",0]],
+     e:"must＋動詞の原形。You must stay with us.（教科書本文）"},
+  ]},
+
+  doumeishi: { title:"動名詞（Unit 4）", emo:"🎣", questions:[
+    {q:"「動名詞」とは、動詞に何をつけて「〜すること」の意味を表すもの？",
+     o:[["ing",1],["to",0],["ed",0],["er",0]],
+     e:"動詞のing形で「〜すること」＝動名詞。名詞と同じ働きをする。"},
+    {q:"「私は音楽を聞くことが好きだ」I like（　）to music.",
+     o:[["listening",1],["listen",0],["listened",0],["listens",0]],
+     e:"like ＋動名詞（listening）。like は to不定詞も動名詞も使える動詞。"},
+    {q:"「彼女は写真を撮ることを楽しんだ」She enjoyed（　）pictures.",
+     o:[["taking",1],["to take",0],["take",0],["took",0]],
+     e:"enjoy は後ろに【動名詞のみ】をとる動詞。enjoy taking。"},
+    {q:"「雨が降りやんだ」It stopped（　）.",
+     o:[["raining",1],["to rain",0],["rain",0],["rained",0]],
+     e:"stop ＋動名詞＝〜するのをやめる。stopped raining。"},
+    {q:"「宿題をやり終えた」I finished（　）my homework.",
+     o:[["doing",1],["to do",0],["do",0],["did",0]],
+     e:"finish も【動名詞のみ】をとる動詞。finish doing。"},
+    {q:"後ろに「動名詞のみ」をとる動詞の組み合わせは？",
+     o:[["enjoy・finish・stop",1],["want・hope・decide",0],["like・start・begin",0],["must・can・will",0]],
+     e:"enjoy/finish/stop＝動名詞のみ。want/hope/decide＝to不定詞のみ。like/startなどは両方OK。"},
+    {q:"「英語を話すことは楽しい」（　）English is fun.",
+     o:[["Speaking",1],["Speak",0],["Spoke",0],["To speaking",0]],
+     e:"動名詞は文の主語にもなれる。Speaking English is fun."},
+    {q:"「〜すること」を表す2つの形は？",
+     o:[["動名詞（〜ing）と不定詞（to＋動詞の原形）",1],["過去形と過去分詞",0],["三単現と複数形",0],["比較級と最上級",0]],
+     e:"「〜すること」＝動名詞 or 名詞的用法の不定詞。動詞によって使い分ける。"},
+  ]},
+
+  gimonto: { title:"疑問詞＋to（Unit 5）", emo:"♿", questions:[
+    {q:"「それらの使い方」を英語で表すと？",
+     o:[["how to use them",1],["what to use them",0],["how using them",0],["to how use them",0]],
+     e:"how to＋動詞の原形＝〜のしかた。You will learn how to use them.（教科書本文）"},
+    {q:"「どこで見つければよいか」を英語で表すと？",
+     o:[["where to find",1],["where finding",0],["what to find",0],["where can find",0]],
+     e:"where to＋動詞の原形＝どこで〜すればよいか。（教科書本文 I will show you where to find...）"},
+    {q:"「何を買えばよいか」を英語で表すと？",
+     o:[["what to buy",1],["how to buy",0],["what buying",0],["to what buy",0]],
+     e:"what to＋動詞の原形＝何を〜すればよいか。"},
+    {q:"「いつ出発すればよいか」を英語で表すと？",
+     o:[["when to leave",1],["when leaving to",0],["what to leave",0],["when leave",0]],
+     e:"when to＋動詞の原形＝いつ〜すればよいか。"},
+    {q:"「私はギターの弾き方を知っている」I know（　）the guitar.",
+     o:[["how to play",1],["what to play",0],["how playing",0],["to play how",0]],
+     e:"「弾き方」＝how to play。"},
+    {q:"「私は何と言えばよいかわからなかった」I didn't know（　）.",
+     o:[["what to say",1],["how to say",0],["what saying",0],["to say what",0]],
+     e:"「何を言えばよいか」＝what to say。（how to say は「言い方」）"},
+    {q:"「彼女は私に電車の乗り方を教えてくれた」She told me（　）the train.",
+     o:[["how to take",1],["what to take",0],["when taking",0],["how take",0]],
+     e:"tell＋人＋how to〜＝人に〜のしかたを教える。show/teachでも同じ形。"},
+    {q:"疑問詞＋to＋動詞の原形 のカタマリは、文の中で何と同じ働きをする？",
+     o:[["名詞（〜すべきか、ということ）",1],["動詞",0],["形容詞",0],["接続詞",0]],
+     e:"「how to use them」などは名詞のカタマリ。know や show の目的語になる。"},
+    {q:"「切符の買い方を教えていただけますか」Could you tell me（　）a ticket?",
+     o:[["how to buy",1],["what to buy",0],["where buying",0],["to buy how",0]],
+     e:"Could you tell me how to 〜? は道案内などで超頻出の表現。"},
+    {q:"「どちらを選べばよいか」を英語で表すと？",
+     o:[["which to choose",1],["which choosing",0],["what choose to",0],["how to which",0]],
+     e:"which to＋動詞の原形＝どちらを〜すればよいか。疑問詞はwhich/what/how/where/whenが使える。"},
+    {q:"ユニバーサルデザイン（universal design）の意味は？",
+     o:[["だれにとっても使いやすいデザイン",1],["宇宙で使うデザイン",0],["大学のデザイン",0],["伝統的なデザイン",0]],
+     e:"Unit 5のテーマ。すべての人（everyone）のためのデザイン。"},
+    {q:"「私はどこに行けばよいかわからない」を英語で？",
+     o:[["I don't know where to go.",1],["I don't know where going.",0],["I don't know to where go.",0],["I don't know where do I go.",0]],
+     e:"know の後ろに where to go（どこに行くべきか）を置く。"},
+  ]},
+
+  jodoushi: { title:"助動詞まとめ（will・may・must）", emo:"🧭", questions:[
+    {q:"助動詞の後ろにくる動詞の形は？",
+     o:[["原形",1],["過去形",0],["ing形",0],["三単現のs付き",0]],
+     e:"助動詞（will/may/must/canなど）の後ろは必ず動詞の原形。（教科書：文法のまとめ）"},
+    {q:"「彼女は日本に来るだろう」She（　）come to Japan.",
+     o:[["will",1],["wills",0],["is will",0],["will to",0]],
+     e:"will＝〜するつもりだ・〜だろう。She will come to Japan.（教科書の例文）"},
+    {q:"may の意味として正しいのは？",
+     o:[["〜してもよい／〜かもしれない",1],["〜しなければならない",0],["〜できない",0],["〜し終わった",0]],
+     e:"may＝許可（〜してもよい）と推量（〜かもしれない）。"},
+    {q:"must の意味は？",
+     o:[["〜しなければならない",1],["〜するかもしれない",0],["〜したい",0],["〜できる",0]],
+     e:"must＝義務（〜しなければならない）。"},
+    {q:"will の否定文「彼女は日本に来ないだろう」は？",
+     o:[["She will not come to Japan.",1],["She not will come to Japan.",0],["She will come not to Japan.",0],["She doesn't will come to Japan.",0]],
+     e:"助動詞の否定は助動詞の直後に not。（教科書の例文）"},
+    {q:"will not の短縮形は？",
+     o:[["won't",1],["willn't",0],["wan't",0],["will'nt",0]],
+     e:"will not → won't（つづり注意）。"},
+    {q:"「ここで走ってはいけません」We（　）run here.",
+     o:[["must not",1],["don't will",0],["may",0],["have",0]],
+     e:"禁止＝must not。We must not run here.（教科書の例文）"},
+    {q:"「窓を開けてもいいですか」を助動詞で言うと？",
+     o:[["May I open the window?",1],["Must I open the window?",0],["Will you open I the window?",0],["Have I open the window?",0]],
+     e:"May I 〜?＝〜してもいいですか（ていねいな許可求め）。"},
+  ]},
+
+  tango: { title:"Unit 4〜6の単語", emo:"📖", questions:[
+    {q:"staff の意味は？",
+     o:[["従業員・スタッフ",1],["階段",0],["杖",0],["食べ物",0]],
+     e:"staff＝従業員（教科書 Unit 4）。"},
+    {q:"assist の意味は？",
+     o:[["〜を助ける",1],["〜を集める",0],["〜を試す",0],["〜を運ぶ",0]],
+     e:"assist＝〜を助ける。The staff will assist you.（教科書本文）"},
+    {q:"perfect の意味は？",
+     o:[["完璧な",1],["普通の",0],["簡単な",0],["有名な",0]],
+     e:"perfect＝完璧な。perfect English（教科書本文）。"},
+    {q:"guest の意味は？",
+     o:[["客",1],["主人",0],["家族",0],["先生",0]],
+     e:"guest＝客。You are not a guest.（ホームステイの場面）"},
+    {q:"bored の意味は？",
+     o:[["退屈した",1],["興奮した",0],["疲れた",0],["怒った",0]],
+     e:"bored＝退屈した。I get bored at night.（教科書本文）"},
+    {q:"「〜を脱ぐ」を英語で？",
+     o:[["take off",1],["put on",0],["take on",0],["get up",0]],
+     e:"take off＝脱ぐ（⇔put on＝着る）。take off your shoes。"},
+    {q:"enter の意味は？",
+     o:[["〜に入る",1],["〜を出る",0],["〜を待つ",0],["〜に登る",0]],
+     e:"enter＝入る。when you enter a house（教科書本文）。"},
+    {q:"public の意味は？",
+     o:[["公共の",1],["個人の",0],["有料の",0],["静かな",0]],
+     e:"public＝公共の（Unit 5）。public facilities＝公共施設。"},
+    {q:"product の意味は？",
+     o:[["製品",1],["生産者",0],["値段",0],["広告",0]],
+     e:"product＝製品。products with a universal design（教科書本文）。"},
+    {q:"side dish の意味は？",
+     o:[["副菜・おかず",1],["食器",0],["横の席",0],["デザート",0]],
+     e:"side dish＝副菜（教科書 Unit 4の場面）。"},
+    {q:"conserve の意味は？",
+     o:[["〜を節約する・保護する",1],["〜を消費する",0],["〜を運転する",0],["〜を会話する",0]],
+     e:"conserve＝節約・保護する。I will try to conserve water.（教科書本文）"},
+    {q:"inequality の意味は？",
+     o:[["不平等",1],["平等",0],["質問",0],["品質",0]],
+     e:"inequality＝不平等（Unit 6・SDGsの話題）。There is inequality...（教科書本文）"},
+    {q:"million の意味は？",
+     o:[["100万",1],["1000",0],["10万",0],["10億",0]],
+     e:"million＝100万。500 million＝5億。"},
+    {q:"「棒グラフ」を英語で？",
+     o:[["bar graph",1],["pie chart",0],["line graph",0],["band graph",0]],
+     e:"bar graph＝棒グラフ。pie chart＝円グラフ、line graph＝折れ線グラフ（Unit 6・発表の資料）。"},
+    {q:"「円グラフ」を英語で？",
+     o:[["pie chart",1],["bar graph",0],["table",0],["geo chart",0]],
+     e:"pie chart＝円グラフ（パイの形から）。割合を示すときに使う（教科書コラム）。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "eigo2_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🔤 英語(2学期)："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>

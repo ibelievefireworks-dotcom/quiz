@@ -98,6 +98,12 @@
 
   <div class="term">📗 2学期（期末＆小テスト対策）</div>
 
+  <a class="subj eigo" href="eigo2.html">
+    <span class="emo">🔤</span>
+    <span class="t"><b>英語（2学期）</b><small>NEW HORIZON 2 Unit 4〜6：have to／must・動名詞・疑問詞＋to・助動詞まとめ・単語（p.37〜72）／全55問</small></span>
+    <span class="go">›</span>
+  </a>
+
   <a class="subj sugaku" href="sugaku.html">
     <span class="emo">📐</span>
     <span class="t"><b>数学（2学期）</b><small>3章 1次関数：定義・変化の割合・グラフ（傾きと切片）・式の求め方・方程式とグラフ・利用（p.57〜94）／全60問</small></span>
@@ -172,6 +178,7 @@ const Qz = {
   gijutsu:{label:"技術",emo:"⚙️",prefix:"gijutsu_best_",topics:[["henkan","変換効率"],["kakou","材料と加工"],["hatsuden","発電"],["kyokyu","電気の供給"]]},
   ongaku:{label:"音楽",emo:"🎵",prefix:"ongaku_best_",topics:[["beethoven","交響曲第5番"],["sonata","形式・用語"],["gakki","楽器"],["shiki","指揮"],["kigou","音楽記号"]]},
   sugaku:{label:"数学",emo:"📐",prefix:"sugaku_best_",topics:[["teigi","1次関数とは"],["wariai","変化の割合"],["graph","グラフ"],["shiki","式の求め方"],["hoteishiki","方程式とグラフ"],["riyou","利用"]]},
+  eigo2:{label:"英語2学期",emo:"🔤",prefix:"eigo2_best_",topics:[["haveto","have to/must"],["doumeishi","動名詞"],["gimonto","疑問詞+to"],["jodoushi","助動詞"],["tango","単語"]]},
 };
 const OUT = {
   kokugo:[["kanji_write","漢字書き",16],["kokugo_say","記述(言う)",8]],
@@ -183,6 +190,7 @@ const OUT = {
   gijutsu:[["gijutsu_say","記述(言う)",5]],
   ongaku:[["ongaku_say","記述(言う)",5]],
   sugaku:[["sugaku_calc","計算(書く)",15]],
+  eigo2:[["eigo2_write","スペル・暗写(書く)",15]],
 };
 function outRate(key,total){ let m={}; try{m=JSON.parse(localStorage.getItem("out_mastery_"+key)||"{}");}catch(e){} const ks=Object.keys(m); if(!ks.length) return {attempted:false,rate:0}; let ok=0; ks.forEach(i=>{if(m[i]===2)ok++;}); return {attempted:true,rate:Math.round(ok/total*100)}; }
 function calc(){
