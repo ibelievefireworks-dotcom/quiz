@@ -42,6 +42,11 @@
   .kateika .emo{background:#ffe6d3; border-radius:14px; padding:6px 0;}
   .gijutsu .emo{background:#e4e4fb; border-radius:14px; padding:6px 0;}
   .ongaku .emo{background:#fbe0ee; border-radius:14px; padding:6px 0;}
+  .sugaku .emo{background:#d8ecfa; border-radius:14px; padding:6px 0;}
+  .term{
+    font-size:13px; font-weight:800; color:#5b6675; letter-spacing:.06em;
+    margin:18px 4px 10px; padding-bottom:4px; border-bottom:2px solid #d8dee8;
+  }
   .output .emo{background:#d7f5e6; border-radius:14px; padding:6px 0;}
   .dash{background:var(--card); border-radius:18px; box-shadow:var(--shadow); padding:18px 18px 16px; margin-bottom:18px; border:1px solid var(--line);}
   .dash .dhead{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
@@ -79,7 +84,7 @@
   <div class="hero">
     <div class="ico">📖</div>
     <h1>期末対策クイズ</h1>
-    <p>1学期末考査（社会・国語・理科・英語・家庭科・技術・音楽）/ 教科書範囲<br>4択クイズで覚え、アウトプット練習で“出せる”力に！</p>
+    <p>2学期期末＆毎週の小テスト対策<br>4択クイズで覚え、書いて解いて“出せる”力に！</p>
   </div>
 
   <div class="dash" id="dash">
@@ -90,6 +95,16 @@
     <div class="dmsg" id="dmsg"></div>
     <div class="ddetail hidden" id="ddetail"></div>
   </div>
+
+  <div class="term">📗 2学期（期末＆小テスト対策）</div>
+
+  <a class="subj sugaku" href="sugaku.html">
+    <span class="emo">📐</span>
+    <span class="t"><b>数学（2学期）</b><small>3章 1次関数：定義・変化の割合・グラフ（傾きと切片）・式の求め方・方程式とグラフ・利用（p.57〜94）／全60問</small></span>
+    <span class="go">›</span>
+  </a>
+
+  <div class="term">📘 1学期の復習（学年末は年間総合。ここも財産！）</div>
 
   <a class="subj chiri" href="chiri.html">
     <span class="emo">📘</span>
@@ -156,6 +171,7 @@ const Qz = {
   kateika:{label:"家庭科",emo:"🍳",prefix:"kateika_best_",topics:[["yakuwari","食事の役割"],["eiyo","五大栄養素"],["chugakusei","必要な栄養"],["shokuhin","食品群"],["kondate","献立"],["kakou","加工食品"],["shukan","食習慣と健康"],["kijun","不足ととりすぎ"]]},
   gijutsu:{label:"技術",emo:"⚙️",prefix:"gijutsu_best_",topics:[["henkan","変換効率"],["kakou","材料と加工"],["hatsuden","発電"],["kyokyu","電気の供給"]]},
   ongaku:{label:"音楽",emo:"🎵",prefix:"ongaku_best_",topics:[["beethoven","交響曲第5番"],["sonata","形式・用語"],["gakki","楽器"],["shiki","指揮"],["kigou","音楽記号"]]},
+  sugaku:{label:"数学",emo:"📐",prefix:"sugaku_best_",topics:[["teigi","1次関数とは"],["wariai","変化の割合"],["graph","グラフ"],["shiki","式の求め方"],["hoteishiki","方程式とグラフ"],["riyou","利用"]]},
 };
 const OUT = {
   kokugo:[["kanji_write","漢字書き",16],["kokugo_say","記述(言う)",8]],
@@ -166,6 +182,7 @@ const OUT = {
   kateika:[["kateika_say","記述(言う)",6]],
   gijutsu:[["gijutsu_say","記述(言う)",5]],
   ongaku:[["ongaku_say","記述(言う)",5]],
+  sugaku:[["sugaku_calc","計算(書く)",15]],
 };
 function outRate(key,total){ let m={}; try{m=JSON.parse(localStorage.getItem("out_mastery_"+key)||"{}");}catch(e){} const ks=Object.keys(m); if(!ks.length) return {attempted:false,rate:0}; let ok=0; ks.forEach(i=>{if(m[i]===2)ok++;}); return {attempted:true,rate:Math.round(ok/total*100)}; }
 function calc(){

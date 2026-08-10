@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数学 期末対策クイズ（2学期）</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#f2f8fd; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#0369a1; --accent-d:#075985;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#d9e9f5; --shadow:0 4px 14px rgba(10,60,110,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#e0eef8; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#eef6fc; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef2f5; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>📐 数学 期末対策クイズ（2学期）</h1>
+  <p class="lead">3章 1次関数（教科書 p.57〜94）<br>テーマを選んでスタート！</p>
+  <a href="output.html?subj=数学" style="display:block;text-align:center;text-decoration:none;font-weight:700;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent);border-radius:14px;padding:12px;margin:2px 0 14px;background:#fff;">✍️ 書いて解く（式を求める・計算）→</a>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  teigi: { title:"1次関数とは", emo:"📏", questions:[
+    {q:"yがxの関数で、yがxの【1次式】で表されるとき、yはxの何であるという？",
+     o:[["1次関数",1],["比例",0],["反比例",0],["2次関数",0]],
+     e:"yがxの1次式で表されるとき、「yはxの1次関数である」という。"},
+    {q:"1次関数を表す一般的な式は？（a、bは定数）",
+     o:[["y＝ax＋b",1],["y＝ax",0],["y＝a÷x",0],["y＝ax²",0]],
+     e:"1次関数は一般に y＝ax＋b の形で表される。"},
+    {q:"深さ3cmまで水が入った水そうに、1分間に2cmずつ水位が増えるように水を入れる。x分後の深さy cmを式で表すと？",
+     o:[["y＝2x＋3",1],["y＝3x＋2",0],["y＝2x",0],["y＝5x",0]],
+     e:"毎分2cm増える分が2x、はじめの3cmが＋3。y＝2x＋3（教科書 例1）。"},
+    {q:"長さ16cmの線香が1分間に0.5cmずつ短くなる。火をつけてからx分後の長さy cmは？",
+     o:[["y＝−0.5x＋16",1],["y＝0.5x＋16",0],["y＝16x−0.5",0],["y＝−16x＋0.5",0]],
+     e:"x分間で0.5x cm短くなるから y＝16−0.5x＝−0.5x＋16（教科書 例2）。"},
+    {q:"1mあたり25gの針金が1000gある。x m使ったときの残りy gの式は？",
+     o:[["y＝−25x＋1000",1],["y＝25x＋1000",0],["y＝1000x−25",0],["y＝25x",0]],
+     e:"使った分25x gを1000から引く。y＝1000−25x＝−25x＋1000。これも1次関数。"},
+    {q:"1辺x cmの正方形の周の長さy cm。yはxの1次関数といえる？",
+     o:[["いえる（y＝4xは1次関数）",1],["いえない",0],["正方形によって変わる",0],["情報が足りない",0]],
+     e:"y＝4x。比例も1次関数（b＝0の場合）なので、1次関数といえる。"},
+    {q:"面積24cm²の長方形の縦がx cmのときの横y cm。yはxの1次関数？",
+     o:[["いえない（y＝24/xは反比例）",1],["いえる",0],["比例である",0],["どちらともいえない",0]],
+     e:"y＝24/x は反比例。1次式ではないので1次関数ではない。"},
+    {q:"比例 y＝ax と1次関数 y＝ax＋b の関係は？",
+     o:[["比例は b＝0 になっている特別な場合",1],["比例は1次関数ではない",0],["まったく別のもの",0],["a＝0の特別な場合",0]],
+     e:"比例は1次関数の式で定数bが0になっている特別な場合。"},
+    {q:"反比例は1次関数？",
+     o:[["1次関数ではない",1],["1次関数である",0],["bが0なら1次関数",0],["aが0なら1次関数",0]],
+     e:"反比例の式は y＝a/x で1次式ではないため、1次関数ではない。"},
+    {q:"20℃の水を熱すると1分ごとに約8℃ずつ上がる。x分後の温度y℃の式は？",
+     o:[["y＝8x＋20",1],["y＝20x＋8",0],["y＝8x",0],["y＝28x",0]],
+     e:"x分間で上がる温度が8x℃、はじめの20℃を足して y＝8x＋20（教科書の導入）。"},
+    {q:"次のうち、1次関数で【ない】ものは？",
+     o:[["y＝24/x",1],["y＝2x＋3",0],["y＝−x",0],["y＝1000−25x",0]],
+     e:"y＝24/xは反比例。ほかはすべて y＝ax＋b の形にできる。"},
+    {q:"y＝ax＋b の a や b のように、決まった数を何という？",
+     o:[["定数",1],["変数",0],["係数だけ",0],["解",0]],
+     e:"aとbは定数。xとyが変数。"},
+  ]},
+
+  wariai: { title:"変化の割合", emo:"📊", questions:[
+    {q:"「変化の割合」の定義は？",
+     o:[["yの増加量 ÷ xの増加量",1],["xの増加量 ÷ yの増加量",0],["yの増加量 × xの増加量",0],["yの値 ÷ xの値",0]],
+     e:"変化の割合＝（yの増加量）／（xの増加量）。"},
+    {q:"1次関数 y＝ax＋b の変化の割合は？",
+     o:[["一定で、aに等しい",1],["一定で、bに等しい",0],["xの値によって変わる",0],["つねに1",0]],
+     e:"1次関数の変化の割合は一定で、xの係数aに等しい。"},
+    {q:"y＝2x＋3 で、xの増加量が4のときのyの増加量は？",
+     o:[["8",1],["4",0],["11",0],["2",0]],
+     e:"yの増加量＝a×（xの増加量）＝2×4＝8。"},
+    {q:"1次関数 y＝4x＋1 の変化の割合は？",
+     o:[["4",1],["1",0],["5",0],["4x",0]],
+     e:"変化の割合＝a＝4（教科書 基本の問題）。"},
+    {q:"y＝−0.5x＋16 の変化の割合は？",
+     o:[["−0.5",1],["16",0],["0.5",0],["−16",0]],
+     e:"a＝−0.5。負の値なので、xが増えるとyは減る。"},
+    {q:"y＝−3x＋2 で、xが2増加するとyは？",
+     o:[["6減る",1],["6増える",0],["2減る",0],["変わらない",0]],
+     e:"yの増加量＝−3×2＝−6。つまり6減る。"},
+    {q:"変化の割合が2の1次関数で、xの増加量が5のときのyの増加量は？",
+     o:[["10",1],["7",0],["2.5",0],["5",0]],
+     e:"yの増加量＝2×5＝10。"},
+    {q:"xの値が1から3まで、yの値が5から9まで増加したときの変化の割合は？",
+     o:[["2",1],["4",0],["3",0],["1/2",0]],
+     e:"（9−5）÷（3−1）＝4÷2＝2。"},
+    {q:"反比例の変化の割合は？",
+     o:[["一定ではない",1],["一定でaに等しい",0],["つねに0",0],["つねに負",0]],
+     e:"反比例は変化の割合が一定にならない。一定なのは1次関数の特徴。"},
+    {q:"1次関数のグラフで、変化の割合と同じ値を表すものは？",
+     o:[["傾き",1],["切片",0],["交点",0],["変域",0]],
+     e:"変化の割合＝グラフの傾きa。「xが1増えたときのyの増加量」でもある。"},
+  ]},
+
+  graph: { title:"グラフ（傾きと切片）", emo:"📈", questions:[
+    {q:"1次関数 y＝ax＋b のグラフがy軸と交わる点のy座標bを何という？",
+     o:[["切片",1],["傾き",0],["原点",0],["頂点",0]],
+     e:"bを1次関数のグラフの切片という。点(0, b)で y軸と交わる。"},
+    {q:"y＝ax＋b の a はグラフでは何を表す？",
+     o:[["傾き",1],["切片",0],["交点",0],["面積",0]],
+     e:"aは傾き。xの値が1だけ増加したときのyの増加量。"},
+    {q:"y＝ax＋b のグラフはどんな線？",
+     o:[["傾きa、切片bの直線",1],["原点を通る直線",0],["曲線（双曲線）",0],["放物線",0]],
+     e:"1次関数のグラフは、傾きa・切片bの直線。"},
+    {q:"「傾き」の意味として正しいものは？",
+     o:[["xが1増加したときのyの増加量",1],["yが1増加したときのxの増加量",0],["グラフとy軸の交点",0],["xとyの積",0]],
+     e:"傾きa＝xの値が1だけ増加したときのyの増加量。"},
+    {q:"y＝5x−3 のグラフの傾きと切片は？",
+     o:[["傾き5、切片−3",1],["傾き−3、切片5",0],["傾き5、切片3",0],["傾き3、切片5",0]],
+     e:"y＝ax＋bと比べて a＝5、b＝−3（教科書 基本の問題）。"},
+    {q:"a＞0（傾きが正）のとき、グラフは？",
+     o:[["右上がりの直線",1],["右下がりの直線",0],["水平な直線",0],["垂直な直線",0]],
+     e:"a＞0なら右上がり。xが増えるとyも増える。"},
+    {q:"a＜0（傾きが負）のとき、グラフは？",
+     o:[["右下がりの直線",1],["右上がりの直線",0],["水平な直線",0],["y軸と重なる",0]],
+     e:"a＜0なら右下がり。xが増えるとyは減る。"},
+    {q:"y＝3x＋2 と y＝3x−1 のグラフの関係は？",
+     o:[["平行",1],["垂直に交わる",0],["同じ直線",0],["原点で交わる",0]],
+     e:"傾きが等しい（どちらも3）直線は平行。交わらない。"},
+    {q:"y＝2x＋3 のグラフは、y＝2x のグラフをどう動かしたもの？",
+     o:[["y軸の正の方向（上）に3だけ平行移動",1],["x軸の方向に3だけ平行移動",0],["3倍に拡大",0],["上下を反転",0]],
+     e:"y＝ax＋bのグラフは、y＝axのグラフをy軸方向にbだけ平行移動した直線。"},
+    {q:"y＝−x＋4 のグラフがy軸と交わる点の座標は？",
+     o:[["(0, 4)",1],["(4, 0)",0],["(0, −1)",0],["(−1, 4)",0]],
+     e:"切片が4なので、y軸との交点は(0, 4)。"},
+    {q:"傾き2・切片3の直線をかくとき、点(0, 3)の次にとる点として正しいのは？",
+     o:[["(1, 5)",1],["(1, 3)",0],["(2, 3)",0],["(3, 1)",0]],
+     e:"切片(0,3)から右へ1・上へ2進む→(1, 5)。傾き＝右1あたりの上がり幅。"},
+    {q:"切片が同じ2つの直線は、どこで交わる？",
+     o:[["y軸上の点（0, b）",1],["x軸上の点",0],["原点だけ",0],["交わらない",0]],
+     e:"切片bが同じなら、どちらも点(0, b)を通るのでy軸上で交わる。"},
+  ]},
+
+  shiki: { title:"直線の式の求め方", emo:"🖊️", questions:[
+    {q:"直線の式 y＝ax＋b を求めるのに必要な情報の組み合わせは？",
+     o:[["傾きと切片（または通る2点など）",1],["傾きだけで十分",0],["切片だけで十分",0],["通る1点だけで十分",0]],
+     e:"aとbの2つを決める情報が必要。傾き＋1点、切片＋1点、2点、のどれかがあれば求められる。"},
+    {q:"傾きが−2で、点(3, 1)を通る直線の式は？",
+     o:[["y＝−2x＋7",1],["y＝−2x＋1",0],["y＝−2x−5",0],["y＝3x＋1",0]],
+     e:"y＝−2x＋bに(3,1)を代入：1＝−6＋b → b＝7。y＝−2x＋7。"},
+    {q:"切片が5で、点(2, 1)を通る直線の式は？",
+     o:[["y＝−2x＋5",1],["y＝2x＋5",0],["y＝−2x＋1",0],["y＝5x＋2",0]],
+     e:"y＝ax＋5に(2,1)を代入：1＝2a＋5 → a＝−2（教科書 例）。"},
+    {q:"2点(2, 3)、(5, 9)を通る直線の傾きは？",
+     o:[["2",1],["3",0],["6",0],["1/2",0]],
+     e:"傾き＝（9−3）÷（5−2）＝6÷3＝2（教科書 例）。"},
+    {q:"2点(2, 3)、(5, 9)を通る直線の式は？",
+     o:[["y＝2x−1",1],["y＝2x＋3",0],["y＝3x−3",0],["y＝2x＋1",0]],
+     e:"傾き2。y＝2x＋bに(2,3)を代入：3＝4＋b → b＝−1。y＝2x−1。"},
+    {q:"変化の割合が3で、x＝1のときy＝5である1次関数の式は？",
+     o:[["y＝3x＋2",1],["y＝3x＋5",0],["y＝5x＋3",0],["y＝3x−2",0]],
+     e:"y＝3x＋bに(1,5)を代入：5＝3＋b → b＝2。"},
+    {q:"y＝4x−1 に平行で、切片が−2の直線の式は？",
+     o:[["y＝4x−2",1],["y＝−4x−2",0],["y＝4x＋2",0],["y＝−2x＋4",0]],
+     e:"平行＝傾きが同じ（a＝4）。切片−2なので y＝4x−2。"},
+    {q:"2点(0, 3)、(2, 7)を通る直線の式は？",
+     o:[["y＝2x＋3",1],["y＝3x＋2",0],["y＝2x＋7",0],["y＝7x＋3",0]],
+     e:"(0,3)を通る→切片3。傾き＝(7−3)÷(2−0)＝2。y＝2x＋3。"},
+  ]},
+
+  hoteishiki: { title:"方程式とグラフ", emo:"✏️", questions:[
+    {q:"2元1次方程式 ax＋by＝c のグラフはどんな形？",
+     o:[["直線",1],["曲線（双曲線）",0],["点",0],["放物線",0]],
+     e:"2元1次方程式のグラフは直線になる。"},
+    {q:"2x−y＝2 をyについて解くと？",
+     o:[["y＝2x−2",1],["y＝−2x＋2",0],["y＝2x＋2",0],["y＝x−2",0]],
+     e:"−y＝−2x＋2 → y＝2x−2。傾き2・切片−2の直線（教科書 例）。"},
+    {q:"y＝3 のグラフはどんな直線？",
+     o:[["x軸に平行な横の直線",1],["y軸に平行な縦の直線",0],["原点を通る直線",0],["右上がりの直線",0]],
+     e:"yの値がつねに3なので、点(0,3)を通りx軸に平行な直線。"},
+    {q:"x＝2 のグラフはどんな直線？",
+     o:[["y軸に平行な縦の直線",1],["x軸に平行な横の直線",0],["傾き2の直線",0],["原点を通る直線",0]],
+     e:"xの値がつねに2なので、点(2,0)を通りy軸に平行な直線。"},
+    {q:"連立方程式の解は、2つの方程式のグラフの何と一致する？",
+     o:[["交点の座標",1],["切片",0],["傾き",0],["x軸との交点",0]],
+     e:"連立方程式の解＝2直線の交点のx座標・y座標。"},
+    {q:"2直線のグラフの交点が(1, 2)のとき、その連立方程式の解は？",
+     o:[["x＝1、y＝2",1],["x＝2、y＝1",0],["x＝1、y＝1",0],["x＝3、y＝0",0]],
+     e:"交点のx座標が解のx、y座標が解のy。"},
+    {q:"2直線が平行（傾きが同じで切片が違う）のとき、連立方程式の解は？",
+     o:[["解はない（交わらないから）",1],["解は無数にある",0],["x＝0、y＝0",0],["切片が解になる",0]],
+     e:"平行な2直線は交点をもたないので、解はない。"},
+    {q:"3x＋2y＝6 のグラフとy軸との交点は？",
+     o:[["(0, 3)",1],["(0, 6)",0],["(2, 0)",0],["(0, 2)",0]],
+     e:"x＝0を代入：2y＝6 → y＝3。交点は(0, 3)。"},
+    {q:"方程式のグラフをかくときの基本の方法は？",
+     o:[["yについて解いて y＝ax＋b の形にする",1],["xとyを入れかえる",0],["両辺を2乗する",0],["表は使えない",0]],
+     e:"yについて解けば傾きと切片がわかる。（通る2点を見つける方法もある）"},
+    {q:"グラフを使って連立方程式を解く利点は？",
+     o:[["解のおよその値が目で見てわかる",1],["計算がいらず正確な値が必ず出る",0],["解が2組見つかる",0],["利点はない",0]],
+     e:"交点の位置から解のおよその値が視覚的にわかる。正確な値は計算で確かめる。"},
+  ]},
+
+  riyou: { title:"1次関数の利用", emo:"🚰", questions:[
+    {q:"20℃の水が1分で8℃ずつ上がる（y＝8x＋20）。80℃になるのは何分後？",
+     o:[["7.5分後",1],["6分後",0],["8分後",0],["10分後",0]],
+     e:"8x＋20＝80 → 8x＝60 → x＝7.5（章とびらの問題の答え）。"},
+    {q:"線香 y＝−0.5x＋16 が燃え尽きる（y＝0になる）のは何分後？",
+     o:[["32分後",1],["16分後",0],["8分後",0],["24分後",0]],
+     e:"0＝−0.5x＋16 → 0.5x＝16 → x＝32。"},
+    {q:"水そう y＝2x＋3 の深さが15cmになるのは何分後？",
+     o:[["6分後",1],["7.5分後",0],["5分後",0],["12分後",0]],
+     e:"2x＋3＝15 → 2x＝12 → x＝6。"},
+    {q:"針金 y＝1000−25x の残りが500gになるのは、何m使ったとき？",
+     o:[["20m",1],["25m",0],["40m",0],["10m",0]],
+     e:"1000−25x＝500 → 25x＝500 → x＝20。"},
+    {q:"「基本料金＋使った分×単価」で決まる料金は、xとyのどんな関係？",
+     o:[["1次関数（y＝ax＋b）",1],["比例",0],["反比例",0],["関数ではない",0]],
+     e:"単価a円×使用量x＋基本料金b＝1次関数の形そのもの。"},
+    {q:"2つの料金プランのグラフの交点は、何を表す？",
+     o:[["2つのプランの料金が等しくなるところ",1],["安い方のプラン",0],["基本料金",0],["最大の料金",0]],
+     e:"交点の前後で、どちらのプランが安いかが入れかわる。"},
+    {q:"xのとりうる値の範囲（例：0≦x≦32）を何という？",
+     o:[["変域",1],["変化の割合",0],["定義",0],["切片",0]],
+     e:"変数のとりうる値の範囲を変域という。文章題ではグラフの端に注意。"},
+    {q:"表・式・グラフのうち、変化のようすが「ひと目で」わかるのは？",
+     o:[["グラフ",1],["表",0],["式",0],["どれも同じ",0]],
+     e:"グラフは全体の変化が視覚的にわかる。正確な値は式、対応は表が得意。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "sugaku_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("📐 数学："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
