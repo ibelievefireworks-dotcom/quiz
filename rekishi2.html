@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>歴史 期末対策クイズ（2学期・近世）</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#fdf8f0; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#b45309; --accent-d:#92400e;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#f3e5cf; --shadow:0 4px 14px rgba(150,90,20,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#f5ead6; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#fdf3e3; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#f5f0e6; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🏯 歴史 期末対策クイズ（2学期・近世）</h1>
+  <p class="lead">4章 近世の日本（教科書 p.98〜150）<br>テーマを選んでスタート！</p>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  europe: { title:"ヨーロッパ世界と大航海時代", emo:"⛵", questions:[
+    {q:"14世紀のイタリアで始まった、古代ギリシャ・ローマの文化を復興し、人間らしさを表現する動きを何という？",
+     o:[["ルネサンス（文芸復興）",1],["宗教改革",0],["大航海時代",0],["産業革命",0]],
+     e:"ルネサンス＝文芸復興。レオナルド・ダ・ビンチやラファエロが活躍。"},
+    {q:"16世紀、カトリック教会の免罪符販売などを批判して宗教改革を始めた人物は？",
+     o:[["ルター",1],["ザビエル",0],["コロンブス",0],["マゼラン",0]],
+     e:"ドイツのルター（スイスではカルバン）。教会の指導ではなく聖書の信仰を重視した。"},
+    {q:"宗教改革で生まれた、カトリックに抗議する人々の宗派を何という？",
+     o:[["プロテスタント",1],["イエズス会",0],["正教会",0],["イスラム教",0]],
+     e:"プロテスタント（抗議する者）。対抗してカトリック側はイエズス会を作り海外布教を進めた。"},
+    {q:"ヨーロッパ人が世界各地の海に進出した時代を何という？",
+     o:[["大航海時代",1],["戦国時代",0],["ルネサンス",0],["植民地時代",0]],
+     e:"大航海時代。香辛料などアジアの産物を直接手に入れることなどが目的。"},
+    {q:"1492年、大西洋を横断してアメリカ大陸付近の島に到達した人物は？",
+     o:[["コロンブス",1],["バスコ・ダ・ガマ",0],["マゼラン",0],["ルター",0]],
+     e:"コロンブス。バスコ・ダ・ガマはインド航路、マゼランの船隊は世界一周を達成。"},
+    {q:"1543年、種子島に伝わったものは？",
+     o:[["鉄砲",1],["キリスト教",0],["活版印刷",0],["羅針盤",0]],
+     e:"ポルトガル人を乗せた中国船が漂着し鉄砲が伝来。堺（大阪）や国友（滋賀）で生産された。"},
+    {q:"1549年、鹿児島に来てキリスト教を日本に伝えた宣教師は？",
+     o:[["フランシスコ・ザビエル",1],["ルター",0],["マルコ・ポーロ",0],["ペリー",0]],
+     e:"イエズス会の宣教師ザビエル。"},
+    {q:"ポルトガル人やスペイン人と行われた貿易を何という？",
+     o:[["南蛮貿易",1],["朱印船貿易",0],["勘合貿易",0],["三角貿易",0]],
+     e:"南蛮貿易。ポルトガル人・スペイン人は南蛮人とよばれた。"},
+    {q:"天正遣欧使節（少年使節）をヨーロッパに送ったのは？",
+     o:[["キリシタン大名",1],["江戸幕府",0],["朝廷",0],["武田信玄",0]],
+     e:"キリスト教徒になった大名（キリシタン大名）が少年使節をローマ教皇のもとへ送った。"},
+  ]},
+
+  tenka: { title:"織田信長・豊臣秀吉と桃山文化", emo:"🏯", questions:[
+    {q:"1575年、織田信長が鉄砲を有効に使って武田軍を破った戦いは？",
+     o:[["長篠の戦い",1],["桶狭間の戦い",0],["関ヶ原の戦い",0],["応仁の乱",0]],
+     e:"長篠の戦い。桶狭間の戦い（1560年）は今川義元を破った戦い。"},
+    {q:"織田信長が安土城下で行った、市の税を免除し座を廃止した政策は？",
+     o:[["楽市・楽座",1],["太閤検地",0],["刀狩",0],["参勤交代",0]],
+     e:"楽市・楽座。商工業を活発にし、城下町の経済発展を図った。"},
+    {q:"豊臣秀吉が行った、田畑の面積や土地のよしあしを調べ、耕作者を検地帳に登録した政策は？",
+     o:[["太閤検地",1],["楽市・楽座",0],["班田収授",0],["地租改正",0]],
+     e:"太閤検地。土地の生産量は石高で表され、百姓は石高に基づく年貢を納めた。"},
+    {q:"1588年、豊臣秀吉が一揆を防ぐため百姓から武器を取り上げた政策は？",
+     o:[["刀狩",1],["絵踏",0],["武家諸法度",0],["五人組",0]],
+     e:"刀狩。刀・弓・やり・鉄砲などを取り上げた。"},
+    {q:"太閤検地と刀狩によって武士と百姓の身分の区別が明確になったことを何という？",
+     o:[["兵農分離",1],["身分統制",0],["廃藩置県",0],["楽市楽座",0]],
+     e:"兵農分離。武士・百姓・町人などの身分に対応した職業で生活する近世社会の仕組みができた。"},
+    {q:"豊臣秀吉が2度にわたって出兵した国は？",
+     o:[["朝鮮",1],["明（中国）",0],["琉球",0],["オランダ",0]],
+     e:"明の征服を目指して朝鮮に出兵（文禄の役・慶長の役）。失敗し、豊臣氏没落の一因となった。"},
+    {q:"信長・秀吉の時代に栄えた、壮大な城と豪華な文化を何という？",
+     o:[["桃山文化",1],["元禄文化",0],["化政文化",0],["室町文化",0]],
+     e:"桃山文化。安土城・大阪城など壮大な城がシンボル。担い手は大名や豪商。"},
+    {q:"わび茶を完成させた人物は？",
+     o:[["千利休",1],["出雲の阿国",0],["狩野永徳",0],["雪舟",0]],
+     e:"千利休。狩野永徳はふすまや屏風に豪華な絵（唐獅子図屏風）をえがいた。"},
+    {q:"かぶき踊りを始めたとされる人物は？",
+     o:[["出雲の阿国",1],["千利休",0],["近松門左衛門",0],["市川団十郎",0]],
+     e:"出雲の阿国。後の歌舞伎につながる。"},
+    {q:"織田信長・豊臣秀吉が力を持てた理由として適切でないものは？",
+     o:[["鎖国で貿易を独占したから",1],["鉄砲を有効に活用したから",0],["経済力のある都市や鉱山をおさえたから",0],["有力な戦国大名を次々に破ったから",0]],
+     e:"鎖国は江戸時代の政策。信長・秀吉は貿易や商業をむしろ活発にして経済力をつけた。"},
+  ]},
+
+  edo: { title:"江戸幕府の成立と大名統制", emo:"⚔️", questions:[
+    {q:"1600年、徳川家康が石田三成らを破った戦いは？",
+     o:[["関ヶ原の戦い",1],["長篠の戦い",0],["大阪の陣",0],["島原・天草一揆",0]],
+     e:"関ヶ原の戦い（岐阜県）。「天下分け目の戦い」。1603年、家康は征夷大将軍となり江戸幕府を開いた。"},
+    {q:"徳川家の親戚の大名を親藩、古くからの家臣を譜代大名というのに対し、関ヶ原の戦いの頃から従った大名を何という？",
+     o:[["外様大名",1],["守護大名",0],["戦国大名",0],["旗本",0]],
+     e:"外様大名。江戸から遠い場所に配置された。"},
+    {q:"1615年に幕府が定めた、大名を統制するための法律は？",
+     o:[["武家諸法度",1],["公事方御定書",0],["御成敗式目",0],["大宝律令",0]],
+     e:"武家諸法度。城の無断修理や大名どうしの無断の縁組みを禁止。違反した大名は厳しく処分された。"},
+    {q:"大名が1年おきに領地と江戸を往復する制度を何という？",
+     o:[["参勤交代",1],["五人組",0],["朱印船",0],["徳政令",0]],
+     e:"参勤交代。妻子は江戸に住まわせられた。往復の費用や江戸での生活費は藩の大きな負担になった。"},
+    {q:"参勤交代を武家諸法度に加えて制度化した第3代将軍は？",
+     o:[["徳川家光",1],["徳川家康",0],["徳川綱吉",0],["徳川吉宗",0]],
+     e:"徳川家光。鎖国体制を固めたのも家光の時代。"},
+    {q:"幕府と藩が全国の土地と人々を支配する仕組みを何という？",
+     o:[["幕藩体制",1],["摂関政治",0],["律令制",0],["封建制度",0]],
+     e:"幕藩体制。約260年続く江戸時代の支配の仕組み。"},
+    {q:"江戸時代、全人口の約85%をしめた身分は？",
+     o:[["百姓",1],["武士",0],["町人",0],["公家",0]],
+     e:"百姓が約85%。武士約7%・町人約5%。百姓は村に住み自給自足に近い生活をした。"},
+    {q:"年貢の納入や犯罪の防止に連帯責任を負わせた制度は？",
+     o:[["五人組",1],["楽市・楽座",0],["奉公",0],["座",0]],
+     e:"五人組。村の自治を利用して年貢を取り立てた。有力な本百姓は庄屋（名主）などの村役人になった。"},
+  ]},
+
+  sakoku: { title:"鎖国と4つの窓口", emo:"🚢", questions:[
+    {q:"徳川家康が大名や商人に海外渡航を許可する書状をあたえて行った貿易は？",
+     o:[["朱印船貿易",1],["南蛮貿易",0],["勘合貿易",0],["三角貿易",0]],
+     e:"朱印船貿易。東南アジア各地に移住した日本人により日本町ができた。"},
+    {q:"1637年、重い年貢とキリスト教弾圧に苦しんだ人々が起こした一揆は？",
+     o:[["島原・天草一揆",1],["シャクシャインの戦い",0],["大塩平八郎の乱",0],["応仁の乱",0]],
+     e:"島原・天草一揆。天草四郎（益田時貞）を大将にした約3万7千人の一揆。幕府は大軍を送り鎮圧した。"},
+    {q:"かくれているキリスト教信者を発見するために行われたことは？",
+     o:[["絵踏",1],["検地",0],["刀狩",0],["楽市・楽座",0]],
+     e:"絵踏。キリストや聖母マリアの像を踏ませた。長崎では毎年正月の行事になっていた。"},
+    {q:"鎖国下でオランダ商館が置かれた、長崎の人工の島は？",
+     o:[["出島",1],["種子島",0],["佐渡島",0],["対馬",0]],
+     e:"出島（約1万3000㎡）。ヨーロッパの国で貿易を許されたのはオランダだけ。"},
+    {q:"鎖国下で長崎での貿易を許されたヨーロッパの国は？",
+     o:[["オランダ",1],["ポルトガル",0],["スペイン",0],["イギリス",0]],
+     e:"オランダ（＋中国）。オランダはキリスト教の布教をしなかったため。スペイン・ポルトガルは来航禁止に。"},
+    {q:"琉球王国を征服し、その窓口となった藩は？",
+     o:[["薩摩藩",1],["対馬藩",0],["松前藩",0],["長州藩",0]],
+     e:"薩摩藩（鹿児島県）。琉球王国は残したまま支配し、中国との中継貿易を管理して利益を得た。"},
+    {q:"朝鮮との交渉の窓口を務め、貿易を独占した藩は？",
+     o:[["対馬藩",1],["薩摩藩",0],["松前藩",0],["会津藩",0]],
+     e:"対馬藩。朝鮮の釜山に倭館が設けられた。"},
+    {q:"将軍の代替わりなどに朝鮮から日本に送られた使節は？",
+     o:[["朝鮮通信使",1],["天正遣欧使節",0],["遣唐使",0],["進貢船",0]],
+     e:"朝鮮通信使。数百人の行列で江戸まで往復し、各地で歓迎された。"},
+    {q:"蝦夷地のアイヌの人々との交易を独占したのは？",
+     o:[["松前藩",1],["薩摩藩",0],["対馬藩",0],["幕府直轄",0]],
+     e:"松前藩。交換の比率は和人に有利で不公平だった。"},
+    {q:"17世紀後半、不公平な交易に不満を持ったアイヌの人々が起こした戦いの指導者は？",
+     o:[["シャクシャイン",1],["天草四郎",0],["大塩平八郎",0],["コシャマイン",0]],
+     e:"シャクシャイン。戦いの後、アイヌの人々への支配はさらに強まった。"},
+    {q:"鎖国下の「4つの窓口」の組み合わせとして正しいのは？",
+     o:[["長崎・薩摩・対馬・松前",1],["江戸・大阪・京都・長崎",0],["長崎・堺・博多・神戸",0],["薩摩・長州・土佐・肥前",0]],
+     e:"長崎（オランダ・中国）、薩摩（琉球）、対馬（朝鮮）、松前（アイヌ／蝦夷地）。最頻出の整理問題。"},
+  ]},
+
+  sangyo: { title:"産業の発達と三都", emo:"🌾", questions:[
+    {q:"江戸時代に開発が進んだ、年貢を増やすための新しい田を何という？",
+     o:[["新田",1],["荘園",0],["口分田",0],["楽田",0]],
+     e:"新田開発。幕府や藩が用水路を整備して大規模に進めた。"},
+    {q:"土を深く耕せる農具は？",
+     o:[["備中ぐわ",1],["千歯こき",0],["唐箕",0],["石包丁",0]],
+     e:"備中ぐわ。千歯こきは脱穀を効率的に行う農具。セットで覚える。"},
+    {q:"いわしを干して作った、お金を出して買う肥料は？",
+     o:[["干鰯",1],["堆肥",0],["草木灰",0],["化学肥料",0]],
+     e:"干鰯（ほしか）。綿などの商品作物の栽培に使われた。"},
+    {q:"江戸を起点に整備された東海道・中山道などの5つの道を何という？",
+     o:[["五街道",1],["七道",0],["東廻り航路",0],["シルクロード",0]],
+     e:"五街道（東海道・中山道・甲州道中・日光道中・奥州道中）。関所が置かれた。"},
+    {q:"大阪と江戸の間を往復した定期船は？",
+     o:[["菱垣廻船・樽廻船",1],["朱印船",0],["進貢船",0],["北前船のみ",0]],
+     e:"菱垣廻船・樽廻船。日本海側の産物は西廻り航路・東廻り航路で運ばれた。"},
+    {q:"「将軍のおひざもと」とよばれた都市は？",
+     o:[["江戸",1],["大阪",0],["京都",0],["長崎",0]],
+     e:"江戸＝政治の中心地。18世紀初めには人口約100万人の大都市になった。"},
+    {q:"「天下の台所」とよばれた全国の商業の中心地は？",
+     o:[["大阪",1],["江戸",0],["京都",0],["名古屋",0]],
+     e:"大阪。諸藩は蔵屋敷を置いて年貢米や特産物を売りさばいた。"},
+    {q:"諸藩が大阪に置いた、年貢米や特産物を保管・販売する施設は？",
+     o:[["蔵屋敷",1],["土倉",0],["正倉院",0],["問注所",0]],
+     e:"蔵屋敷。記述でも頻出。"},
+    {q:"金銀の交換や貸し付けを行った商人を何という？",
+     o:[["両替商",1],["株仲間",0],["蔵元",0],["飛脚",0]],
+     e:"両替商。三井などの豪商が成長した。商人の同業者組織は株仲間。"},
+  ]},
+
+  kaikaku: { title:"幕政の改革（享保〜天保）", emo:"📜", questions:[
+    {q:"1716年から享保の改革を行った第8代将軍は？",
+     o:[["徳川吉宗",1],["徳川綱吉",0],["徳川家光",0],["徳川慶喜",0]],
+     e:"徳川吉宗（紀伊藩主から将軍に）。倹約令・新田開発・目安箱・公事方御定書。"},
+    {q:"徳川吉宗が定めた、裁判の基準となる法律は？",
+     o:[["公事方御定書",1],["武家諸法度",0],["御成敗式目",0],["禁中並公家諸法度",0]],
+     e:"公事方御定書。民衆の意見を聞く目安箱も設置した。"},
+    {q:"18世紀後半、株仲間を奨励して商人の力で財政再建を図った老中は？",
+     o:[["田沼意次",1],["松平定信",0],["水野忠邦",0],["徳川吉宗",0]],
+     e:"田沼意次。商業を重視したが、わいろが横行して批判された。"},
+    {q:"田沼意次の政治の頃、浅間山の大噴火も影響して起こったききんは？",
+     o:[["天明のききん",1],["享保のききん",0],["天保のききん",0],["養和のききん",0]],
+     e:"天明のききん。百姓一揆や打ちこわしが急増し、田沼は失脚した。"},
+    {q:"寛政の改革を行った老中は？",
+     o:[["松平定信",1],["田沼意次",0],["水野忠邦",0],["井伊直弼",0]],
+     e:"松平定信。農村の立て直しと質素・倹約。厳しすぎて人々の反感を買った。"},
+    {q:"1837年、ききんで苦しむ人々を救うため大阪で乱を起こした奉行所の元役人は？",
+     o:[["大塩平八郎",1],["天草四郎",0],["シャクシャイン",0],["石田三成",0]],
+     e:"大塩平八郎。元役人の反乱は幕府に大きな衝撃をあたえた。"},
+    {q:"1825年、幕府が出した外国船を追い払う命令は？",
+     o:[["異国船打払令",1],["鎖国令",0],["禁教令",0],["倹約令",0]],
+     e:"異国船打払令。モリソン号事件を批判した蘭学者の渡辺崋山・高野長英は処罰された（蛮社の獄）。"},
+    {q:"天保の改革を行った老中は？",
+     o:[["水野忠邦",1],["松平定信",0],["田沼意次",0],["徳川吉宗",0]],
+     e:"水野忠邦。享保・寛政の改革を手本に、株仲間の解散などを行ったが2年余りで失敗。"},
+    {q:"改革の順番として正しいのは？",
+     o:[["享保→田沼の政治→寛政→天保",1],["寛政→享保→天保→田沼の政治",0],["天保→寛政→享保→田沼の政治",0],["田沼の政治→享保→寛政→天保",0]],
+     e:"享保（吉宗）→田沼→寛政（定信）→天保（忠邦）。「きょうた・かんて」などで順番暗記。"},
+  ]},
+
+  bunka: { title:"元禄文化・化政文化と学問", emo:"🎭", questions:[
+    {q:"17世紀末〜18世紀初め、上方（大阪・京都）の町人を担い手として栄えた文化は？",
+     o:[["元禄文化",1],["化政文化",0],["桃山文化",0],["国風文化",0]],
+     e:"元禄文化。当時の元号「元禄」から。担い手＝経済力を持った上方の町人。"},
+    {q:"『浮世草子』で町人の生活をえがき、ベストセラー作家となった人物は？",
+     o:[["井原西鶴",1],["松尾芭蕉",0],["近松門左衛門",0],["十返舎一九",0]],
+     e:"井原西鶴。浮世草子＝町人社会を描いた小説。"},
+    {q:"俳諧（俳句）の芸術性を高め、『奥の細道』を書いた人物は？",
+     o:[["松尾芭蕉",1],["小林一茶",0],["与謝蕪村",0],["石川啄木",0]],
+     e:"松尾芭蕉。自己の内面を作品に表現した。"},
+    {q:"人形浄瑠璃の脚本で、町人社会の義理と人情をえがいた人物は？",
+     o:[["近松門左衛門",1],["井原西鶴",0],["出雲の阿国",0],["滝沢馬琴",0]],
+     e:"近松門左衛門。『曽根崎心中』など。歌舞伎では坂田藤十郎（上方）・市川団十郎（江戸）が人気。"},
+    {q:"町人の風俗をえがき「浮世絵の祖」といわれる人物は？",
+     o:[["菱川師宣",1],["尾形光琳",0],["葛飾北斎",0],["狩野永徳",0]],
+     e:"菱川師宣（『見返り美人図』）。尾形光琳は大胆な構図の装飾画。"},
+    {q:"19世紀初め、江戸の庶民を担い手として栄えた文化は？",
+     o:[["化政文化",1],["元禄文化",0],["桃山文化",0],["飛鳥文化",0]],
+     e:"化政文化（文化・文政の元号から）。元禄＝上方の町人、化政＝江戸の庶民、の対比が最頻出。"},
+    {q:"多色刷りの版画を何という？",
+     o:[["錦絵",1],["水墨画",0],["装飾画",0],["油絵",0]],
+     e:"錦絵。鈴木春信が始め、喜多川歌麿（美人画）、葛飾北斎・歌川広重（風景画）が人気に。"},
+    {q:"『古事記伝』を著して国学を大成した人物は？",
+     o:[["本居宣長",1],["杉田玄白",0],["伊能忠敬",0],["新井白石",0]],
+     e:"本居宣長。国学は天皇を尊ぶ思想と結び付き、幕末の尊王攘夷運動に影響した。"},
+    {q:"ヨーロッパの解剖書を翻訳して『解体新書』を出版し、蘭学の基礎を築いた人物は？",
+     o:[["杉田玄白（と前野良沢）",1],["本居宣長",0],["伊能忠敬",0],["緒方洪庵",0]],
+     e:"杉田玄白ら。蘭学＝オランダ語でヨーロッパの学問を学ぶ学問。"},
+    {q:"ヨーロッパの測量術で全国の海岸線を測量し、正確な日本地図を作った人物は？",
+     o:[["伊能忠敬",1],["杉田玄白",0],["本居宣長",0],["間宮林蔵",0]],
+     e:"伊能忠敬。19世紀初めに全国を歩いて測量した。"},
+    {q:"庶民の子どもが読み・書き・そろばんを学んだ場所は？",
+     o:[["寺子屋",1],["藩校",0],["大学",0],["適塾",0]],
+     e:"寺子屋。武士の子弟が学ぶのは藩校。日本の識字率の高さの土台になった。"},
+    {q:"元禄文化と化政文化の違いとして正しいのは？",
+     o:[["元禄は上方の町人、化政は江戸の庶民が担い手",1],["元禄は江戸、化政は上方が中心",0],["どちらも武士だけの文化",0],["どちらも朝廷の文化",0]],
+     e:"担い手と場所の対比。テストで最もよく問われる整理ポイント。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "rekishi2_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🏯 歴史(2学期・近世)："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
