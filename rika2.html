@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>理科 期末対策クイズ（2学期・生物）</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#f2fbf6; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#059669; --accent-d:#047857;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#d8f0e3; --shadow:0 4px 14px rgba(10,90,60,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#e0f3ea; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#effaf4; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef4f0; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🌱 理科 期末対策クイズ（2学期・生物）</h1>
+  <p class="lead">生物の体のつくりとはたらき（教科書 p.2〜67）<br>テーマを選んでスタート！</p>
+  <a href="output.html?subj=理科" style="display:block;text-align:center;text-decoration:none;font-weight:700;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent);border-radius:14px;padding:12px;margin:2px 0 14px;background:#fff;">✍️ 書いて仕上げる（用語・考察の記述）→</a>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  saibou: { title:"細胞と顕微鏡（1章）", emo:"🔬", questions:[
+    {q:"生物の体をつくる、最小の単位を何という？",
+     o:[["細胞",1],["組織",0],["器官",0],["核",0]],
+     e:"すべての生物の体は細胞からできている。"},
+    {q:"細胞の中にふつう1個あり、染色液によく染まる丸いつくりは？",
+     o:[["核",1],["細胞膜",0],["液胞",0],["葉緑体",0]],
+     e:"核。酢酸カーミン液や酢酸オルセイン液で赤く染まる。"},
+    {q:"細胞のいちばん外側を包むうすい膜は？",
+     o:[["細胞膜",1],["細胞壁",0],["核膜",0],["気孔",0]],
+     e:"細胞膜。動物・植物どちらの細胞にもある。"},
+    {q:"植物の細胞だけにあるつくりの組み合わせは？",
+     o:[["細胞壁・葉緑体・液胞",1],["核・細胞膜・細胞質",0],["細胞膜・核・葉緑体",0],["細胞壁・核・細胞膜",0]],
+     e:"細胞壁・葉緑体・（発達した）液胞は植物細胞の特徴（教科書の観察）。核と細胞膜は動植物共通。"},
+    {q:"植物の細胞で、光合成を行う緑色の粒は？",
+     o:[["葉緑体",1],["液胞",0],["細胞壁",0],["核",0]],
+     e:"葉緑体。光を受けてデンプンなどの養分をつくる。"},
+    {q:"体が1個の細胞でできている生物を何という？",
+     o:[["単細胞生物",1],["多細胞生物",0],["微生物",0],["原生生物",0]],
+     e:"単細胞生物（ゾウリムシ・ミカヅキモなど）。1個の細胞で運動も栄養のとり入れも行う（教科書本文）。"},
+    {q:"多くの細胞でできている生物を何という？",
+     o:[["多細胞生物",1],["単細胞生物",0],["集合生物",0],["群体",0]],
+     e:"多細胞生物。ヒトや多くの動植物。"},
+    {q:"形やはたらきが同じ細胞の集まりを何という？",
+     o:[["組織",1],["器官",0],["個体",0],["細胞質",0]],
+     e:"細胞→組織→器官→個体、の順に体はつくられる。"},
+    {q:"いくつかの組織が集まって特定のはたらきをする部分（胃・葉など）を何という？",
+     o:[["器官",1],["組織",0],["細胞",0],["系統",0]],
+     e:"器官。器官が集まって個体ができる。"},
+    {q:"顕微鏡で視野が暗いとき、調節するのは？",
+     o:[["反射鏡としぼり",1],["接眼レンズの倍率",0],["プレパラート",0],["ステージの高さ",0]],
+     e:"反射鏡としぼりで明るさを調節する（教科書の顕微鏡の使い方）。"},
+  ]},
+
+  kougousei: { title:"光合成と呼吸（2章）", emo:"🍃", questions:[
+    {q:"植物が光を受けて、デンプンなどの養分をつくるはたらきは？",
+     o:[["光合成",1],["呼吸",0],["蒸散",0],["消化",0]],
+     e:"光合成。細胞の中の葉緑体で行われる。"},
+    {q:"光合成の材料となる2つの物質は？",
+     o:[["水と二酸化炭素",1],["酸素とデンプン",0],["水と酸素",0],["窒素と水素",0]],
+     e:"水＋二酸化炭素 →（光）→ デンプンなど＋酸素。"},
+    {q:"光合成でつくられる気体は？",
+     o:[["酸素",1],["二酸化炭素",0],["窒素",0],["水素",0]],
+     e:"酸素が発生する。養分（デンプンなど）も同時につくられる。"},
+    {q:"光合成が行われる場所は細胞のどこ？",
+     o:[["葉緑体",1],["核",0],["液胞",0],["細胞壁",0]],
+     e:"葉緑体。緑色の粒で、光のエネルギーを使う。"},
+    {q:"葉にデンプンができたことを確かめる薬品は？",
+     o:[["ヨウ素液",1],["ベネジクト液",0],["石灰水",0],["BTB液",0]],
+     e:"ヨウ素液。デンプンがあると青紫色に変化する。"},
+    {q:"植物の呼吸について正しいのは？",
+     o:[["昼も夜も一日中行っている",1],["夜だけ行う",0],["昼だけ行う",0],["呼吸はしない",0]],
+     e:"呼吸は一日中。昼は光合成の方がさかんなので、見かけ上は酸素を出しているように見える。"},
+    {q:"呼吸で植物が取り入れる気体・出す気体は？",
+     o:[["酸素を取り入れ、二酸化炭素を出す",1],["二酸化炭素を取り入れ、酸素を出す",0],["窒素を取り入れ、酸素を出す",0],["何も出し入れしない",0]],
+     e:"呼吸は動物と同じ。光合成とは気体の出入りが逆。"},
+    {q:"石灰水を白くにごらせる気体は？",
+     o:[["二酸化炭素",1],["酸素",0],["水素",0],["ちっ素",0]],
+     e:"二酸化炭素。呼吸の実験で使われる定番の確認方法。"},
+    {q:"光合成の実験で、葉の一部をアルミはくで覆うのは何を調べるため？",
+     o:[["光が当たらないと光合成が起きないことを確かめるため",1],["葉を保護するため",0],["温度を上げるため",0],["水分を保つため",0]],
+     e:"覆った部分（光なし）と当たった部分（光あり）を比較する対照実験。"},
+    {q:"「対照実験」とは何のために行う？",
+     o:[["調べたい条件以外を同じにして比較するため",1],["実験を2回くり返すため",0],["失敗に備えるため",0],["時間を節約するため",0]],
+     e:"1つの条件だけを変えて比べることで、その条件の効果がわかる。記述問題の頻出ポイント。"},
+  ]},
+
+  mizu: { title:"水の通り道・蒸散（2章）", emo:"💧", questions:[
+    {q:"根から吸収した水や養分（肥料分）が通る管は？",
+     o:[["道管",1],["師管",0],["気管",0],["リンパ管",0]],
+     e:"道管。茎の内側を通る。「水（みず）は道（みち）を通る」と覚える。"},
+    {q:"葉でつくられた養分が通る管は？",
+     o:[["師管",1],["道管",0],["血管",0],["毛細血管",0]],
+     e:"師管。茎の外側を通る。"},
+    {q:"道管と師管が集まった束を何という？",
+     o:[["維管束",1],["神経束",0],["葉脈束",0],["繊維束",0]],
+     e:"維管束。葉では葉脈として見える。"},
+    {q:"葉の表皮にある、三日月形の細胞に囲まれたすきまは？",
+     o:[["気孔",1],["道管",0],["葉緑体",0],["柔毛",0]],
+     e:"気孔。孔辺細胞に囲まれ、ふつう葉の裏側に多い。"},
+    {q:"植物の体から水が水蒸気となって出ていくことを何という？",
+     o:[["蒸散",1],["蒸発",0],["放出",0],["拡散",0]],
+     e:"蒸散。主に気孔で起こり、根からの吸水の原動力になる。"},
+    {q:"気孔から出入りする気体でないものは？",
+     o:[["デンプン",1],["酸素",0],["二酸化炭素",0],["水蒸気",0]],
+     e:"デンプンは固体の養分で気孔は通らない（師管を糖に変わって移動）。気孔は気体の出入り口。"},
+    {q:"蒸散の実験で、葉の裏にワセリンをぬると水の減り方はどうなる？",
+     o:[["大きく減りにくくなる（裏に気孔が多いから）",1],["変わらない",0],["増える",0],["葉が枯れる",0]],
+     e:"気孔の多い裏側をふさぐと蒸散が大きく抑えられる＝裏に気孔が多い証拠。"},
+    {q:"根の先端近くにある細い毛のようなつくりは？",
+     o:[["根毛",1],["柔毛",0],["繊毛",0],["側根",0]],
+     e:"根毛。表面積を大きくして、水や養分を効率よく吸収する。"},
+  ]},
+
+  shouka: { title:"消化と吸収（3章）", emo:"🍙", questions:[
+    {q:"食物を吸収されやすい養分に分解するはたらきを何という？",
+     o:[["消化",1],["吸収",0],["排出",0],["呼吸",0]],
+     e:"消化。口→食道→胃→小腸→大腸の消化管で行われる。"},
+    {q:"だ液にふくまれる消化酵素は？",
+     o:[["アミラーゼ",1],["ペプシン",0],["リパーゼ",0],["トリプシン",0]],
+     e:"アミラーゼ。デンプンを分解する（教科書のだ液の実験）。"},
+    {q:"だ液のはたらきの実験で、デンプンが分解されて麦芽糖などができたことを確かめる薬品は？",
+     o:[["ベネジクト液",1],["ヨウ素液",0],["石灰水",0],["酢酸カーミン液",0]],
+     e:"ベネジクト液＋加熱で赤褐色の沈殿。ヨウ素液はデンプンが「残っている」ことの確認用。"},
+    {q:"だ液の実験を約40℃で行う理由は？",
+     o:[["ヒトの体温に近い温度だから",1],["水がよく蒸発するから",0],["デンプンがとけるから",0],["試験管が割れないから",0]],
+     e:"消化酵素は体温くらいの温度で最もよくはたらく。記述で頻出。"},
+    {q:"胃液にふくまれる、タンパク質を分解する消化酵素は？",
+     o:[["ペプシン",1],["アミラーゼ",0],["リパーゼ",0],["インスリン",0]],
+     e:"ペプシン。胃はタンパク質の消化を担当。"},
+    {q:"デンプンは最終的に何に分解される？",
+     o:[["ブドウ糖",1],["アミノ酸",0],["脂肪酸",0],["麦芽糖のまま",0]],
+     e:"デンプン→（麦芽糖）→ブドウ糖。小腸で吸収される。"},
+    {q:"タンパク質は最終的に何に分解される？",
+     o:[["アミノ酸",1],["ブドウ糖",0],["脂肪酸",0],["モノグリセリド",0]],
+     e:"タンパク質→アミノ酸。"},
+    {q:"脂肪は最終的に何に分解される？",
+     o:[["脂肪酸とモノグリセリド",1],["ブドウ糖とアミノ酸",0],["麦芽糖",0],["水と二酸化炭素",0]],
+     e:"脂肪→脂肪酸＋モノグリセリド。胆汁（肝臓でつくられる）が消化を助ける。"},
+    {q:"小腸の内側の壁にある、たくさんの小さな突起を何という？",
+     o:[["柔毛",1],["根毛",0],["繊毛",0],["肺胞",0]],
+     e:"柔毛。表面積を大きくして養分を効率よく吸収する。"},
+    {q:"柔毛がたくさんあることの利点は？",
+     o:[["表面積が大きくなり養分を効率よく吸収できる",1],["消化液を多く出せる",0],["食物を速く動かせる",0],["温度を保てる",0]],
+     e:"「表面積を大きくして効率よく○○する」は柔毛・肺胞・根毛に共通する頻出記述。"},
+    {q:"胆汁をつくる器官は？",
+     o:[["肝臓",1],["胆のう",0],["すい臓",0],["じん臓",0]],
+     e:"胆汁は肝臓でつくられ、胆のうにたくわえられる。消化酵素はふくまないが脂肪の分解を助ける。"},
+    {q:"ブドウ糖とアミノ酸は柔毛から吸収された後、どこを通る？",
+     o:[["毛細血管",1],["リンパ管",0],["気管",0],["道管",0]],
+     e:"ブドウ糖・アミノ酸→毛細血管。脂肪酸・モノグリセリド→（再び脂肪になり）リンパ管。"},
+  ]},
+
+  junkan: { title:"呼吸・血液・排出（3章）", emo:"🫀", questions:[
+    {q:"肺の中にある、たくさんの小さなふくろを何という？",
+     o:[["肺胞",1],["柔毛",0],["気孔",0],["気管支",0]],
+     e:"肺胞。表面積を大きくして酸素と二酸化炭素の交換を効率よく行う。"},
+    {q:"血液の成分で、酸素を運ぶものは？",
+     o:[["赤血球",1],["白血球",0],["血小板",0],["血しょう",0]],
+     e:"赤血球。ヘモグロビンが酸素と結びつく。"},
+    {q:"ヘモグロビンの性質として正しいのは？",
+     o:[["酸素が多いところで結びつき、少ないところではなす",1],["酸素が少ないところで結びつく",0],["二酸化炭素を運ぶ",0],["体温を保つ",0]],
+     e:"肺（酸素多）で結びつき、全身（酸素少）ではなす。この性質で酸素を運べる。記述頻出。"},
+    {q:"血液の成分で、細菌などをとらえて体を守るのは？",
+     o:[["白血球",1],["赤血球",0],["血小板",0],["血しょう",0]],
+     e:"白血球。免疫のはたらき。"},
+    {q:"出血したとき、血を固めるはたらきをするのは？",
+     o:[["血小板",1],["白血球",0],["赤血球",0],["血しょう",0]],
+     e:"血小板。"},
+    {q:"血液の液体成分で、養分や不要物をとかして運ぶのは？",
+     o:[["血しょう",1],["組織液",0],["リンパ液",0],["胆汁",0]],
+     e:"血しょう。毛細血管からしみ出ると組織液になる。"},
+    {q:"心臓から送り出される血液が流れる血管は？",
+     o:[["動脈",1],["静脈",0],["毛細血管",0],["リンパ管",0]],
+     e:"動脈。壁が厚く弾力がある。心臓にもどる血管が静脈（弁がある）。"},
+    {q:"酸素を多くふくむ血液を何という？",
+     o:[["動脈血",1],["静脈血",0],["混合血",0],["組織液",0]],
+     e:"動脈血（あざやかな赤色）。二酸化炭素が多い血液は静脈血。"},
+    {q:"⚠️ひっかけ注意⚠️ 肺動脈を流れる血液は？",
+     o:[["静脈血",1],["動脈血",0],["どちらでもない",0],["リンパ液",0]],
+     e:"肺動脈＝心臓から肺へ向かう血管だが、流れるのは二酸化炭素の多い【静脈血】。肺静脈には動脈血が流れる。テスト最頻出のひっかけ。"},
+    {q:"細胞の活動でできた有害なアンモニアは、肝臓で何に変えられる？",
+     o:[["尿素",1],["尿酸",0],["ブドウ糖",0],["デンプン",0]],
+     e:"アンモニア→（肝臓で）→害の少ない尿素に変えられる。"},
+    {q:"血液中から尿素などの不要物をこしとる器官は？",
+     o:[["じん臓",1],["肝臓",0],["すい臓",0],["ぼうこう",0]],
+     e:"じん臓。不要物は尿としてぼうこうにためられ排出される。"},
+    {q:"細胞による呼吸（細胞呼吸）とは？",
+     o:[["酸素を使って養分を分解しエネルギーをとり出すこと",1],["肺で息を吸うこと",0],["二酸化炭素をつくらない呼吸",0],["植物だけが行う呼吸",0]],
+     e:"養分＋酸素→エネルギー＋二酸化炭素＋水。全身のすべての細胞で行われる。"},
+  ]},
+
+  shinkei: { title:"刺激と反応（4章）", emo:"⚡", questions:[
+    {q:"光や音などの刺激を受けとる器官を何という？",
+     o:[["感覚器官",1],["運動器官",0],["消化器官",0],["循環器官",0]],
+     e:"感覚器官。目（光）・耳（音）・鼻（におい）・舌（味）・皮膚（温度や圧力）。"},
+    {q:"目で光の刺激を受けとる部分は？",
+     o:[["網膜",1],["レンズ（水晶体）",0],["こうさい",0],["角膜",0]],
+     e:"網膜。光の刺激を信号に変えて脳へ送る。"},
+    {q:"耳で音の振動を最初に受けとる膜は？",
+     o:[["鼓膜",1],["網膜",0],["うずまき管",0],["粘膜",0]],
+     e:"鼓膜。振動→耳小骨→うずまき管→信号として脳へ。"},
+    {q:"脳とせきずいをまとめて何という？",
+     o:[["中枢神経",1],["末しょう神経",0],["運動神経",0],["感覚神経",0]],
+     e:"中枢神経。判断や命令を行う。そこから枝分かれするのが末しょう神経。"},
+    {q:"感覚器官からの信号を中枢に伝える神経は？",
+     o:[["感覚神経",1],["運動神経",0],["中枢神経",0],["自律神経",0]],
+     e:"感覚神経。中枢からの命令を筋肉へ伝えるのが運動神経。"},
+    {q:"「熱いものに触れて思わず手を引っこめた」— この反応を何という？",
+     o:[["反射",1],["意識的な反応",0],["条件反射だけ",0],["反応ではない",0]],
+     e:"反射。刺激に対して無意識に起こる反応。"},
+    {q:"反射が意識的な反応より速い理由は？",
+     o:[["信号が脳を通らず、せきずいから直接命令が出るから",1],["筋肉が強いから",0],["神経が太いから",0],["刺激が強いから",0]],
+     e:"反射の信号は感覚器官→せきずい→筋肉と最短ルートを通る。記述最頻出。"},
+    {q:"反射の例として正しいものは？",
+     o:[["明るい所でひとみが小さくなる",1],["名前を呼ばれて振り向く",0],["信号を見て止まる",0],["問題を考えて答える",0]],
+     e:"ひとみの大きさの変化は無意識＝反射。ほかは脳で判断する意識的な反応。"},
+    {q:"うでを曲げるとき、筋肉はどうなっている？",
+     o:[["内側の筋肉が縮み、外側の筋肉がゆるむ",1],["両方の筋肉が縮む",0],["両方の筋肉がゆるむ",0],["筋肉は関係ない",0]],
+     e:"筋肉は対（ペア）ではたらく。一方が縮むとき、もう一方はゆるむ。"},
+    {q:"筋肉が骨についている部分（丈夫なつくり）を何という？",
+     o:[["けん",1],["関節",0],["軟骨",0],["じん帯",0]],
+     e:"けん。筋肉は関節をまたいで2つの骨に、けんでついている。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "rika2_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🌱 理科(2学期・生物)："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+</script>
+</body>
+</html>
