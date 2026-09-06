@@ -25,6 +25,16 @@
   .mode .tt b{font-size:16px;display:block;}
   .mode .tt small{color:var(--sub);font-size:12px;}
   .mode .best{font-size:11px;color:var(--ok);font-weight:700;margin-left:auto;}
+  .sethead{display:flex;align-items:center;gap:10px;margin:14px 2px 6px;}
+  .sethead .emo{font-size:24px;}
+  .sethead .tt b{font-size:15px;display:block;}
+  .sethead .tt small{color:var(--sub);font-size:12px;}
+  .setrow{display:flex;gap:8px;margin-bottom:6px;}
+  .mode.small{flex:1;padding:10px 10px;margin:0;gap:8px;}
+  .mode.small .emo{font-size:20px;}
+  .mode.small .tt b{font-size:14px;}
+  .mode.small .tt small{display:block;font-size:11px;color:var(--sub);}
+  .mode.small .tt small.best{color:var(--ok);font-weight:700;margin-left:0;}
   .bar{height:8px;background:#e0f3ea;border-radius:99px;overflow:hidden;margin-bottom:8px;}
   .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s;}
   .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:12px;}
@@ -63,8 +73,8 @@
 <div id="home">
   <a class="backlink" href="index.html">← 科目をえらぶ</a>
   <h1>🔬 理科 小テスト対策：細胞のつくり</h1>
-  <p class="lead">プリント「生物のからだのつくりとはたらき」全8問<br>本番は<b>順番が変わって出る</b>ので、シャッフルで練習！</p>
-  <div class="note">おすすめの順番：①4択で用語を確認 → ②「書く」モードで本番形式を2周（✗ゼロになるまで）。答えは<b>漢字で書ける</b>ことがゴール。</div>
+  <p class="lead">プリント「生物のからだのつくりとはたらき」を4セット・計36問に<br>本番は<b>順番が変わって出る</b>ので、毎回シャッフル！</p>
+  <div class="note">おすすめ：<b>セット1→2→3（選択式）</b>で手を変え品を変え反復 → 仕上げに<b>セット4（記述）</b>を✗ゼロまで。答えは<b>漢字で書ける</b>ことがゴール。</div>
   <div id="modeList"></div>
   <p class="foot">※合格ライン＝全問正解（8/8）。小テストは満点スタートが目標！</p>
 </div>
@@ -125,8 +135,8 @@ const FIG = `<svg class="fig" viewBox="0 0 340 190" xmlns="http://www.w3.org/200
   <defs><pattern id="dots" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#633"/></pattern></defs>
 </svg>`;
 
-/* プリントの8問をそのまま。o=4択の選択肢（1が正解）、a=書く答え */
-const QS = [
+/* セット1：プリントの8問をそのまま。o=4択の選択肢（1が正解）、a=書く答え */
+const QS1 = [
   {n:1,q:"生物のからだに共通して見られる小さな部屋のようなものを何というか。",a:"細胞",o:[["細胞",1],["組織",0],["器官",0],["細胞質",0]],e:"「胞」の字に注意（月へん＋包）。すべての生物のからだは細胞でできている。"},
   {n:2,q:"光合成が行われる、細胞の中の緑色をした粒を何というか。",a:"葉緑体",o:[["葉緑体",1],["液胞",0],["核",0],["細胞壁",0]],e:"「葉」「緑」「体」の3文字。植物の細胞だけにある。"},
   {n:3,q:"細胞にふつう1つあり、染色液によく染まる部分を何というか。",a:"核",o:[["核",1],["細胞膜",0],["液胞",0],["葉緑体",0]],e:"核。酢酸カーミン液・酢酸オルセイン液で赤く染まる。問7とセット。"},
@@ -137,34 +147,64 @@ const QS = [
   {n:8,q:"小腸や葉のように、いくつかの組織が集まって、1つのまとまった形をもち、特定のはたらきをする部分を何というか。",a:"器官",o:[["器官",1],["組織",0],["個体",0],["細胞",0]],e:"細胞→組織→器官→個体。「いくつかの組織が集まって」＝器官。「器」の字は口が4つ＋大。"},
 ];
 
-const MODES = {
-  choice:{title:"① 4択で確認",emo:"✅",sub:"用語をすぐ思い出せるか（全8問）",write:false},
-  write:{title:"② 書く（本番形式）",emo:"✍️",sub:"紙に漢字で書いて自己採点（全8問・シャッフル）",write:true},
+/* セット2：同じ答えを別の言い方で／用語→説明の逆問い */
+const QS2 = [
+  {n:"言い換え",q:"細胞の中にあって、光合成が行われる場所はどこか。",a:"葉緑体",o:[["葉緑体",1],["液胞",0],["核",0],["細胞質",0]],e:"「光合成の場」ときたら葉緑体。緑色の粒。"},
+  {n:"言い換え",q:"酢酸カーミン液や酢酸オルセイン液で赤く染まる、細胞に1つある丸いつくりは何か。",a:"核",o:[["核",1],["葉緑体",0],["細胞膜",0],["液胞",0]],e:"染色液の名前が出ても答えは核。"},
+  {n:"言い換え",q:"植物の細胞で、細胞膜のさらに外側をおおっている丈夫なつくりは何か。",a:"細胞壁",o:[["細胞壁",1],["細胞膜",0],["細胞質",0],["液胞",0]],e:"「外側」「丈夫」「植物だけ」＝細胞壁。からだを支える役目。"},
+  {n:"言い換え",q:"動物の細胞にもある、細胞のいちばん外側をつつむうすい膜は何か。",a:"細胞膜",o:[["細胞膜",1],["細胞壁",0],["核",0],["葉緑体",0]],e:"動物にもある＝細胞壁ではなく細胞膜。"},
+  {n:"言い換え",q:"細胞の中身のうち、核と細胞膜をのぞいた部分全体を何というか。",a:"細胞質",o:[["細胞質",1],["細胞液",0],["組織",0],["液胞",0]],e:"細胞質。葉緑体や液胞は細胞質の中にある。"},
+  {n:"言い換え",q:"形やはたらきが同じ細胞の集まりを組織という。では、組織がいくつか集まって、まとまった形と特定のはたらきをもつものを何というか。",a:"器官",o:[["器官",1],["個体",0],["細胞",0],["組織",0]],e:"組織→器官。胃・小腸・葉・根はすべて器官。"},
+  {n:"逆問い",q:"「細胞質」の説明として正しいものはどれか。（書くモード：細胞質とはどの部分か、一文で説明せよ）",a:"細胞膜の内側で、核以外の部分",o:[["細胞膜の内側で、核以外の部分",1],["細胞膜の外側にある丈夫なつくり",0],["染色液でよく染まる丸い部分",0],["光合成を行う緑色の粒",0]],e:"プリント6番の逆。説明を自分の言葉で言えると本番で言い回しが変わっても対応できる。"},
+  {n:"逆問い",q:"「細胞壁」は細胞膜の内側・外側のどちらにあるか。また、動物の細胞にあるか。",a:"外側にある・動物の細胞にはない",o:[["外側にある・動物の細胞にはない",1],["内側にある・動物の細胞にもある",0],["外側にある・動物の細胞にもある",0],["内側にある・動物の細胞にはない",0]],e:"細胞壁＝細胞膜の外側、植物だけ。プリント4番の逆問い。"},
+  {n:"逆問い",q:"植物の細胞にしか見られないつくりを3つ答えよ。",a:"細胞壁・葉緑体・液胞",o:[["細胞壁・葉緑体・液胞",1],["核・細胞膜・細胞質",0],["細胞壁・核・液胞",0],["葉緑体・細胞膜・核",0]],e:"「壁・緑・液」の3つ。核・細胞膜・細胞質は動物と共通。"},
+  {n:"言い換え",q:"生物のからだをつくる、いちばん小さな基本の単位は何か。",a:"細胞",o:[["細胞",1],["組織",0],["器官",0],["核",0]],e:"「部屋のようなもの」＝「基本の単位」＝細胞。"},
+];
+
+/* セット3：図のA〜G・順番・分類 */
+const QS3 = [
+  {n:"図",fig:true,q:"図のAのつくりの名前は何か。",a:"細胞壁",o:[["細胞壁",1],["細胞膜",0],["核",0],["液胞",0]],e:"いちばん外側の厚い線＝細胞壁。"},
+  {n:"図",fig:true,q:"図のBのつくりの名前は何か。",a:"核",o:[["核",1],["葉緑体",0],["液胞",0],["細胞質",0]],e:"中央の丸＝核。染色液で染まる。"},
+  {n:"図",fig:true,q:"図のCのつくりの名前は何か。",a:"細胞膜",o:[["細胞膜",1],["細胞壁",0],["細胞質",0],["核",0]],e:"細胞壁のすぐ内側のうすい線＝細胞膜。"},
+  {n:"図",fig:true,q:"図のDのつくりの名前は何か。",a:"葉緑体",o:[["葉緑体",1],["液胞",0],["核",0],["細胞膜",0]],e:"小さな粒がたくさん＝葉緑体。"},
+  {n:"図",fig:true,q:"図のEのつくりの名前は何か。",a:"液胞",o:[["液胞",1],["葉緑体",0],["核",0],["細胞質",0]],e:"大きなふくろ＝液胞。成長した植物の細胞で大きい。"},
+  {n:"図",fig:true,q:"図のF・Gのつくりの名前をそれぞれ答えよ。",a:"F＝核、G＝細胞膜",o:[["F＝核、G＝細胞膜",1],["F＝核、G＝細胞壁",0],["F＝葉緑体、G＝細胞膜",0],["F＝液胞、G＝細胞壁",0]],e:"動物の細胞には細胞壁がないので、いちばん外側は細胞膜。"},
+  {n:"図",fig:true,q:"図で、動物の細胞には見られないつくりをA〜Eからすべて選べ。",a:"A、D、E",o:[["A、D、E",1],["B、C",0],["A、B、D",0],["Aのみ",0]],e:"A細胞壁・D葉緑体・E液胞＝植物だけ。B核・C細胞膜は動物にもある。"},
+  {n:"順番",q:"細胞・組織・器官・個体を、小さいものから順に並べよ。",a:"細胞→組織→器官→個体",o:[["細胞→組織→器官→個体",1],["細胞→器官→組織→個体",0],["組織→細胞→器官→個体",0],["細胞→組織→個体→器官",0]],e:"細（さい）→組（そ）→器（き）→個（こ）。プリント8番の土台。"},
+  {n:"分類",q:"植物と動物の細胞に共通して見られるつくりをすべて答えよ。",a:"核・細胞膜・細胞質",o:[["核・細胞膜・細胞質",1],["核・細胞壁・葉緑体",0],["細胞膜・液胞・葉緑体",0],["核だけ",0]],e:"共通＝核・細胞膜・細胞質。プリント5番「共通して見られる」の発展。"},
+  {n:"分類",q:"次のうち、器官にあたるものをすべて選べ：小腸・葉・筋肉の細胞・根",a:"小腸・葉・根",o:[["小腸・葉・根",1],["小腸・葉・筋肉の細胞・根",0],["葉・根",0],["筋肉の細胞",0]],e:"小腸・葉・根＝器官。筋肉の細胞は「細胞」。"},
+];
+
+const SETS = {
+  s1:{title:"セット1：プリントそのまま（選択式）",emo:"📄",sub:"本番と同じ8問を4択で（順番シャッフル）",qs:QS1,write:false},
+  s2:{title:"セット2：言い方を変えて・逆から（選択式）",emo:"🔁",sub:"同じ答えを別の問い方で／用語→説明（10問）",qs:QS2,write:false},
+  s3:{title:"セット3：図と関係（選択式）",emo:"🔬",sub:"図のA〜Gは何か・並び順・植物と動物の分類（10問）",qs:QS3,write:false},
+  s4:{title:"セット4：記述（本番形式）",emo:"✍️",sub:"プリントの8問を紙に漢字で書いて自己採点。✗ゼロがゴール",qs:QS1,write:true},
 };
 const $=id=>document.getElementById(id);
 let state={};
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function bestKey(k){return "kotest_rika_saibou_"+k;}
+function bestKey(s){return "kotest_rika_saibou_"+s;}
 function renderHome(){
   $("home").classList.remove("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");
   const list=$("modeList");list.innerHTML="";
-  for(const k in MODES){const m=MODES[k];const best=localStorage.getItem(bestKey(k));
+  for(const s in SETS){const st=SETS[s];const best=localStorage.getItem(bestKey(s));
     const b=document.createElement("button");b.className="mode";
-    b.innerHTML=`<span class="emo">${m.emo}</span><span class="tt"><b>${m.title}</b><small>${m.sub}</small></span>${best?`<span class="best">最高 ${best}%</span>`:""}`;
-    b.onclick=()=>start(k);list.appendChild(b);}
+    b.innerHTML=`<span class="emo">${st.emo}</span><span class="tt"><b>${st.title}</b><small>${st.sub}</small></span>${best?`<span class="best">最高 ${best}%</span>`:""}`;
+    b.onclick=()=>start(s);list.appendChild(b);}
 }
-function start(mode,subset){
-  const qs=subset?subset:QS.slice();
-  state={mode,items:shuffle(qs),pos:0,score:0,wrong:[]};
+function start(set,subset){
+  const qs=subset?subset:SETS[set].qs.slice();
+  state={set,items:shuffle(qs),pos:0,score:0,wrong:[]};
   $("home").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");
-  $("modeName").textContent=MODES[mode].emo+" "+MODES[mode].title;
+  $("modeName").textContent=SETS[set].emo+" "+SETS[set].title;
   renderQ();
 }
 function renderQ(){
-  const it=state.items[state.pos];const w=MODES[state.mode].write;
+  const it=state.items[state.pos];const w=SETS[state.set].write;
   $("count").textContent=`${state.pos+1} / ${state.items.length}`;
   $("prog").style.width=(state.pos/state.items.length*100)+"%";
-  $("qtag").textContent="第"+(state.pos+1)+"問（プリント"+it.n+"番）";
+  $("qtag").textContent="第"+(state.pos+1)+"問（"+(typeof it.n==="number"?"プリント"+it.n+"番":it.n)+"）";
   $("qText").textContent=it.q;
   $("figBox").innerHTML=it.fig?FIG:"";
   $("exp").className="exp";$("exp").innerHTML="";$("nextBtn").classList.add("hidden");
@@ -203,16 +243,16 @@ function renderResult(){
   else if(pct>=75){ring="💪";msg="あと少し！まちがえた問題だけもう1周";}
   else{ring="📖";msg="解説を読んで、書けなかった用語を3回書こう";}
   $("ring").textContent=ring;$("resMsg").textContent=msg;
-  if(state.items.length===QS.length){
-    const prev=parseInt(localStorage.getItem(bestKey(state.mode))||"0");
-    if(pct>prev)localStorage.setItem(bestKey(state.mode),pct);
-    if(typeof reportUnit==="function")reportUnit("🔬 理科 小テスト対策（細胞のつくり）："+MODES[state.mode].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 全問正解！":"あと少し！復習します💪")+"\n#莉映の小テスト対策");
+  if(state.items.length===SETS[state.set].qs.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
+    if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
+    if(typeof reportUnit==="function")reportUnit("🔬 理科 小テスト対策（細胞のつくり）："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 全問正解！":"あと少し！復習します💪")+"\n#莉映の小テスト対策");
   }
   const rw=$("retryWrong");
-  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.mode,state.wrong.slice());}
+  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.wrong.slice());}
   else rw.classList.add("hidden");
 }
-$("againBtn").onclick=()=>start(state.mode);
+$("againBtn").onclick=()=>start(state.set);
 $("homeBtn").onclick=renderHome;
 $("quitBtn").onclick=()=>{if(confirm("モード一覧に戻りますか？"))renderHome();};
 renderHome();
