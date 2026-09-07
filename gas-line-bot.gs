@@ -30,12 +30,18 @@ function doPost(e){
     json.events.forEach(function(ev){
       var gid = ev.source && ev.source.groupId;
       var txt0 = (ev.type === "message" && ev.message && ev.message.type === "text") ? (ev.message.text || "") : "";
-      // グループ登録：未登録のとき、または「登録」と送られたときだけ（他のグループの発言で勝手に切り替わらない）
-      if (gid && PROPS.getProperty("GROUP_ID") !== gid && (!PROPS.getProperty("GROUP_ID") || txt0.indexOf("登録") >= 0)) {
-        PROPS.setProperty("GROUP_ID", gid);
-        if (ev.replyToken) {
-          reply(ev.replyToken, "✅ このグループを登録しました。1日3回（18時・20時・23時）に学習まとめが届きます！");
-        }
+      // 投稿先の登録は明示コマンドだけ（他のグループの発言で勝手に切り替わらない）
+      //   「勉強登録」→ 学習まとめ・「進捗」の投稿先（りえい 明光義塾）
+      //   「野球登録」→ 自主トレ達成率（20:00/21:30）の投稿先（りえい 黒羽根コーチ）
+      if (gid && ev.replyToken && txt0.indexOf("勉強登録") >= 0) {
+        PROPS.setProperty("GROUP_STUDY", gid);
+        reply(ev.replyToken, "✅ このグループを【勉強】の投稿先に登録しました。学習まとめ（18時・20時・23時）が届きます！");
+        return;
+      }
+      if (gid && ev.replyToken && txt0.indexOf("野球登録") >= 0) {
+        PROPS.setProperty("GROUP_TRAIN", gid);
+        reply(ev.replyToken, "✅ このグループを【野球】の投稿先に登録しました。自主トレの達成率（20:00・21:30）が届きます！");
+        return;
       }
       // 「進捗」「状況」と送られたら、現在の達成状況を返信
       if (ev.type === "message" && ev.message && ev.message.type === "text" && ev.replyToken) {
@@ -91,9 +97,13 @@ function appendToBuffer(text){
   }
 }
 
+/* 投稿先グループ（勉強＝GROUP_STUDY／野球＝GROUP_TRAIN。旧GROUP_IDは野球側の予備） */
+function studyGroup(){ return PROPS.getProperty("GROUP_STUDY") || ""; }
+function trainGroup(){ return PROPS.getProperty("GROUP_TRAIN") || PROPS.getProperty("GROUP_ID") || ""; }
+
 /* 1日3回（18/20/23時）：たまっている分をまとめて1通だけ送る（トリガーで自動実行） */
 function sendDailyDigest(){
-  var gid = PROPS.getProperty("GROUP_ID");
+  var gid = studyGroup();
   if (!gid) { return; }
   var buf = PROPS.getProperty("BUFFER") || "";
   if (!buf) { push(gid, reminderText()); return; }  // 前回以降に動きが無い → リマインドを送る
@@ -199,12 +209,12 @@ function trainingStatusText(){
 
 function sendTrainingPreview(){                 // 20:00 トリガー
   deleteTriggersOf("sendTrainingPreview");
-  var gid = PROPS.getProperty("GROUP_ID"); if (!gid) return;
+  var gid = trainGroup(); if (!gid) return;
   var t = trainingPreviewText(); if (t) push(gid, t);
 }
 function sendTrainingStatus(){                  // 21:30 トリガー
   deleteTriggersOf("sendTrainingStatus");
-  var gid = PROPS.getProperty("GROUP_ID"); if (!gid) return;
+  var gid = trainGroup(); if (!gid) return;
   push(gid, trainingStatusText());
 }
 
@@ -230,13 +240,13 @@ function setupTrainingTriggers(){
 
 /* 動作確認：今の状況を今すぐ1通送る */
 function testTrainingStatusNow(){
-  var gid = PROPS.getProperty("GROUP_ID");
+  var gid = trainGroup();
   if (gid) push(gid, trainingStatusText());
 }
 
 /* ---- 動作確認用 ---- */
-function testPush(){            // 接続テスト：今すぐ1通送る
-  var gid = PROPS.getProperty("GROUP_ID");
+function testPush(){            // 接続テスト：勉強グループへ今すぐ1通送る
+  var gid = studyGroup();
   if (gid) push(gid, "🔔 テスト送信：自動まとめ投稿の準備ができました！");
 }
 function testDigestNow(){       // 今ためている分を、待たずに今すぐまとめ送信
