@@ -29,8 +29,9 @@ function doPost(e){
   if (json && json.events) {
     json.events.forEach(function(ev){
       var gid = ev.source && ev.source.groupId;
-      // 初回（未登録）のときだけグループ登録＆返信
-      if (gid && PROPS.getProperty("GROUP_ID") !== gid) {
+      var txt0 = (ev.type === "message" && ev.message && ev.message.type === "text") ? (ev.message.text || "") : "";
+      // グループ登録：未登録のとき、または「登録」と送られたときだけ（他のグループの発言で勝手に切り替わらない）
+      if (gid && PROPS.getProperty("GROUP_ID") !== gid && (!PROPS.getProperty("GROUP_ID") || txt0.indexOf("登録") >= 0)) {
         PROPS.setProperty("GROUP_ID", gid);
         if (ev.replyToken) {
           reply(ev.replyToken, "✅ このグループを登録しました。1日3回（18時・20時・23時）に学習まとめが届きます！");
