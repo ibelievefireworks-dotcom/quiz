@@ -39,7 +39,9 @@ function doPost(e){
       // 「進捗」「状況」と送られたら、現在の達成状況を返信
       if (ev.type === "message" && ev.message && ev.message.type === "text" && ev.replyToken) {
         var t = ev.message.text || "";
-        if (t.indexOf("進捗") >= 0 || t.indexOf("状況") >= 0 || t.indexOf("しんちょく") >= 0) {
+        if (t.indexOf("トレ") >= 0 || t.indexOf("メニュー") >= 0) {
+          reply(ev.replyToken, trainingStatusText());        // 自主トレの今の状況
+        } else if (t.indexOf("進捗") >= 0 || t.indexOf("状況") >= 0 || t.indexOf("しんちょく") >= 0) {
           reply(ev.replyToken, progressText());
         }
       }
@@ -133,6 +135,102 @@ function reply(token, text){
     payload: JSON.stringify({ replyToken: token, messages: [{ type: "text", text: text }] }),
     muteHttpExceptions: true
   });
+}
+
+/* =====================================================================
+   自主トレ管理アプリ（nnn.lomo.jp/kanri）の「今日の達成率」リマインド
+   ---------------------------------------------------------------------
+   ・20:00  「今日は100%を達成できるか！？」＋現時点の達成数
+   ・21:30  その時点の達成率＋未達成項目の列記
+   ・グループで「トレ」と送ると、その時点の状況をすぐ返信
+   設定：関数 setupTrainingTriggers を一度だけ実行（毎日0時台に当日20:00/21:30の
+         1回限りトリガーを予約する仕組み。分単位で正確に届く）
+   ===================================================================== */
+
+var KANRI_API = "https://nnn.lomo.jp/kanri/api/";
+var KANRI_URL = "https://nnn.lomo.jp/kanri/";
+
+function todayIsoJst(){ return Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd"); }
+
+/* アプリから今日のメニューと記録を取得して集計 */
+function fetchKanriToday(){
+  var date = todayIsoJst();
+  var menuRes = JSON.parse(UrlFetchApp.fetch(KANRI_API + "get_menu.php", {muteHttpExceptions:true}).getContentText());
+  var logRes  = JSON.parse(UrlFetchApp.fetch(KANRI_API + "get_log.php?date=" + date, {muteHttpExceptions:true}).getContentText());
+  var dayKey = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date(date + "T00:00:00+09:00").getDay()];
+  var log = logRes && logRes.log;
+  var items, completed = {}, hidden = [];
+  if (log) {
+    hidden = log.hidden || [];
+    items = (Array.isArray(log.baseMenu) ? log.baseMenu : (menuRes.menu||{})[dayKey] || []).concat(log.extraMenu || []);
+    completed = (log.completed && !Array.isArray(log.completed)) ? log.completed : {};
+  } else {
+    items = (menuRes.menu||{})[dayKey] || [];
+  }
+  items = items.filter(function(i){ return hidden.indexOf(i) < 0; });
+  var done = items.filter(function(i){ return completed[i]; });
+  var undone = items.filter(function(i){ return !completed[i]; });
+  var rate = items.length ? Math.round(done.length / items.length * 100) : 0;
+  return { date:date, logged:!!log, total:items.length, done:done.length, rate:rate, undone:undone };
+}
+
+/* 20:00 「今日は100%を達成できるか！？」 */
+function trainingPreviewText(){
+  var s = fetchKanriToday();
+  if (!s.total) return "";
+  if (s.rate === 100) return "🎉 20時の時点でもう100%達成！\n本牧の中で一番練習した日だ。\n#莉映の自主トレ";
+  return "🔥 20時チェック\n今日は100%を達成できるか！？\n\n" +
+         "📋 今日のメニュー：" + s.total + "項目\n" +
+         "✅ いま：" + s.done + "/" + s.total + "（" + s.rate + "%）" + (s.logged ? "" : "（まだ記録なし）") + "\n\n" +
+         "残り" + s.undone.length + "項目、まだ間に合う！\n👉 " + KANRI_URL + "\n#莉映の自主トレ";
+}
+
+/* 21:30 達成率＋未達成の列記（「トレ」コマンドの返信にも使う） */
+function trainingStatusText(){
+  var s = fetchKanriToday();
+  if (!s.total) return "📋 今日のメニューが見つかりません。\n" + KANRI_URL;
+  var now = Utilities.formatDate(new Date(), "Asia/Tokyo", "H:mm");
+  if (s.rate === 100) return "🎉 " + now + " 現在：100%達成（" + s.done + "/" + s.total + "）\n本牧の中で一番練習した！\n#莉映の自主トレ";
+  var head = "⏰ " + now + " 現在\n達成率 " + s.rate + "%（" + s.done + "/" + s.total + "）" + (s.logged ? "" : "\n📝 今日はまだ記録がありません") + "\n\n";
+  var list = "❌ 未達成 " + s.undone.length + "項目\n" + s.undone.map(function(i){ return "・" + i; }).join("\n");
+  return head + list + "\n\n寝るまでに、やった分は必ず記録！\n👉 " + KANRI_URL + "\n#莉映の自主トレ";
+}
+
+function sendTrainingPreview(){                 // 20:00 トリガー
+  deleteTriggersOf("sendTrainingPreview");
+  var gid = PROPS.getProperty("GROUP_ID"); if (!gid) return;
+  var t = trainingPreviewText(); if (t) push(gid, t);
+}
+function sendTrainingStatus(){                  // 21:30 トリガー
+  deleteTriggersOf("sendTrainingStatus");
+  var gid = PROPS.getProperty("GROUP_ID"); if (!gid) return;
+  push(gid, trainingStatusText());
+}
+
+/* 毎日0時台に実行：当日20:00と21:30の1回限りトリガーを予約 */
+function scheduleTodayTrainingTriggers(){
+  deleteTriggersOf("sendTrainingPreview");
+  deleteTriggersOf("sendTrainingStatus");
+  var d = todayIsoJst();
+  var t1 = new Date(d + "T20:00:00+09:00"), t2 = new Date(d + "T21:30:00+09:00"), now = new Date();
+  if (t1 > now) ScriptApp.newTrigger("sendTrainingPreview").timeBased().at(t1).create();
+  if (t2 > now) ScriptApp.newTrigger("sendTrainingStatus").timeBased().at(t2).create();
+}
+function deleteTriggersOf(fn){
+  ScriptApp.getProjectTriggers().forEach(function(t){ if (t.getHandlerFunction() === fn) ScriptApp.deleteTrigger(t); });
+}
+
+/* 一度だけ実行：毎日0時台の予約トリガーを作成し、今日の分もすぐ予約する */
+function setupTrainingTriggers(){
+  deleteTriggersOf("scheduleTodayTrainingTriggers");
+  ScriptApp.newTrigger("scheduleTodayTrainingTriggers").timeBased().everyDays(1).atHour(0).create();
+  scheduleTodayTrainingTriggers();
+}
+
+/* 動作確認：今の状況を今すぐ1通送る */
+function testTrainingStatusNow(){
+  var gid = PROPS.getProperty("GROUP_ID");
+  if (gid) push(gid, trainingStatusText());
 }
 
 /* ---- 動作確認用 ---- */
