@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>理科 小テスト対策：植物の体のつくり</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#f2fbf6; --card:#fff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#059669; --accent-d:#047857;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#d8f0e3; --shadow:0 4px 14px rgba(10,90,60,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:17px;padding:14px 12px 40px;max-width:480px;margin:0 auto;}
+  h1{font-size:19px;margin:6px 0 2px;text-align:center;}
+  .lead{text-align:center;color:var(--sub);font-size:13px;margin:0 0 14px;}
+  .backlink{display:inline-block;margin-bottom:6px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14px;}
+  .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px;}
+  .mode{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:11px;text-align:left;box-shadow:var(--shadow);cursor:pointer;}
+  .mode:active{transform:scale(.98);}
+  .mode .emo{font-size:26px;}
+  .mode .tt b{font-size:16px;display:block;}
+  .mode .tt small{color:var(--sub);font-size:12px;}
+  .mode .best{font-size:11px;color:var(--ok);font-weight:700;margin-left:auto;}
+  .sethead{display:flex;align-items:center;gap:10px;margin:14px 2px 6px;}
+  .sethead .emo{font-size:24px;}
+  .sethead .tt b{font-size:15px;display:block;}
+  .sethead .tt small{color:var(--sub);font-size:12px;}
+  .setrow{display:flex;gap:8px;margin-bottom:6px;}
+  .mode.small{flex:1;padding:10px 10px;margin:0;gap:8px;}
+  .mode.small .emo{font-size:20px;}
+  .mode.small .tt b{font-size:14px;}
+  .mode.small .tt small{display:block;font-size:11px;color:var(--sub);}
+  .mode.small .tt small.best{color:var(--ok);font-weight:700;margin-left:0;}
+  .bar{height:8px;background:#e0f3ea;border-radius:99px;overflow:hidden;margin-bottom:8px;}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s;}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:12px;}
+  .qtag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:2px 8px;margin-bottom:10px;}
+  .q{font-size:18px;font-weight:700;margin:0 0 14px;line-height:1.55;}
+  .fig{width:100%;max-width:340px;display:block;margin:0 auto 14px;}
+  .opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px;font-size:16px;color:var(--ink);cursor:pointer;}
+  .opt.correct{border-color:var(--ok);background:var(--ok-bg);font-weight:700;}
+  .opt.wrong{border-color:var(--ng);background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{background:#effaf4;border-left:4px solid var(--accent);border-radius:8px;padding:11px 13px;font-size:14px;color:#334;margin-top:4px;display:none;}
+  .exp.show{display:block;}
+  .exp .res{font-weight:800;display:block;margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .ans{font-size:26px;font-weight:800;color:var(--accent);text-align:center;padding:10px;border:2px dashed var(--accent);border-radius:12px;margin:8px 0;}
+  .writebox{border:2px solid var(--line);border-radius:12px;min-height:64px;padding:10px;color:var(--sub);font-size:14px;margin-bottom:10px;background:#fbfdfc;}
+  .btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:var(--shadow);}
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:none;}
+  .btn.gray{background:#eef4f0;color:var(--sub);box-shadow:none;}
+  .row{display:flex;gap:10px;}
+  .row .btn{margin-top:12px;}
+  .btn.ok{background:var(--ok);} .btn.ng{background:var(--ng);}
+  .hidden{display:none;}
+  .score{text-align:center;padding:8px 0 4px;}
+  .score .big{font-size:46px;font-weight:800;line-height:1;}
+  .score .pct{font-size:15px;color:var(--sub);}
+  .ring{font-size:54px;text-align:center;margin:6px 0;}
+  .msg{text-align:center;font-size:16px;font-weight:700;margin:6px 0 16px;}
+  .foot{text-align:center;color:var(--sub);font-size:11px;margin-top:18px;}
+  .note{font-size:13px;color:#334;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🌿 理科 小テスト対策：植物の体のつくり</h1>
+  <p class="lead">9/28（月）小テスト「生物の体のつくりとはたらき」両面12問を4セット・計48問に<br>表＝道管・師管・気孔・蒸散・維管束、裏＝ふ入りアサガオの光合成実験</p>
+  <div class="note">おすすめ：<b>セット1→2→3（選択式）</b>で手を変え品を変え反復 → 仕上げに<b>セット4（記述）</b>を✗ゼロまで。裏面のアサガオは「<b>光</b>と<b>葉緑体</b>の両方がそろった所だけ光合成」が全部の答えのカギ。</div>
+  <div id="modeList"></div>
+  <p class="foot">※合格ライン＝全問正解（8/8）。小テストは満点スタートが目標！</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="modeName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="figBox"></div>
+    <div id="opts"></div>
+    <div id="writeArea" class="hidden">
+      <div class="writebox">✍️ ノートか紙に<b>漢字で</b>答えを書いてから「答えを見る」</div>
+      <button class="btn ghost" id="revealBtn">答えを見る</button>
+      <div id="ansBox" class="hidden">
+        <div class="ans" id="ansText"></div>
+        <div class="row"><button class="btn ok" id="selfOk">⭕ 書けた</button><button class="btn ng" id="selfNg">❌ 書けなかった</button></div>
+      </div>
+    </div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてモード一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問シャッフル）</button>
+    <button class="btn gray" id="homeBtn">モード一覧へ</button>
+  </div>
+</div>
+
+<script>
+/* 図：ふ入りのアサガオ（A〜D）／茎と葉の断面（A〜D） */
+const FIGS = {
+ asagao: `<svg class="fig" viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="14">
+  <path d="M120 20 C60 20 30 70 40 110 C50 150 100 185 120 185 C140 185 190 150 200 110 C210 70 180 20 120 20 Z" fill="#cde8c4" stroke="#333" stroke-width="2"/>
+  <path d="M120 22 L120 183" stroke="#6a8" stroke-width="1.5"/>
+  <path d="M120 60 L70 90 M120 60 L170 90 M120 110 L75 140 M120 110 L165 140" stroke="#6a8" stroke-width="1.2" fill="none"/>
+  <ellipse cx="128" cy="105" rx="26" ry="42" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <rect x="40" y="118" width="164" height="30" rx="4" fill="#ddd" stroke="#333" stroke-width="2"/>
+  <rect x="30" y="126" width="12" height="14" fill="#bbb" stroke="#333"/><rect x="202" y="126" width="12" height="14" fill="#bbb" stroke="#333"/>
+  <g font-weight="700"><text x="146" y="62">A</text><text x="66" y="140">B</text><text x="120" y="98">C</text><text x="127" y="140">D</text></g>
+  <line x1="154" y1="90" x2="240" y2="80" stroke="#333" stroke-width="1"/><text x="244" y="84" font-size="12">ふの部分</text>
+  <line x1="170" y1="150" x2="240" y2="175" stroke="#333" stroke-width="1"/><text x="200" y="192" font-size="12">アルミニウムはく</text>
+ </svg>`,
+ cross: `<svg class="fig" viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="13">
+  <text x="20" y="18" font-weight="700">茎</text>
+  <circle cx="90" cy="105" r="70" fill="#fff" stroke="#333" stroke-width="2"/>
+  <g fill="#fff" stroke="#333" stroke-width="1.5">
+   <ellipse cx="90" cy="48" rx="13" ry="9"/><ellipse cx="90" cy="72" rx="9" ry="7"/>
+   <ellipse cx="141" cy="78" rx="13" ry="9" transform="rotate(60 141 78)"/><ellipse cx="121" cy="90" rx="9" ry="7" transform="rotate(60 121 90)"/>
+   <ellipse cx="141" cy="132" rx="13" ry="9" transform="rotate(-60 141 132)"/><ellipse cx="121" cy="120" rx="9" ry="7" transform="rotate(-60 121 120)"/>
+   <ellipse cx="90" cy="162" rx="13" ry="9"/><ellipse cx="90" cy="138" rx="9" ry="7"/>
+   <ellipse cx="39" cy="132" rx="13" ry="9" transform="rotate(60 39 132)"/><ellipse cx="59" cy="120" rx="9" ry="7" transform="rotate(60 59 120)"/>
+   <ellipse cx="39" cy="78" rx="13" ry="9" transform="rotate(-60 39 78)"/><ellipse cx="59" cy="90" rx="9" ry="7" transform="rotate(-60 59 90)"/>
+  </g>
+  <line x1="26" y1="78" x2="8" y2="70" stroke="#333"/><text x="0" y="66" font-weight="700">A</text>
+  <line x1="50" y1="92" x2="8" y2="104" stroke="#333"/><text x="0" y="108" font-weight="700">B</text>
+  <text x="30" y="195" font-size="11">維管束（外側=A・内側=B）</text>
+  <text x="190" y="18" font-weight="700">葉</text>
+  <rect x="190" y="30" width="140" height="150" fill="#eef7ea" stroke="#333" stroke-width="1.5"/>
+  <text x="300" y="44" font-size="11">表側</text><text x="300" y="176" font-size="11">裏側</text>
+  <circle cx="250" cy="105" r="26" fill="#fff" stroke="#333" stroke-width="1.5"/>
+  <circle cx="250" cy="92" r="6" fill="#333"/><circle cx="250" cy="118" r="6" fill="#333"/>
+  <line x1="250" y1="86" x2="236" y2="34" stroke="#333"/><text x="228" y="30" font-weight="700">C</text>
+  <line x1="256" y1="118" x2="274" y2="34" stroke="#333"/><text x="270" y="30" font-weight="700">D</text>
+  <text x="196" y="195" font-size="11">葉の維管束（表側=C・裏側=D）</text>
+ </svg>`
+};
+
+/* セット1：プリント原文（表8問＋裏4問＝12問） */
+const QS1 = [
+  {n:1,q:"光合成が行われる、細胞の中の緑色をした粒を何というか。",a:"葉緑体",o:[["葉緑体",1],["液胞",0],["核",0],["細胞壁",0]],e:"表1番。細胞の小テストと同じ問題が再登場。"},
+  {n:2,q:"根から吸収した水や水にとけた養分などが通る管を何というか。",a:"道管",o:[["道管",1],["師管",0],["気管",0],["血管",0]],e:"表2番。「水（みず）は道（みち）を通る」。"},
+  {n:3,q:"葉でつくられた栄養分が運ばれる管を何というか。",a:"師管",o:[["師管",1],["道管",0],["維管束",0],["気孔",0]],e:"表3番。「師」は「師匠」の師。「詩」「支」と書かない。"},
+  {n:4,q:"葉の表皮にある孔辺細胞に囲まれたすきまを何というか。",a:"気孔",o:[["気孔",1],["気管",0],["柔毛",0],["葉脈",0]],e:"表4番。孔辺細胞（三日月形の細胞2つ）に囲まれたすきま＝気孔。ふつう葉の裏に多い。"},
+  {n:5,q:"植物の体から水が水蒸気となって出ていく現象を何というか。",a:"蒸散",o:[["蒸散",1],["蒸発",0],["呼吸",0],["光合成",0]],e:"表5番。「蒸散」の「散」を忘れない。蒸発（物理現象）と区別。"},
+  {n:6,q:"茎の維管束が散在しているのは、被子植物の（　）のなかまである。（　）にあてはまる言葉は何か。",a:"単子葉類",o:[["単子葉類",1],["双子葉類",0],["裸子植物",0],["シダ植物",0]],e:"表6番。散らばっている＝単子葉類（トウモロコシ・イネ・ユリ）。"},
+  {n:7,q:"茎の維管束が輪のように並んでいるのは、被子植物の（　）のなかまである。（　）にあてはまる言葉は何か。",a:"双子葉類",o:[["双子葉類",1],["単子葉類",0],["裸子植物",0],["コケ植物",0]],e:"表7番。輪＝双子葉類（ホウセンカ・アサガオ・ヒマワリ）。"},
+  {n:8,fig:"cross",q:"図は、ある植物の茎と葉の断面を模式的に表したものである。この植物に赤く着色した水を根から吸わせたとき、赤く染まる部分をA〜Dの中からすべて選びなさい。",a:"A、C",o:[["A、C",1],["B、D",0],["A、D",0],["B、C",0]],e:"表8番。赤い水が通る＝道管。プリントの答えは「A、C」＝茎ではA、葉では表側のC。「すべて選ぶ」なので2つ書く。"},
+  {n:"裏1",fig:"asagao",q:"ふ入りのアサガオの葉の一部をアルミニウムはくでおおい、じゅうぶんに光を当てた。葉の部分A〜Dのうち、光合成が行われた部分を選びなさい。",a:"A",o:[["A",1],["B",0],["C",0],["D",0]],e:"裏1番。光あり＋葉緑体あり＝A だけ。"},
+  {n:"裏2",fig:"asagao",q:"ふ入りのアサガオの葉の一部をアルミニウムはくでおおい、じゅうぶんに光を当てた。葉の部分A〜Dのうち、葉緑体はあるが光が当たらなかった部分を選びなさい。",a:"B",o:[["B",1],["A",0],["C",0],["D",0]],e:"裏2番。緑の部分でアルミはくの下＝B。「光が必要」を示す比較相手。"},
+  {n:"裏3",fig:"asagao",q:"ふ入りのアサガオの葉の一部をアルミニウムはくでおおい、じゅうぶんに光を当てた。葉の部分A〜Dのうち、光が当たるが葉緑体がない部分を選びなさい。",a:"C",o:[["C",1],["A",0],["B",0],["D",0]],e:"裏3番。ふの部分でアルミはくの外＝C。「葉緑体が必要」を示す比較相手。"},
+  {n:"裏4",q:"植物が光を受けて、デンプンなどの栄養分をつくり出すはたらきを何というか。",a:"光合成",o:[["光合成",1],["呼吸",0],["蒸散",0],["消化",0]],e:"裏4番。「光合成」の3文字。"},
+];
+
+/* セット2：言い換え・逆問い */
+const QS2 = [
+  {n:"言い換え",q:"根からの水の通り道と、葉でできた養分の通り道の組み合わせで正しいのは？",a:"水＝道管、養分＝師管",o:[["水＝道管、養分＝師管",1],["水＝師管、養分＝道管",0],["どちらも道管",0],["どちらも師管",0]],e:"「水は道を通る」で固定。"},
+  {n:"言い換え",q:"道管と師管が集まった束を何というか。",a:"維管束",o:[["維管束",1],["神経束",0],["葉脈",0],["気孔",0]],e:"維管束。葉では葉脈として見える。"},
+  {n:"言い換え",q:"気孔を囲んでいる三日月形の細胞を何というか。",a:"孔辺細胞",o:[["孔辺細胞",1],["表皮細胞",0],["柔毛",0],["葉緑体",0]],e:"孔辺細胞。プリント4番の文中に出ている語。逆に問われても答えられるように。"},
+  {n:"言い換え",q:"気孔はふつう葉のどちら側に多いか。",a:"裏側",o:[["裏側",1],["表側",0],["両側同じ",0],["茎の中",0]],e:"裏側に多い。蒸散の実験（ワセリン）で問われる定番。"},
+  {n:"言い換え",q:"蒸散が主に行われる場所はどこか。",a:"気孔",o:[["気孔",1],["道管",0],["根毛",0],["葉緑体",0]],e:"水蒸気の出口＝気孔。"},
+  {n:"逆問い",q:"「蒸散」の説明として正しいものは？（記述では一文で説明）",a:"植物の体から水が水蒸気となって出ていく現象",o:[["植物の体から水が水蒸気となって出ていく現象",1],["根から水を吸い上げる現象",0],["葉で養分をつくる現象",0],["酸素をとり入れて二酸化炭素を出す現象",0]],e:"プリント5番の逆。"},
+  {n:"言い換え",q:"トウモロコシやイネのように、茎の維管束が散らばっている植物のなかまは？",a:"単子葉類",o:[["単子葉類",1],["双子葉類",0],["裸子植物",0],["シダ植物",0]],e:"単子葉類＝散在・ひげ根・平行脈。"},
+  {n:"言い換え",q:"ホウセンカやアサガオのように、茎の維管束が輪の形に並ぶ植物のなかまは？",a:"双子葉類",o:[["双子葉類",1],["単子葉類",0],["裸子植物",0],["コケ植物",0]],e:"双子葉類＝輪状・主根と側根・網状脈。"},
+  {n:"言い換え",q:"ふ入りのアサガオの実験で「光合成には光が必要」を示すには、どの2つを比べればよいか。",a:"AとB",o:[["AとB（緑・光あり vs 緑・光なし）",1],["AとC（緑・光あり vs ふ・光あり）",0],["BとD",0],["CとD",0]],e:"「光」だけが違う2つ＝AとB。葉緑体の条件はそろえる（対照実験の考え方）。"},
+  {n:"言い換え",q:"ふ入りのアサガオの実験で「光合成には葉緑体が必要」を示すには、どの2つを比べればよいか。",a:"AとC",o:[["AとC（緑・光あり vs ふ・光あり）",1],["AとB（緑・光あり vs 緑・光なし）",0],["BとD",0],["AとD",0]],e:"「葉緑体」だけが違う2つ＝AとC。光の条件はそろえる。"},
+  {n:"言い換え",q:"この実験でヨウ素液をつけたとき、青紫色になる部分はどこか。",a:"A",o:[["A",1],["B",0],["C",0],["D",0]],e:"デンプンができた所＝光合成した所＝A。"},
+  {n:"逆問い",q:"光合成でつくられる栄養分と、必要な条件の組み合わせは？",a:"デンプンなど／光と葉緑体",o:[["デンプンなど／光と葉緑体",1],["酸素／水と温度",0],["タンパク質／光と水",0],["二酸化炭素／葉緑体のみ",0]],e:"つくる＝デンプンなど（＋酸素が出る）。条件＝光・葉緑体（材料＝水と二酸化炭素）。"},
+];
+
+/* セット3：図と関係・分類 */
+const QS3 = [
+  {n:"図",fig:"cross",q:"茎の断面のAは道管と師管のどちらか。",a:"道管",o:[["道管",1],["師管",0],["気孔",0],["葉緑体",0]],e:"赤い水で染まったA＝道管。プリントの図ではAが道管の位置。"},
+  {n:"図",fig:"cross",q:"茎の断面のBは道管と師管のどちらか。",a:"師管",o:[["師管",1],["道管",0],["形成層",0],["根毛",0]],e:"染まらなかったB＝師管。"},
+  {n:"図",fig:"cross",q:"葉の断面のCは道管と師管のどちらか。",a:"道管",o:[["道管",1],["師管",0],["気孔",0],["表皮",0]],e:"葉の維管束は【表側が道管・裏側が師管】。"},
+  {n:"図",fig:"cross",q:"葉の断面のDは道管と師管のどちらか。",a:"師管",o:[["師管",1],["道管",0],["孔辺細胞",0],["葉脈",0]],e:"裏側＝師管。表8番で「A、C」になる理由がこれ。"},
+  {n:"図",fig:"cross",q:"この茎の断面の植物は、単子葉類と双子葉類のどちらか。",a:"双子葉類",o:[["双子葉類（維管束が輪）",1],["単子葉類（維管束が散在）",0],["裸子植物",0],["判断できない",0]],e:"維管束が輪の形＝双子葉類。"},
+  {n:"図",fig:"asagao",q:"図のA〜Dのうち、「葉緑体あり・光あり」の部分はどれか。",a:"A",o:[["A",1],["B",0],["C",0],["D",0]],e:"緑でアルミはくの外＝A。ここだけ光合成が起こる。"},
+  {n:"図",fig:"asagao",q:"図のA〜Dのうち、「葉緑体なし・光なし」の部分はどれか。",a:"D",o:[["D",1],["A",0],["B",0],["C",0]],e:"ふの部分でアルミはくの下＝D。どちらの条件も欠けている。"},
+  {n:"図",fig:"asagao",q:"図のA〜Dを「光合成が起こる／起こらない」で分けると？",a:"起こる＝A、起こらない＝B・C・D",o:[["起こる＝A、起こらない＝B・C・D",1],["起こる＝A・B、起こらない＝C・D",0],["起こる＝A・C、起こらない＝B・D",0],["すべて起こる",0]],e:"光と葉緑体の両方がそろうAだけ。"},
+  {n:"分類",q:"単子葉類の特徴の組み合わせとして正しいのは？",a:"維管束が散在・ひげ根・平行脈",o:[["維管束が散在・ひげ根・平行脈",1],["維管束が輪・主根と側根・網状脈",0],["維管束が散在・主根と側根・網状脈",0],["維管束が輪・ひげ根・平行脈",0]],e:"単子葉類＝散在・ひげ根・平行脈（トウモロコシ）。双子葉類＝輪・主根側根・網状脈（ホウセンカ）。"},
+  {n:"分類",q:"次のうち双子葉類はどれか。",a:"ホウセンカ",o:[["ホウセンカ",1],["トウモロコシ",0],["イネ",0],["ユリ",0]],e:"ホウセンカ・アサガオ・ヒマワリ＝双子葉類。トウモロコシ・イネ・ユリ＝単子葉類。"},
+  {n:"分類",q:"植物の体の中で「水」がたどる順番として正しいのは？",a:"根→道管→葉→気孔（蒸散）",o:[["根→道管→葉→気孔（蒸散）",1],["葉→師管→根→気孔",0],["気孔→道管→根",0],["根→師管→葉→気孔",0]],e:"根で吸収→道管を上る→葉→気孔から水蒸気として出る（蒸散）。"},
+  {n:"分類",q:"「葉でつくられた養分」がたどる順番として正しいのは？",a:"葉（光合成）→師管→体の各部",o:[["葉（光合成）→師管→体の各部",1],["根→道管→葉",0],["気孔→師管→根",0],["葉→道管→根",0]],e:"養分は師管で全身へ。"},
+];
+
+const SETS = {
+  s1:{title:"セット1：プリントそのまま（選択式）",emo:"📄",sub:"本番と同じ両面12問を4択で（順番シャッフル）",qs:QS1,write:false},
+  s2:{title:"セット2：言い方を変えて・逆から（選択式）",emo:"🔁",sub:"別の問い方・実験の比較・用語→説明（12問）",qs:QS2,write:false},
+  s3:{title:"セット3：図と関係（選択式）",emo:"🌿",sub:"断面図のA〜D・アサガオのA〜D・単子葉/双子葉の分類（12問）",qs:QS3,write:false},
+  s4:{title:"セット4：記述（本番形式）",emo:"✍️",sub:"プリントの12問を紙に漢字で書いて自己採点。✗ゼロがゴール",qs:QS1,write:true},
+};
+const $=id=>document.getElementById(id);
+let state={};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function bestKey(s){return "kotest_rika_shokubutsu_"+s;}
+function renderHome(){
+  $("home").classList.remove("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");
+  const list=$("modeList");list.innerHTML="";
+  for(const s in SETS){const st=SETS[s];const best=localStorage.getItem(bestKey(s));
+    const b=document.createElement("button");b.className="mode";
+    b.innerHTML=`<span class="emo">${st.emo}</span><span class="tt"><b>${st.title}</b><small>${st.sub}</small></span>${best?`<span class="best">最高 ${best}%</span>`:""}`;
+    b.onclick=()=>start(s);list.appendChild(b);}
+}
+function start(set,subset){
+  const qs=subset?subset:SETS[set].qs.slice();
+  state={set,items:shuffle(qs),pos:0,score:0,wrong:[]};
+  $("home").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");
+  $("modeName").textContent=SETS[set].emo+" "+SETS[set].title;
+  renderQ();
+}
+function renderQ(){
+  const it=state.items[state.pos];const w=SETS[state.set].write;
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問（"+(typeof it.n==="number"?"プリント"+it.n+"番":it.n)+"）";
+  $("qText").textContent=it.q;
+  $("figBox").innerHTML=it.fig?FIGS[it.fig]:"";
+  $("exp").className="exp";$("exp").innerHTML="";$("nextBtn").classList.add("hidden");
+  const box=$("opts");box.innerHTML="";
+  if(w){
+    box.classList.add("hidden");$("writeArea").classList.remove("hidden");
+    $("ansBox").classList.add("hidden");$("revealBtn").classList.remove("hidden");
+    $("ansText").textContent=it.a;
+  }else{
+    box.classList.remove("hidden");$("writeArea").classList.add("hidden");
+    shuffle(it.o).forEach(op=>{const b=document.createElement("button");b.className="opt";b.textContent=op[0];b.onclick=()=>answer(b,op[1]===1,it);box.appendChild(b);});
+  }
+  window.scrollTo(0,0);
+}
+function correctText(it){return it.o.find(o=>o[1]===1)[0];}
+function finish(correct,it){
+  if(correct)state.score++;else state.wrong.push(it);
+  const exp=$("exp");exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ここを復習'}</span>${it.e}`;
+  exp.classList.add("show");$("nextBtn").classList.remove("hidden");
+}
+function answer(btn,correct,it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.textContent===correctText(it))b.classList.add("correct");});
+  if(!correct)btn.classList.add("wrong");
+  finish(correct,it);
+}
+$("revealBtn").onclick=()=>{$("revealBtn").classList.add("hidden");$("ansBox").classList.remove("hidden");};
+$("selfOk").onclick=()=>{$("ansBox").classList.add("hidden");finish(true,state.items[state.pos]);};
+$("selfNg").onclick=()=>{$("ansBox").classList.add("hidden");finish(false,state.items[state.pos]);};
+$("nextBtn").onclick=()=>{state.pos++;if(state.pos>=state.items.length)renderResult();else renderQ();};
+function renderResult(){
+  $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+  const total=state.items.length,sc=state.score,pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;$("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct===100){ring="🎉";msg="全問正解！明日はこの調子で満点！";}
+  else if(pct>=75){ring="💪";msg="あと少し！まちがえた問題だけもう1周";}
+  else{ring="📖";msg="解説を読んで、書けなかった用語を3回書こう";}
+  $("ring").textContent=ring;$("resMsg").textContent=msg;
+  if(state.items.length===SETS[state.set].qs.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
+    if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
+    if(typeof reportUnit==="function")reportUnit("🌿 理科 小テスト対策（植物の体のつくり）："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 全問正解！":"あと少し！復習します💪")+"\n#莉映の小テスト対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.wrong.slice());}
+  else rw.classList.add("hidden");
+}
+$("againBtn").onclick=()=>start(state.set);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{if(confirm("モード一覧に戻りますか？"))renderHome();};
+renderHome();
+</script>
+</body>
+</html>
