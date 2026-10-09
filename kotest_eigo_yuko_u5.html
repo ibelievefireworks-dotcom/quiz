@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ゆうちゃん先生の Unit 5 プリント</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#fff8f2; --card:#fff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#c2410c; --accent-d:#9a3412;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#f6d9c6; --shadow:0 4px 14px rgba(160,70,20,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:17px;padding:14px 12px 40px;max-width:480px;margin:0 auto;}
+  h1{font-size:19px;margin:6px 0 2px;text-align:center;}
+  .lead{text-align:center;color:var(--sub);font-size:13px;margin:0 0 12px;}
+  .backlink{display:inline-block;margin-bottom:6px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14px;}
+  .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px;}
+  .letter{background:#fffdf7;border:1px solid #f3e2c8;border-left:5px solid #e0a96d;border-radius:12px;padding:12px 14px;font-size:13.5px;color:#4a3a2a;margin-bottom:12px;}
+  .letter b{color:#9a3412;}
+  .sechead{font-size:13px;font-weight:800;color:#7c2d12;letter-spacing:.05em;margin:16px 4px 8px;padding-bottom:4px;border-bottom:2px solid #f3c9a8;}
+  .mode{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow);cursor:pointer;}
+  .mode:active{transform:scale(.98);}
+  .mode .emo{font-size:24px;}
+  .mode .tt{flex:1;}
+  .mode .tt b{font-size:15px;display:block;}
+  .mode .tt small{color:var(--sub);font-size:12px;}
+  .mode .best{font-size:11px;color:var(--ok);font-weight:700;white-space:nowrap;}
+  .bar{height:8px;background:#fbe7d6;border-radius:99px;overflow:hidden;margin-bottom:8px;}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s;}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:12px;}
+  .qtag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:2px 8px;margin-bottom:10px;}
+  .q{font-size:18px;font-weight:700;margin:0 0 6px;line-height:1.55;}
+  .ctx{font-size:16px;color:#334;background:#fff3ea;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-family:Georgia,"Times New Roman",serif;}
+  .ctx b{color:var(--accent);}
+  .bank{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+  .bank span{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-family:Georgia,serif;}
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:0 0 12px;}
+  .tbl th,.tbl td{border:1px solid var(--line);padding:5px 6px;text-align:center;}
+  .tbl th{background:#fff3ea;}
+  .inp{width:100%;font-size:19px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-family:Georgia,"Times New Roman",serif;outline:none;}
+  .inp:focus{border-color:var(--accent);}
+  .inp.ok{border-color:var(--ok);background:var(--ok-bg);}
+  .inp.ng{border-color:var(--ng);background:var(--ng-bg);}
+  .row{display:flex;gap:10px;}
+  .btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:var(--shadow);}
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:none;}
+  .btn.gray{background:#f7ece3;color:var(--sub);box-shadow:none;}
+  .btn.sm{padding:10px;font-size:14px;margin-top:10px;}
+  .exp{background:#fff3ea;border-left:4px solid var(--accent);border-radius:8px;padding:11px 13px;font-size:14px;color:#334;margin-top:12px;display:none;}
+  .exp.show{display:block;}
+  .exp .res{font-weight:800;display:block;margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .ansline{font-family:Georgia,serif;font-size:17px;margin:4px 0;}
+  .ansline .you{color:var(--ng);} .ansline .cor{color:var(--ok);font-weight:800;}
+  .diff b{color:var(--ng);text-decoration:underline;}
+  .copyans{font-family:Georgia,serif;font-size:18px;font-weight:800;color:var(--accent);background:#fff;border:2px dashed var(--accent);border-radius:10px;padding:8px 12px;margin:0 0 10px;text-align:center;}
+  .hidden{display:none;}
+  .score{text-align:center;padding:8px 0 4px;}
+  .score .big{font-size:46px;font-weight:800;line-height:1;}
+  .score .pct{font-size:15px;color:var(--sub);}
+  .ring{font-size:54px;text-align:center;margin:6px 0;}
+  .msg{text-align:center;font-size:16px;font-weight:700;margin:6px 0 16px;}
+  .foot{text-align:center;color:var(--sub);font-size:11px;margin-top:18px;}
+  .steps{display:flex;gap:6px;margin:0 0 10px;}
+  .steps span{flex:1;text-align:center;font-size:11px;padding:5px 2px;border-radius:8px;background:#f7ece3;color:var(--sub);font-weight:700;}
+  .steps span.on{background:var(--accent);color:#fff;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>✉️ ゆうちゃん先生の Unit 5 プリント</h1>
+  <p class="lead">教科書 pp.59〜66 ／ <b>10/19（月）にこのテストをする</b><br>スペルはキーボード入力で判定</p>
+  <div class="letter">
+    <b>ゆうちゃん先生のやり方</b>（手紙より）<br>
+    ① 解答を見て、きちんと写す → ② 覚える → ③ 解答を見ないで自分で記入 → ④ 間違いをチェックして、記入しながら覚える → ⑤ まで、<b>毎日1頁をメドに</b>。Ⓐの次はⒷも同じように。<br>
+    <small>※このプリントは家の外に持ち出さないこと。</small>
+  </div>
+  <div id="modeList"></div>
+  <p class="foot">各セットは「写す→自力で入力」の2段階。間違えた問題だけ何度でもやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="modeName"></span><span id="count"></span></div>
+    <div class="steps" id="steps"><span id="st1">① 写して覚える</span><span id="st2">③ 自力で記入</span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="ctxBox"></div>
+    <div id="copyBox"></div>
+    <div id="bankBox"></div>
+    <input class="inp" id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="ここに入力">
+    <div class="row"><button class="btn" id="judgeBtn">判定する</button><button class="btn ghost sm" id="hintBtn" style="flex:0 0 40%;margin-top:12px;padding:14px 6px;">ヒント</button></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめて一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ（<span id="wrongN"></span>問）</button>
+    <button class="btn hidden" id="toStep2">③ 解答を見ないで自力で記入 →</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">一覧へ</button>
+  </div>
+</div>
+
+<script>
+/* ===== Ⓐ 単語・表現のまとめ（プリントの通り） ===== */
+const A_WORDS = [
+ {n:"(1)",m:"全ての人々の",a:["universal"]},
+ {n:"(2)",m:"デザイン",a:["design"]},
+ {n:"(3)",m:"博覧会、フェア",a:["fair"]},
+ {n:"(4)",m:"びん、ボトル",a:["bottle"]},
+ {n:"(5)",m:"（機械などが）自動式の",a:["automatic"]},
+ {n:"(6)",m:"調節可能な",a:["adjustable"]},
+ {n:"(7)",m:"公の、公共の",a:["public"]},
+ {n:"(8)",m:"…にさわる、ふれる",a:["touch"]},
+ {n:"(9)",m:"製品",a:["product"]},
+ {n:"(10)",m:"施設、設備",a:["facility"]},
+ {n:"(11)",m:"職員、従業員",a:["staff"]},
+ {n:"(12)",m:"役に立つ、有用な",a:["useful"]},
+ {n:"(13)",m:"標識、看板、掲示",a:["sign"]},
+ {n:"(14)",m:"若い、幼い",a:["young"]},
+ {n:"(15)",m:"（複数形で）階段",a:["stairs","stair"]},
+ {n:"(16)",m:"…をひく、ひっぱる",a:["pull"]},
+ {n:"(17)",m:"赤ん坊",a:["baby"]},
+ {n:"(18)",m:"子供のころ",a:["childhood"]},
+ {n:"(19)",m:"…を取り除く",a:["remove"]},
+ {n:"(20)",m:"壁、障壁",a:["barrier"]},
+ {n:"(21)",m:"立場、境遇、状況",a:["situation"]},
+ {n:"(22)",m:"…を広げる、広める",a:["spread"]},
+ {n:"(23)",m:"(22)の過去形",a:["spread"]},
+ {n:"(24)",m:"（…にとって）使いやすい［行きやすい］",a:["accessible"]},
+];
+const A_EXPR = [
+ {n:"(1)",j:"こちらに来て。",c:"Come ___ ___.",a:["over here"]},
+ {n:"(2)",j:"あなたが手伝ってくれたおかげで、私たちはこの仕事を終えることができました。",c:"___ ___ your help, we could finish this job.",a:["thanks to"]},
+ {n:"(3)",j:"姉も兄も同じ大学に通っています。",c:"___ my sister ___ brother go to the same college.",a:["both and"],note:"2つの空欄を順に、スペースで区切って入力（例: both and）"},
+ {n:"(4)",j:"もしよろしければ、予約をしましょうか。",c:"___ ___ ___, I can make a reservation for you.",a:["if you want"]},
+ {n:"(5)",j:"先生は私たちにユニバーサルデザインの例をいくつか見せてくれました。",c:"Our teacher showed us some ___ ___ ___ design.",a:["examples of universal"]},
+ {n:"(6)",j:"彼女はその国で貧しい人々のために働きました。",c:"She worked for ___ poor in the country.",a:["the"]},
+ {n:"(7)",j:"年齢に関係なく、どなたでも歓迎します。",c:"Everyone is welcome ___ ___ age.",a:["regardless of"]},
+];
+/* ===== Ⓑ Key Sentences のまとめ（プリントの通り） ===== */
+const B1 = [
+ {n:"❶(1)",c:"I don't know how ( use / using / to use ) this camera.",a:["to use"]},
+ {n:"❶(2)",c:"Please tell me ( where / where to / to where ) buy food.",a:["where to"]},
+ {n:"❶(3)",c:"I'm sure ( if / that / because ) he will come back soon.",a:["that"]},
+ {n:"❶(4)",c:"He told ( us to when / us when to / to us when ) leave.",a:["us when to"]},
+ {n:"❶(5)",c:"I'm glad ( that / to / it ) I can go shopping with you tomorrow.",a:["that"]},
+];
+const B2 = [
+ {n:"❷(1)",j:"私は夕食に何を作るべきかわかりません。",w:"what / for / know / I / to / make / don't",tail:"dinner.",a:["I don't know what to make for dinner."]},
+ {n:"❷(2)",j:"私は今日晴れていてうれしいです。",w:"is / glad / I'm / that / sunny / it",tail:"today.",a:["I'm glad that it is sunny today."]},
+ {n:"❷(3)",j:"父は私に魚の捕まえ方を見せてくれました。",w:"fish / me / to / my father / catch / how / showed",tail:".",a:["My father showed me how to catch fish."]},
+ {n:"❷(4)",j:"きっと彼らはイベントで多くのことを学んだと思います。",w:"they / sure / things / that / a lot of / I'm / learned",tail:"at the event.",a:["I'm sure that they learned a lot of things at the event."]},
+ {n:"❷(5)",j:"どこでサッカーの練習をすべきか私たちに教えてくれますか。",w:"to / tell / soccer / you / where / can / us / practice",tail:"?",a:["Can you tell us where to practice soccer?"]},
+];
+const B3TABLE = `<table class="tbl"><tr><th></th><th>博 (Hiroshi)</th><th>由美 (Yumi)</th><th>ジム (Jim)</th></tr><tr><th>知りたいこと</th><td>ギターのひき方</td><td>速く走る方法</td><td>漢字の書き方</td></tr><tr><th>教えてくれる人</th><td>ジム</td><td>博</td><td>由美</td></tr></table>`;
+const B3 = [
+ {n:"❸(1)",q:"What does Jim want to know?（疑問詞を使うこと）",a:["He wants to know how to write kanji."]},
+ {n:"❸(2)",q:"Will Yumi teach Jim how to play the guitar?",a:["No, she will not.","No, she won't."]},
+ {n:"❸(3)",q:"What will Hiroshi teach Yumi?（疑問詞を使うこと）",a:["He will teach her how to run fast."]},
+];
+
+/* セット定義：小分け（集中力の持続する数） */
+const SETS = {
+ a1:{sec:"Ⓐ 単語・表現のまとめ（教科書 pp.59-66）",title:"Ⓐ-1 単語 (1)〜(8)",emo:"⌨️",sub:"universal 〜 touch（8語）",items:A_WORDS.slice(0,8).map(x=>({t:"word",...x}))},
+ a2:{title:"Ⓐ-2 単語 (9)〜(16)",emo:"⌨️",sub:"product 〜 pull（8語）",items:A_WORDS.slice(8,16).map(x=>({t:"word",...x}))},
+ a3:{title:"Ⓐ-3 単語 (17)〜(24)",emo:"⌨️",sub:"baby 〜 accessible（8語）",items:A_WORDS.slice(16,24).map(x=>({t:"word",...x}))},
+ a4:{title:"Ⓐ-4 表現チェック (1)〜(7)",emo:"📝",sub:"空欄に入る語を入力（各3点）",items:A_EXPR.map(x=>({t:"expr",...x}))},
+ aall:{title:"Ⓐ 全問テスト（24語＋7表現）",emo:"🧪",sub:"本番形式：ランダム順で一気に",items:[...A_WORDS.map(x=>({t:"word",...x})),...A_EXPR.map(x=>({t:"expr",...x}))],testOnly:true},
+ b1:{sec:"Ⓑ Key Sentences のまとめ（教科書 pp.59-66）",title:"Ⓑ-1 ❶ 適する語句を選ぶ (1)〜(5)",emo:"🔘",sub:"( )内から選んで入力（各4点）",items:B1.map(x=>({t:"choose",...x}))},
+ b2:{title:"Ⓑ-2 ❷ 並べかえ (1)〜(5)",emo:"📝",sub:"文をまるごと入力（各4点）",items:B2.map(x=>({t:"order",...x}))},
+ b3:{title:"Ⓑ-3 ❸ 表を見て英語で答える (1)〜(3)",emo:"📊",sub:"疑問詞 how to を使って答える（各5点）",items:B3.map(x=>({t:"table",...x}))},
+ ball:{title:"Ⓑ 全問テスト（13問）",emo:"🧪",sub:"本番形式：ランダム順で一気に",items:[...B1.map(x=>({t:"choose",...x})),...B2.map(x=>({t:"order",...x})),...B3.map(x=>({t:"table",...x}))],testOnly:true},
+};
+
+const $=id=>document.getElementById(id);
+let state={};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function bestKey(s){return "kotest_eigo_yuko_u5_"+s;}
+function norm(s){return (s||"").toLowerCase().replace(/[’‘`]/g,"'").replace(/[-–—]/g," ").replace(/[.,!?。、"“”\[\]]/g,"").replace(/\s+/g," ").trim();}
+function renderHome(){
+  $("home").classList.remove("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");
+  const list=$("modeList");list.innerHTML="";
+  for(const s in SETS){const st=SETS[s];
+    if(st.sec){const h=document.createElement("div");h.className="sechead";h.textContent=st.sec;list.appendChild(h);}
+    const best=localStorage.getItem(bestKey(s));
+    const b=document.createElement("button");b.className="mode";
+    b.innerHTML=`<span class="emo">${st.emo}</span><span class="tt"><b>${st.title}</b><small>${st.sub}</small></span>${best?`<span class="best">自力 ${best}%</span>`:""}`;
+    b.onclick=()=>start(s, st.testOnly?2:1);list.appendChild(b);}
+}
+/* step 1 = 写して覚える（答えを表示して入力）, step 2 = 自力で記入 */
+function start(set,step,subset){
+  const qs=subset?subset:(step===1?SETS[set].items.slice():shuffle(SETS[set].items));
+  state={set,step,items:qs,pos:0,score:0,wrong:[],hint:0};
+  $("home").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");
+  $("modeName").textContent=SETS[set].emo+" "+SETS[set].title;
+  $("st1").className=step===1?"on":"";$("st2").className=step===2?"on":"";
+  $("steps").style.display=SETS[set].testOnly?"none":"flex";
+  renderQ();
+}
+function renderQ(){
+  const it=state.items[state.pos];state.hint=0;
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("exp").className="exp";$("exp").innerHTML="";$("nextBtn").classList.add("hidden");
+  $("ctxBox").innerHTML="";$("bankBox").innerHTML="";$("copyBox").innerHTML="";
+  const inp=$("inp");inp.value="";inp.className="inp";inp.disabled=false;
+  $("judgeBtn").classList.remove("hidden");$("hintBtn").classList.toggle("hidden",state.step===1);
+  $("qtag").textContent=it.n;
+  if(it.t==="word"){
+    $("qText").textContent=it.m; inp.placeholder="教科書の語句欄にある単語を入力";
+  }else if(it.t==="expr"){
+    $("qText").textContent=it.j;
+    $("ctxBox").innerHTML=`<div class="ctx">${it.c.replace(/___/g,"<b>___</b>")}</div>${it.note?`<div style="font-size:12px;color:#6b7686;margin:-6px 0 10px">${it.note}</div>`:""}`;
+    inp.placeholder="空欄に入る語を順に入力";
+  }else if(it.t==="choose"){
+    $("qText").textContent="（　）内から適する語句を選んで入力";
+    $("ctxBox").innerHTML=`<div class="ctx">${it.c}</div>`; inp.placeholder="例: to use";
+  }else if(it.t==="order"){
+    $("qText").textContent=it.j;
+    $("ctxBox").innerHTML=`<div class="ctx">( ${it.w} ) ${it.tail}</div>`;
+    $("bankBox").innerHTML=`<div class="bank">${it.w.split(" / ").map(w=>`<span>${w}</span>`).join("")}<span>${it.tail}</span></div>`;
+    inp.placeholder="文全体を入力（文頭は大文字）";
+  }else if(it.t==="table"){
+    $("qText").textContent=it.q;
+    $("ctxBox").innerHTML=B3TABLE; inp.placeholder="英語の文で答える";
+  }
+  if(state.step===1){ $("copyBox").innerHTML=`<div class="copyans">✎ ${it.a[0]}</div>`; inp.placeholder="↑を見て、そのまま打って覚える"; }
+  setTimeout(()=>inp.focus(),50);
+  window.scrollTo(0,0);
+}
+function diffMark(user,cor){const u=norm(user),c=norm(cor);let i=0;while(i<u.length&&i<c.length&&u[i]===c[i])i++;return `<span class="diff">${c.slice(0,i)}<b>${c.slice(i)}</b></span>`;}
+function finish(correct,it,userText){
+  if(correct)state.score++;else state.wrong.push(it);
+  const body=correct?`<div class="ansline"><span class="cor">${it.a[0]}</span></div>`:`<div class="ansline">あなた：<span class="you">${userText||"（空欄）"}</span></div><div class="ansline">正解：<span class="cor">${it.a[0]}</span>${it.a.length>1?`<small style="color:#6b7686">（${it.a.slice(1).join(" / ")} も可）</small>`:""}</div><div class="ansline">ちがう所から→ ${diffMark(userText,it.a[0])}</div>`;
+  $("exp").innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ④ 間違いをチェック'}</span>${body}`;
+  $("exp").classList.add("show");$("nextBtn").classList.remove("hidden");
+  $("judgeBtn").classList.add("hidden");$("hintBtn").classList.add("hidden");$("inp").disabled=true;
+  setTimeout(()=>$("nextBtn").focus(),50);
+}
+$("judgeBtn").onclick=()=>{const it=state.items[state.pos];const v=$("inp").value;const ok=it.a.some(x=>norm(x)===norm(v));$("inp").className="inp "+(ok?"ok":"ng");finish(ok,it,v);};
+$("inp").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(!$("judgeBtn").classList.contains("hidden"))$("judgeBtn").click();else $("nextBtn").click();}});
+$("hintBtn").onclick=()=>{const it=state.items[state.pos];state.hint++;const ans=it.a[0];if(ans.indexOf(" ")<0){$("inp").value=ans.slice(0,Math.min(state.hint,ans.length-1));}else{const ws=ans.split(" ");$("inp").value=ws.slice(0,Math.min(state.hint,ws.length-1)).join(" ")+" ";}$("inp").focus();};
+$("nextBtn").onclick=()=>{state.pos++;if(state.pos>=state.items.length)renderResult();else renderQ();};
+function renderResult(){
+  $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+  const total=state.items.length,sc=state.score,pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;$("scorePct").textContent=(state.step===1?"写し":"自力")+` 正答率 ${pct}%`;
+  let ring,msg;
+  if(state.step===1){ring="📖";msg=pct===100?"全部写せた。次は③ 解答を見ないで自力で記入":"写し間違いあり。もう一度ていねいに写してから③へ";}
+  else if(pct===100){ring="🎉";msg="自力で全問正解！このページは仕上がり";}
+  else if(pct>=80){ring="💪";msg="あと少し。まちがえた問題だけ④で覚え直し";}
+  else{ring="📝";msg="まちがえた問題だけ、④記入しながら覚える→もう一度";}
+  $("ring").textContent=ring;$("resMsg").textContent=msg;
+  const full=state.items.length===SETS[state.set].items.length;
+  if(full&&state.step===2){
+    const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
+    if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
+    if(typeof reportUnit==="function")reportUnit("✉️ ゆうちゃん先生のUnit5プリント："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 自力で全問正解！":pct>=80?"✅ 合格ライン！":"あと少し！覚え直します💪")+"\n#莉映の小テスト対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.step,state.wrong.slice());}else rw.classList.add("hidden");
+  const t2=$("toStep2");if(state.step===1){t2.classList.remove("hidden");t2.onclick=()=>start(state.set,2);}else t2.classList.add("hidden");
+}
+$("againBtn").onclick=()=>start(state.set,state.step);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{if(confirm("一覧に戻りますか？"))renderHome();};
+renderHome();
+</script>
+</body>
+</html>
