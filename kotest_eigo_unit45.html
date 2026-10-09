@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>英語 小テスト対策：Unit 4 復習＋Unit 5 予測</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#fff5f7; --card:#fff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#be123c; --accent-d:#9f1239;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#f5d5dc; --shadow:0 4px 14px rgba(150,20,60,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:17px;padding:14px 12px 40px;max-width:480px;margin:0 auto;}
+  h1{font-size:19px;margin:6px 0 2px;text-align:center;}
+  .lead{text-align:center;color:var(--sub);font-size:13px;margin:0 0 12px;}
+  .backlink{display:inline-block;margin-bottom:6px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14px;}
+  .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px;}
+  .sechead{font-size:13px;font-weight:800;color:#7a2236;letter-spacing:.05em;margin:16px 4px 8px;padding-bottom:4px;border-bottom:2px solid #efc6d0;}
+  .mode{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow);cursor:pointer;}
+  .mode:active{transform:scale(.98);}
+  .mode .emo{font-size:24px;}
+  .mode .tt{flex:1;}
+  .mode .tt b{font-size:15px;display:block;}
+  .mode .tt small{color:var(--sub);font-size:12px;}
+  .mode .best{font-size:11px;color:var(--ok);font-weight:700;white-space:nowrap;}
+  .bar{height:8px;background:#f8e3e8;border-radius:99px;overflow:hidden;margin-bottom:8px;}
+  .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s;}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:12px;}
+  .qtag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:2px 8px;margin-bottom:10px;}
+  .q{font-size:18px;font-weight:700;margin:0 0 6px;line-height:1.55;}
+  .ctx{font-size:16px;color:#334;background:#fdf2f5;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-family:Georgia,"Times New Roman",serif;}
+  .ctx b{color:var(--accent);}
+  .bank{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+  .bank span{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-family:Georgia,serif;}
+  .inp{width:100%;font-size:19px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-family:Georgia,"Times New Roman",serif;outline:none;}
+  .inp:focus{border-color:var(--accent);}
+  .inp.ok{border-color:var(--ok);background:var(--ok-bg);}
+  .inp.ng{border-color:var(--ng);background:var(--ng-bg);}
+  .row{display:flex;gap:10px;}
+  .btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:var(--shadow);}
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:none;}
+  .btn.gray{background:#f6ecef;color:var(--sub);box-shadow:none;}
+  .btn.ok{background:var(--ok);} .btn.ng{background:var(--ng);}
+  .btn.sm{padding:10px;font-size:14px;margin-top:10px;}
+  .exp{background:#fdf2f5;border-left:4px solid var(--accent);border-radius:8px;padding:11px 13px;font-size:14px;color:#334;margin-top:12px;display:none;}
+  .exp.show{display:block;}
+  .exp .res{font-weight:800;display:block;margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .ansline{font-family:Georgia,serif;font-size:17px;margin:4px 0;}
+  .ansline .you{color:var(--ng);} .ansline .cor{color:var(--ok);font-weight:800;}
+  .diff b{color:var(--ng);text-decoration:underline;}
+  .passage{font-size:14.5px;line-height:1.7;font-family:Georgia,"Times New Roman",serif;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 12px;}
+  details summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14px;margin-bottom:8px;}
+  .ans{font-size:20px;font-weight:800;color:var(--accent);text-align:center;padding:10px;border:2px dashed var(--accent);border-radius:12px;margin:8px 0;}
+  .hidden{display:none;}
+  .score{text-align:center;padding:8px 0 4px;}
+  .score .big{font-size:46px;font-weight:800;line-height:1;}
+  .score .pct{font-size:15px;color:var(--sub);}
+  .ring{font-size:54px;text-align:center;margin:6px 0;}
+  .msg{text-align:center;font-size:16px;font-weight:700;margin:6px 0 16px;}
+  .foot{text-align:center;color:var(--sub);font-size:11px;margin-top:18px;}
+  .note{font-size:13px;color:#334;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🔤 英語 小テスト対策</h1>
+  <p class="lead">Unit 4 まとめテストの復習 ＋ Unit 5 まとめテストの予測<br><b>スペルはキーボードで入力して判定</b>（大文字小文字・ピリオドは気にしなくてOK）</p>
+  <div class="note">Unit 4 のテストで落とした21点のうち12点は「読解を空欄」「英作文が質問とずれた」。<b>①単語を入力で覚える → ②文をまるごと打てるようにする → ③読解は本文から探す</b>の順で。Unit 5 は次の小テストの先回り。</div>
+  <div id="modeList"></div>
+  <p class="foot">※単語・文は入力して自動判定。読解は答えを見て自己採点。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="modeName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <div id="passBox"></div>
+    <p class="q" id="qText"></p>
+    <div id="ctxBox"></div>
+    <div id="bankBox"></div>
+    <div id="inputArea">
+      <input class="inp" id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="ここに入力">
+      <div class="row"><button class="btn" id="judgeBtn">判定する</button><button class="btn ghost sm" id="hintBtn" style="flex:0 0 40%;margin-top:12px;padding:14px 6px;">ヒント</button></div>
+    </div>
+    <div id="selfArea" class="hidden">
+      <button class="btn ghost" id="revealBtn">答えを見る</button>
+      <div id="ansBox" class="hidden">
+        <div class="ans" id="ansText"></div>
+        <div class="row"><button class="btn ok" id="selfOk">⭕ 合っていた</button><button class="btn ng" id="selfNg">❌ ちがった／空欄</button></div>
+      </div>
+    </div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめて一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問シャッフル）</button>
+    <button class="btn gray" id="homeBtn">一覧へ</button>
+  </div>
+</div>
+
+<script>
+/* ========== 本文（読解用） ========== */
+const PASS = {
+ team:`I joined a basketball team last month. I enjoy playing basketball, so I was very happy to become a member.<br>Our team has some rules. We have to come to practice on time. We also have to bring our water bottles. However, we don't have to buy special shoes. We can use our own shoes.<br>Our coach is kind, but he is strict about safety. We must not run in the gym before practice starts. We must listen carefully when the coach is talking. These rules help us stay safe.<br>Practice is hard, but I like it. My favorite part is playing games with my teammates. I want to improve my basketball skills, so I practice every week.`,
+ lucas:`<b>Lucas:</b> My host family is an elderly couple. They don't watch TV. After dinner, they usually enjoy reading books in the living room. After they finish reading, they go to bed. I get bored at night because I have nothing to do. They are very kind and I really like them. So, I want to enjoy doing something with them. What should I do?<br><b>Yuna:</b> My host father is good at cooking. Everyone enjoys eating his dinners, but there's one problem. He puts too much food on my plate. I can't finish it all. I don't want to hurt his feelings. What can I say when he's giving me too much?`,
+ kevin:`I had a host brother, Kevin. He was really interested in Japan and asked me many questions. Talking with him was fun. However, it was difficult to answer some questions. For example, he said, "Why do you say 'Tadaima' when you get home? Why do you take off your shoes when you enter a house?" I couldn't explain the reasons. After I talked with him, I felt like learning about my own country.<br>In the end, staying with a host family was a great experience. Sometimes we couldn't understand each other. However, I kept trying to speak in English, and they listened to me carefully. I want to visit them again in the near future.`,
+ ud1:`Do you know about universal design? "Universal" means "for all people." So, universal design is useful for everyone. I'll show you two examples of it in our city.<br>Look at this sign. It uses a picture, English, and easy Japanese. I can understand it easily. Young children can understand it, too.<br>Next, do you see the ramp by the stairs? If you're in a wheelchair or pulling heavy baggage, you can use the ramp. It also helps the elderly and people with babies or small children.<br>I'm sure that these facilities help many people. I'm glad that I could find them in our city.`,
+ ud2:`Ronald Mace, an American professor, is the father of universal design. He was in a wheelchair from childhood, and often had a difficult time.<br>In the 1970s, people started to remove barriers for some disabled people, but Ronald had a different idea. He wanted to make designs for all people, regardless of age, ability, or situation. In the 1980s, he founded the Center for Universal Design, and spread his idea around the world.<br>Now many people think that it is a great idea. You can find many products and facilities with a universal design around you. There are automatic doors, accessible restrooms, and ramps.`
+};
+
+/* ========== Unit 4 復習 ========== */
+/* 単語：t=spell, m=意味, c=文脈（___が空欄）, a=答え（配列可）, e=解説 */
+const U4W = [
+ {t:"spell",m:"完璧な",c:"You speak ___ English.",a:["perfect"],e:"テスト大問4②。per-fect。"},
+ {t:"spell",m:"何も〜ない",c:"I had ___ to do.",a:["nothing"],e:"テスト大問4①。no+thing。"},
+ {t:"spell",m:"皿",c:"There was much food on my ___.",a:["plate"],e:"テスト大問4③。pl-a-te（最後のe）。"},
+ {t:"spell",m:"おたがい",c:"They help ___ ___.",a:["each other"],e:"テスト大問4④。2語で1つ。"},
+ {t:"spell",m:"〜したい気分だった",c:"I ___ ___ dancing.",a:["felt like"],e:"テスト大問4⑤。feel like …ing の過去形。felt（fee→fel+t）。"},
+ {t:"spell",m:"将来",c:"What do you want to be ___ ___ ___?",a:["in the future"],e:"テスト大問4⑥。fu-tu-re。"},
+ {t:"spell",m:"答える",c:"Please ___ my questions.",a:["answer"],e:"テスト大問4⑦。an-s-wer（wを忘れない）。"},
+ {t:"spell",m:"助言・アドバイス",c:"Homestay ___",a:["advice"],e:"advice（名詞はc）。"},
+ {t:"spell",m:"一員・メンバー",c:"You are a ___ of the family.",a:["member"],e:"mem-ber。"},
+ {t:"spell",m:"（招かれた）客",c:"You are not a ___.",a:["guest"],e:"gu-est（uを忘れない）。"},
+ {t:"spell",m:"〜に従う",c:"You have to ___ the house rules.",a:["follow"],e:"fol-low（lが2つ）。"},
+ {t:"spell",m:"規則",c:"the house ___s",a:["rule","rules"],e:"rule。"},
+ {t:"spell",m:"主人・（ホームステイの）受け入れ側",c:"ask your ___ family",a:["host"],e:"host family。"},
+ {t:"spell",m:"ホームステイ",c:"enjoy your ___",a:["homestay"],e:"home+stay。"},
+ {t:"spell",m:"シャワー",c:"We must not take long ___s.",a:["shower","showers"],e:"sho-wer。"},
+ {t:"spell",m:"限度・制限",c:"What's the ___?",a:["limit"],e:"li-mit。"},
+ {t:"spell",m:"年配の",c:"an ___ couple",a:["elderly"],e:"el-der-ly。"},
+ {t:"spell",m:"夫婦・カップル",c:"an elderly ___",a:["couple"],e:"cou-ple。"},
+ {t:"spell",m:"終える",c:"After they ___ reading, they go to bed.",a:["finish"],e:"fi-nish。"},
+ {t:"spell",m:"〜すべきだ",c:"What ___ I do?",a:["should"],e:"sh-ou-ld（lを忘れない）。"},
+ {t:"spell",m:"傷つける",c:"I don't want to ___ his feelings.",a:["hurt"],e:"hurt。"},
+ {t:"spell",m:"気持ち",c:"I don't want to hurt his ___s.",a:["feeling","feelings"],e:"feel+ing。"},
+ {t:"spell",m:"入る",c:"when you ___ a house",a:["enter"],e:"en-ter。"},
+ {t:"spell",m:"説明する",c:"I couldn't ___ the reasons.",a:["explain"],e:"ex-plain。"},
+ {t:"spell",m:"注意深く",c:"They listened to me ___.",a:["carefully"],e:"care-ful-ly（lが2つ）。"},
+ {t:"spell",m:"結局・最後には",c:"In the ___, staying with a host family was a great experience.",a:["end"],e:"in the end＝結局。"},
+ {t:"spell",m:"〜し続けた（keepの過去形）",c:"I ___ trying to speak in English.",a:["kept"],e:"keep→kept。"},
+ {t:"spell",m:"（靴などを）脱ぐ",c:"Why do you ___ ___ your shoes?",a:["take off"],e:"take off。"},
+ {t:"spell",m:"寝る",c:"They ___ ___ ___ after reading.",a:["go to bed"],e:"go to bed。"},
+ {t:"spell",m:"居間",c:"They read books in the ___ ___.",a:["living room"],e:"living room。"},
+];
+/* 文：t=sent, j=日本語, a=答え（配列・どれでも正解）, e=解説 */
+const U4S = [
+ {t:"sent",j:"私はその本を読む必要はありません。",a:["I don't have to read the book.","I do not have to read the book."],e:"テスト大問5①。don't have to＝〜する必要はない。"},
+ {t:"sent",j:"美しい花を見ることはすてきでした。",a:["Seeing beautiful flowers was nice."],e:"テスト大問5②で落とした問題。動名詞 Seeing … が主語→was。"},
+ {t:"sent",j:"私たちはスタジアムで走ることを楽しみました。",a:["We enjoyed running in the stadium."],e:"テスト大問5③。enjoy＋動名詞。"},
+ {t:"sent",j:"ここで写真を撮ってはいけません。",a:["You must not take pictures here.","You mustn't take pictures here."],e:"テスト大問5④で落とした問題。must not＋動詞＋目的語＋場所。here は最後。"},
+ {t:"sent",j:"あなたは英語を話さなければなりません。",a:["You have to speak English."],e:"Key Sentences 13。"},
+ {t:"sent",j:"あなたは完璧な英語を話す必要はありません。",a:["You do not have to speak perfect English.","You don't have to speak perfect English."],e:"Key Sentences 13。"},
+ {t:"sent",j:"私たちは水を節約しなければなりません。",a:["We must save water."],e:"Key Sentences 14。"},
+ {t:"sent",j:"私たちは長いシャワーを浴びてはいけません。",a:["We must not take long showers.","We mustn't take long showers."],e:"Key Sentences 14。"},
+ {t:"sent",j:"彼らは本を読むことを楽しみます。",a:["They enjoy reading books."],e:"Key Sentences 15。動名詞が目的語。"},
+ {t:"sent",j:"彼と話すことは楽しかったです。",a:["Talking with him was fun."],e:"Key Sentences 16。動名詞が主語。"},
+ {t:"sent",j:"私は何もすることがありませんでした。",a:["I had nothing to do."],e:"本文（Lucas）。"},
+ {t:"sent",j:"私たちは昼食を持ってこなければなりません。",a:["We have to bring our lunch."],e:"Practice の例文。"},
+];
+/* 英作文テンプレ */
+const U4E = [
+ {t:"sent",j:"【What do you enjoy doing after school? への答え】私は野球をすることを楽しみます。",a:["I enjoy playing baseball."],e:"テスト大問6問2で0点だった問題。enjoy doing と聞かれたら enjoy -ing で返す。"},
+ {t:"sent",j:"【2文目の定型】私は毎日それを練習します。",a:["I practice it every day."],e:"2文目はこの固定文でOK（補足文）。"},
+ {t:"sent",j:"私は友達とサッカーをすることを楽しみます。",a:["I enjoy playing soccer with my friends.","I enjoy playing soccer with my friend."],e:"enjoy -ing の型。"},
+ {t:"sent",j:"【What do you have to do today? への答え】私は英語を勉強しなければなりません。",a:["I have to study English."],e:"have to と聞かれたら have to で返す。"},
+ {t:"sent",j:"私は毎日練習しなければなりません。",a:["I have to practice every day."],e:"have to の型。"},
+ {t:"sent",j:"【What do you want to be in the future? への答え】私は野球選手になりたいです。",a:["I want to be a baseball player."],e:"want to be と聞かれたら want to be で返す。"},
+];
+/* 読解：t=jp, p=本文キー, q=質問, a=答え（日本語） */
+const U4R = [
+ {t:"jp",p:"team",q:"What do team members have to bring to practice?",a:"水筒（water bottles）",e:"テスト問1①。本文 We also have to bring our water bottles. を探す→ bring の後ろが答え。"},
+ {t:"jp",p:"team",q:"What must not students do before practice starts?",a:"（練習が始まる前に）体育館で走ること",e:"テスト問1②。We must not run in the gym before practice starts."},
+ {t:"jp",p:"team",q:"What is the writer's favorite part of practice?",a:"チームメイトと試合をすること",e:"テスト問1③。My favorite part is playing games with my teammates."},
+ {t:"jp",p:"team",q:"What don't they have to buy?",a:"特別な靴（自分の靴でよい）",e:"we don't have to buy special shoes."},
+ {t:"jp",p:"lucas",q:"Why does Lucas get bored at night?",a:"何もすることがないから（ホストファミリーは夕食後に本を読んで寝てしまう）",e:"because I have nothing to do."},
+ {t:"jp",p:"lucas",q:"What does Lucas want to do?",a:"ホストファミリーといっしょに何かをして楽しみたい",e:"I want to enjoy doing something with them."},
+ {t:"jp",p:"lucas",q:"Can Yuna finish all the food on her plate?",a:"いいえ、食べきれない（多すぎる）",e:"I can't finish it all."},
+ {t:"jp",p:"kevin",q:"What was difficult for Jun?",a:"ケビンからのいくつかの質問に答えること",e:"it was difficult to answer some questions."},
+ {t:"jp",p:"kevin",q:"What did the host family do when Jun kept trying to speak in English?",a:"注意深く聞いてくれた",e:"they listened to me carefully."},
+];
+
+/* ========== Unit 5 予測 ========== */
+const U5W1 = [
+ {t:"spell",m:"全ての人のための・ユニバーサルな",c:"___ design",a:["universal"],e:"u-ni-ver-sal。"},
+ {t:"spell",m:"デザイン・設計",c:"universal ___",a:["design"],e:"de-sign（gを忘れない）。"},
+ {t:"spell",m:"見本市・フェア",c:"Universal Design ___",a:["fair"],e:"fair。"},
+ {t:"spell",m:"びん・ボトル",c:"We can find ___s with special shapes.",a:["bottle","bottles"],e:"bot-tle（tが2つ）。"},
+ {t:"spell",m:"自動の",c:"There are ___ doors.",a:["automatic"],e:"au-to-ma-tic。"},
+ {t:"spell",m:"調節できる",c:"___ desks",a:["adjustable"],e:"ad-just-able。"},
+ {t:"spell",m:"公共の",c:"Midori ___ Library",a:["public"],e:"pub-lic。"},
+ {t:"spell",m:"触る",c:"You can see and ___ many products.",a:["touch"],e:"tou-ch。"},
+ {t:"spell",m:"製品",c:"many ___s with a universal design",a:["product","products"],e:"pro-duct。"},
+ {t:"spell",m:"施設",c:"You will learn where to find ___ in our city.",a:["facilities","facility"],e:"facility→複数 facilities。"},
+ {t:"spell",m:"市役所",c:"PLACE: Midori ___ ___",a:["city hall"],e:"city hall。"},
+ {t:"spell",m:"スタッフ・職員",c:"the ___ at the event",a:["staff"],e:"staff（fが2つ）。"},
+ {t:"spell",m:"軽くたたく",c:"I can ___ them like castanets.",a:["tap"],e:"tap。"},
+ {t:"spell",m:"両方の",c:"___ left- and right-handed people can use them.",a:["both"],e:"both。"},
+ {t:"spell",m:"左ききの",c:"___ people",a:["left-handed","left handed"],e:"left-handed。"},
+ {t:"spell",m:"右ききの",c:"___ people",a:["right-handed","right handed"],e:"right-handed。"},
+ {t:"spell",m:"こちらに",c:"Look ___ ___.",a:["over here"],e:"over here。"},
+ {t:"spell",m:"〜のおかげで",c:"___ ___ their shape, you can cut the paper easily.",a:["thanks to"],e:"thanks to。"},
+ {t:"spell",m:"役に立つ",c:"Universal design is ___ for everyone.",a:["useful"],e:"use+ful（lは1つ）。"},
+ {t:"spell",m:"標識・看板",c:"Look at this ___.",a:["sign"],e:"sign（gを忘れない）。"},
+ {t:"spell",m:"若い",c:"___ children can understand it, too.",a:["young"],e:"you-ng。"},
+ {t:"spell",m:"スロープ・傾斜路",c:"Do you see the ___ by the stairs?",a:["ramp"],e:"ramp。"},
+ {t:"spell",m:"階段",c:"the ramp by the ___",a:["stairs"],e:"stairs（複数形で使う）。"},
+ {t:"spell",m:"車いす",c:"If you're in a ___, you can use the ramp.",a:["wheelchair"],e:"wheel+chair。"},
+ {t:"spell",m:"引く",c:"___ing heavy baggage",a:["pull"],e:"pull（lが2つ）。"},
+ {t:"spell",m:"手荷物",c:"pulling heavy ___",a:["baggage"],e:"bag-gage（gが2つ×2）。"},
+ {t:"spell",m:"赤ちゃん（複数形）",c:"people with ___ or small children",a:["babies"],e:"baby→babies。"},
+ {t:"spell",m:"発表・プレゼンテーション",c:"This is the end of my ___.",a:["presentation"],e:"pre-sen-ta-tion。"},
+ {t:"spell",m:"はさみ",c:"Are these ___?",a:["scissors"],e:"sc-issors（cを忘れない）。"},
+];
+const U5W2 = [
+ {t:"spell",m:"アメリカ人の",c:"an ___ professor",a:["american"],e:"American（本当は大文字で始める）。"},
+ {t:"spell",m:"教授",c:"an American ___",a:["professor"],e:"pro-fes-sor（sが2つ）。"},
+ {t:"spell",m:"子ども時代",c:"He was in a wheelchair from ___.",a:["childhood"],e:"child+hood。"},
+ {t:"spell",m:"取り除く",c:"People started to ___ barriers.",a:["remove"],e:"re-move。"},
+ {t:"spell",m:"障壁・障害",c:"remove ___s for some disabled people",a:["barrier","barriers"],e:"bar-ri-er（rが2つ）。"},
+ {t:"spell",m:"障がいのある",c:"some ___ people",a:["disabled"],e:"dis-abled。"},
+ {t:"spell",m:"〜に関係なく",c:"___ ___ age, ability, or situation",a:["regardless of"],e:"regardless of。"},
+ {t:"spell",m:"能力",c:"regardless of age, ___, or situation",a:["ability"],e:"a-bil-i-ty。"},
+ {t:"spell",m:"状況",c:"regardless of age, ability, or ___",a:["situation"],e:"sit-u-a-tion。"},
+ {t:"spell",m:"設立した（foundの過去形）",c:"He ___ the Center for Universal Design.",a:["founded"],e:"found→founded（find-foundと区別）。"},
+ {t:"spell",m:"中心・センター",c:"the ___ for Universal Design",a:["center"],e:"cen-ter。"},
+ {t:"spell",m:"広めた（spreadの過去形）",c:"He ___ his idea around the world.",a:["spread"],e:"spread→spread（同形）。"},
+ {t:"spell",m:"利用しやすい",c:"___ restrooms",a:["accessible"],e:"ac-ces-si-ble。"},
+];
+const U5S = [
+ {t:"sent",j:"私はこれらの製品の使い方を知っています。",a:["I know how to use these products."],e:"Key Sentences 17。how to＋動詞の原形＝〜のしかた。"},
+ {t:"sent",j:"私はあなたにこれらの製品の使い方を見せることができます。",a:["I can show you how to use these products."],e:"Key Sentences 18。show＋人＋how to …。"},
+ {t:"sent",j:"私はこれらのアイデアが多くの人を助けると確信しています。",a:["I am sure that these ideas help many people.","I'm sure that these ideas help many people."],e:"Key Sentences 19。be sure that …。"},
+ {t:"sent",j:"アナはいつ家を出るべきか知っています。",a:["Anna knows when to leave her house."],e:"when to＝いつ〜すべきか。"},
+ {t:"sent",j:"私はあなたにこのはさみの使い方を教えることができます。",a:["I can tell you how to use these scissors."],e:"tell＋人＋how to …。"},
+ {t:"sent",j:"私はユニバーサルデザインが役に立つと確信しています。",a:["I'm sure that universal design is helpful.","I am sure that universal design is helpful."],e:"Practice の例文。"},
+ {t:"sent",j:"私はあなたがユニバーサルデザインに興味を持ってうれしいです。",a:["I'm glad that you became interested in universal design.","I am glad that you became interested in universal design."],e:"be glad that …。"},
+ {t:"sent",j:"私はあなたに、私たちの市のどこで施設を見つけられるか教えることができます。",a:["I can tell you where to find facilities in our city."],e:"where to＝どこで〜すべきか。"},
+ {t:"sent",j:"左ききの人も右ききの人も両方それらを使うことができます。",a:["Both left- and right-handed people can use them.","Both left and right handed people can use them."],e:"本文 Part 2。"},
+ {t:"sent",j:"全ての創造的な製品を見に行ってはいかがですか。",a:["Why don't you go and see all the creative products?"],e:"Real Life English 5 の Key Expression。Why don't you …?＝〜してはいかが。"},
+ {t:"sent",j:"ミドリ公共図書館には自動ドアと調節できる机があります。",a:["There are automatic doors and adjustable desks at Midori Public Library."],e:"本文 Part 1。"},
+ {t:"sent",j:"あなたはそれらの使い方を学ぶでしょう。",a:["You will learn how to use them."],e:"本文 Part 1。"},
+];
+const U5R = [
+ {t:"jp",p:"ud1",q:"What does \"universal\" mean?",a:"「全ての人のための」",e:"\"Universal\" means \"for all people.\""},
+ {t:"jp",p:"ud1",q:"Where did Anna find the two examples of universal design?",a:"自分たちの市（our city）で",e:"two examples of it in our city."},
+ {t:"jp",p:"ud1",q:"If you cannot use the stairs, what can you use?",a:"スロープ（ramp）",e:"you can use the ramp."},
+ {t:"jp",p:"ud1",q:"Who does the ramp help?",a:"車いすの人・重い荷物を引く人・高齢者・赤ちゃんや小さい子どもを連れた人",e:"It also helps the elderly and people with babies or small children."},
+ {t:"jp",p:"ud2",q:"Who is Ronald Mace?",a:"ユニバーサルデザインの父（アメリカ人の教授）",e:"the father of universal design"},
+ {t:"jp",p:"ud2",q:"What did people start to do in the 1970s?",a:"障がいのある人のために障壁（バリア）を取り除き始めた",e:"people started to remove barriers for some disabled people"},
+ {t:"jp",p:"ud2",q:"What did Ronald want to make?",a:"年齢・能力・状況に関係なく、全ての人のためのデザイン",e:"designs for all people, regardless of age, ability, or situation"},
+ {t:"jp",p:"ud2",q:"What are some examples of products and facilities with a universal design?",a:"自動ドア・利用しやすいトイレ・スロープ",e:"automatic doors, accessible restrooms, and ramps"},
+];
+
+const SETS = {
+  u4w:{sec:"🔁 Unit 4 の復習（今回のまとめテスト）",title:"① Unit 4 単語を入力（30語）",emo:"⌨️",sub:"テストで落とした plate・perfect・felt like… ＋ Unit 4 の新出語",qs:U4W},
+  u4s:{sec:"",title:"② Unit 4 文を入力（12文）",emo:"📝",sub:"落とした並べかえ2問＋Key Sentences 13〜16 を丸ごと打つ",qs:U4S},
+  u4e:{sec:"",title:"③ 英作文の型を入力（6文）",emo:"✍️",sub:"enjoy -ing／have to／want to be ＋ 2文目の固定文",qs:U4E},
+  u4r:{sec:"",title:"④ 読解「本文から探す」（9問・自己採点）",emo:"📖",sub:"空欄だった大問6の本文＋教科書本文。質問の動詞を本文で探す練習",qs:U4R},
+  u5w1:{sec:"🔮 Unit 5 の予測（次のまとめテスト）",title:"⑤ Unit 5 単語①を入力（29語）",emo:"⌨️",sub:"Part 1・2＋Read 1：universal・automatic・wheelchair・baggage…",qs:U5W1},
+  u5w2:{sec:"",title:"⑥ Unit 5 単語②を入力（13語）",emo:"⌨️",sub:"Read 2：professor・remove・barrier・regardless of・founded…",qs:U5W2},
+  u5s:{sec:"",title:"⑦ Unit 5 文を入力（12文）",emo:"📝",sub:"Key Sentences 17〜19（how to／show 人 how to／be sure that）",qs:U5S},
+  u5r:{sec:"",title:"⑧ Unit 5 読解「本文から探す」（8問・自己採点）",emo:"📖",sub:"ユニバーサルデザインの本文2つ",qs:U5R},
+};
+
+const $=id=>document.getElementById(id);
+let state={};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function bestKey(s){return "kotest_eigo_u45_"+s;}
+function norm(s){return (s||"").toLowerCase().replace(/[’‘`]/g,"'").replace(/[-–—]/g," ").replace(/[.,!?。、"“”]/g,"").replace(/\s+/g," ").trim();}
+function renderHome(){
+  $("home").classList.remove("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");
+  const list=$("modeList");list.innerHTML="";
+  for(const s in SETS){const st=SETS[s];
+    if(st.sec){const h=document.createElement("div");h.className="sechead";h.textContent=st.sec;list.appendChild(h);}
+    const best=localStorage.getItem(bestKey(s));
+    const b=document.createElement("button");b.className="mode";
+    b.innerHTML=`<span class="emo">${st.emo}</span><span class="tt"><b>${st.title}</b><small>${st.sub}</small></span>${best?`<span class="best">最高 ${best}%</span>`:""}`;
+    b.onclick=()=>start(s);list.appendChild(b);}
+}
+function start(set,subset){
+  const qs=subset?subset:SETS[set].qs.slice();
+  state={set,items:shuffle(qs),pos:0,score:0,wrong:[],hint:0};
+  $("home").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");
+  $("modeName").textContent=SETS[set].emo+" "+SETS[set].title;
+  renderQ();
+}
+function renderQ(){
+  const it=state.items[state.pos]; state.hint=0;
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("exp").className="exp";$("exp").innerHTML="";$("nextBtn").classList.add("hidden");
+  $("passBox").innerHTML="";$("ctxBox").innerHTML="";$("bankBox").innerHTML="";
+  const inp=$("inp");inp.value="";inp.className="inp";inp.disabled=false;
+  if(it.t==="spell"){
+    $("qtag").textContent="単語を入力";
+    $("qText").textContent=it.m;
+    $("ctxBox").innerHTML=`<div class="ctx">${it.c.replace(/___/g,"<b>___</b>")}</div>`;
+    inp.placeholder="英語で入力（例: perfect）";
+    $("inputArea").classList.remove("hidden");$("selfArea").classList.add("hidden");$("judgeBtn").classList.remove("hidden");$("hintBtn").classList.remove("hidden");
+    setTimeout(()=>inp.focus(),50);
+  }else if(it.t==="sent"){
+    $("qtag").textContent="文を入力";
+    $("qText").textContent=it.j;
+    const words=shuffle(it.a[0].replace(/[.?!]/g,"").split(" "));
+    $("bankBox").innerHTML=`<div class="bank">${words.map(w=>`<span>${w}</span>`).join("")}</div>`;
+    inp.placeholder="英文を入力（語順も採点）";
+    $("inputArea").classList.remove("hidden");$("selfArea").classList.add("hidden");$("judgeBtn").classList.remove("hidden");$("hintBtn").classList.remove("hidden");
+    setTimeout(()=>inp.focus(),50);
+  }else{
+    $("qtag").textContent="読解・日本語で答える（文でなくてよい）";
+    $("passBox").innerHTML=`<details><summary>📄 本文を見る（質問の動詞をここで探す）</summary><div class="passage">${PASS[it.p]}</div></details>`;
+    $("qText").textContent=it.q;
+    $("inputArea").classList.add("hidden");$("selfArea").classList.remove("hidden");
+    $("ansBox").classList.add("hidden");$("revealBtn").classList.remove("hidden");$("ansText").textContent=it.a;
+  }
+  window.scrollTo(0,0);
+}
+function diffMark(user,cor){
+  const u=norm(user),c=norm(cor);let i=0;while(i<u.length&&i<c.length&&u[i]===c[i])i++;
+  return `<span class="diff">${c.slice(0,i)}<b>${c.slice(i)}</b></span>`;
+}
+function finish(correct,it,userText){
+  if(correct)state.score++;else state.wrong.push(it);
+  const exp=$("exp");
+  let body="";
+  if(it.t==="spell"||it.t==="sent"){
+    body=correct?`<div class="ansline"><span class="cor">${it.a[0]}</span></div>`:`<div class="ansline">あなた：<span class="you">${userText||"（空欄）"}</span></div><div class="ansline">正解：<span class="cor">${it.a[0]}</span>${it.a.length>1?`<small style="color:#6b7686">（${it.a.slice(1).join(" / ")} も可）</small>`:""}</div><div class="ansline">ちがう所から→ ${diffMark(userText,it.a[0])}</div>`;
+  }
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ もう一度覚える'}</span>${body}${it.e||""}`;
+  exp.classList.add("show");$("nextBtn").classList.remove("hidden");
+  $("judgeBtn").classList.add("hidden");$("hintBtn").classList.add("hidden");$("inp").disabled=true;
+  setTimeout(()=>$("nextBtn").focus(),50);
+}
+$("judgeBtn").onclick=()=>{
+  const it=state.items[state.pos];const v=$("inp").value;
+  const ok=it.a.some(x=>norm(x)===norm(v));
+  $("inp").className="inp "+(ok?"ok":"ng");
+  finish(ok,it,v);
+};
+$("inp").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(!$("judgeBtn").classList.contains("hidden"))$("judgeBtn").click();else $("nextBtn").click();}});
+$("hintBtn").onclick=()=>{
+  const it=state.items[state.pos];state.hint++;
+  const ans=it.a[0];
+  if(it.t==="spell"){const n=Math.min(state.hint,ans.length-1);$("inp").value=ans.slice(0,n);$("inp").focus();}
+  else{const ws=ans.split(" ");const n=Math.min(state.hint,ws.length-1);$("inp").value=ws.slice(0,n).join(" ")+" ";$("inp").focus();}
+};
+$("revealBtn").onclick=()=>{$("revealBtn").classList.add("hidden");$("ansBox").classList.remove("hidden");};
+$("selfOk").onclick=()=>{$("ansBox").classList.add("hidden");finish(true,state.items[state.pos]);};
+$("selfNg").onclick=()=>{$("ansBox").classList.add("hidden");finish(false,state.items[state.pos]);};
+$("nextBtn").onclick=()=>{state.pos++;if(state.pos>=state.items.length)renderResult();else renderQ();};
+function renderResult(){
+  $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+  const total=state.items.length,sc=state.score,pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;$("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct===100){ring="🎉";msg="全問正解！このセットは仕上がった";}
+  else if(pct>=80){ring="💪";msg="合格ライン。まちがえた分だけもう1周";}
+  else{ring="📖";msg="まちがえた問題だけ、✗ゼロになるまで回そう";}
+  $("ring").textContent=ring;$("resMsg").textContent=msg;
+  if(state.items.length===SETS[state.set].qs.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
+    if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
+    if(typeof reportUnit==="function")reportUnit("🔤 英語 小テスト対策（Unit4復習／Unit5予測）："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 全問正解！":pct>=80?"✅ 合格ライン！":"あと少し！復習します💪")+"\n#莉映の小テスト対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.wrong.slice());}
+  else rw.classList.add("hidden");
+}
+$("againBtn").onclick=()=>start(state.set);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{if(confirm("一覧に戻りますか？"))renderHome();};
+renderHome();
+</script>
+</body>
+</html>
