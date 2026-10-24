@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ゆうちゃん先生の模擬試験（Unit 6）</title>
+<script src="report.js"></script>
+<style>
+  :root{--bg:#fff8f2;--card:#fff;--ink:#1f2733;--sub:#6b7686;--accent:#c2410c;--accent-d:#9a3412;--ok:#16a34a;--ok-bg:#dcfce7;--ng:#dc2626;--ng-bg:#fee2e2;--line:#f6d9c6;--shadow:0 4px 14px rgba(160,70,20,.08);}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:17px;padding:14px 12px 40px;max-width:480px;margin:0 auto;}
+  h1{font-size:19px;margin:6px 0 2px;text-align:center;}
+  .lead{text-align:center;color:var(--sub);font-size:13px;margin:0 0 12px;}
+  .backlink{display:inline-block;margin-bottom:6px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14px;}
+  .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px;}
+  .letter{background:#fffdf7;border:1px solid #f3e2c8;border-left:5px solid #e0a96d;border-radius:12px;padding:12px 14px;font-size:13.5px;color:#4a3a2a;margin-bottom:12px;}
+  .letter b{color:#9a3412;}
+  .sechead{font-size:13px;font-weight:800;color:#7c2d12;letter-spacing:.05em;margin:16px 4px 8px;padding-bottom:4px;border-bottom:2px solid #f3c9a8;}
+  .mode{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow);cursor:pointer;}
+  .mode .emo{font-size:24px;} .mode .tt{flex:1;} .mode .tt b{font-size:15px;display:block;} .mode .tt small{color:var(--sub);font-size:12px;}
+  .mode .best{font-size:11px;color:var(--ok);font-weight:700;white-space:nowrap;}
+  .bar{height:8px;background:#fbe7d6;border-radius:99px;overflow:hidden;margin-bottom:8px;} .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s;}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:12px;}
+  .qtag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:2px 8px;margin-bottom:10px;}
+  .q{font-size:17px;font-weight:700;margin:0 0 8px;line-height:1.55;}
+  .ctx{font-size:15.5px;color:#334;background:#fff3ea;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-family:Georgia,"Times New Roman",serif;line-height:1.6;}
+  .ctx b{color:var(--accent);}
+  .ctx .sp{display:block;margin:2px 0;}
+  .passage{font-size:14.5px;line-height:1.7;font-family:Georgia,serif;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 12px;}
+  details summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14px;margin-bottom:8px;}
+  .inp{width:100%;font-size:19px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-family:Georgia,serif;outline:none;}
+  .inp:focus{border-color:var(--accent);} .inp.ok{border-color:var(--ok);background:var(--ok-bg);} .inp.ng{border-color:var(--ng);background:var(--ng-bg);}
+  .opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px;font-size:15.5px;color:var(--ink);cursor:pointer;line-height:1.5;}
+  .opt.correct{border-color:var(--ok);background:var(--ok-bg);font-weight:700;} .opt.wrong{border-color:var(--ng);background:var(--ng-bg);} .opt:disabled{cursor:default;}
+  .row{display:flex;gap:10px;}
+  .btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:var(--shadow);}
+  .btn:active{background:var(--accent-d);} .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:none;} .btn.gray{background:#f7ece3;color:var(--sub);box-shadow:none;}
+  .btn.sm{padding:10px;font-size:14px;margin-top:10px;}
+  .exp{background:#fff3ea;border-left:4px solid var(--accent);border-radius:8px;padding:11px 13px;font-size:14px;color:#334;margin-top:12px;display:none;} .exp.show{display:block;}
+  .exp .res{font-weight:800;display:block;margin-bottom:3px;} .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .ansline{font-family:Georgia,serif;font-size:16px;margin:4px 0;} .ansline .you{color:var(--ng);} .ansline .cor{color:var(--ok);font-weight:800;} .diff b{color:var(--ng);text-decoration:underline;}
+  .copyans{font-family:Georgia,serif;font-size:17px;font-weight:800;color:var(--accent);background:#fff;border:2px dashed var(--accent);border-radius:10px;padding:8px 12px;margin:0 0 10px;text-align:center;}
+  .steps{display:flex;gap:6px;margin:0 0 10px;} .steps span{flex:1;text-align:center;font-size:11px;padding:5px 2px;border-radius:8px;background:#f7ece3;color:var(--sub);font-weight:700;} .steps span.on{background:var(--accent);color:#fff;}
+  .hidden{display:none;}
+  .score{text-align:center;padding:8px 0 4px;} .score .big{font-size:46px;font-weight:800;line-height:1;} .score .pct{font-size:15px;color:var(--sub);}
+  .ring{font-size:54px;text-align:center;margin:6px 0;} .msg{text-align:center;font-size:16px;font-weight:700;margin:6px 0 16px;}
+  .foot{text-align:center;color:var(--sub);font-size:11px;margin-top:18px;}
+</style>
+</head>
+<body>
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>✉️ ゆうちゃん先生の模擬試験（Unit 6）</h1>
+  <p class="lead">「2学期期末テスト例」100点満点（知技65／思判表35・範囲 p.87まで）<br><b>比較級・最上級・as … as</b> を全部定着させる</p>
+  <div class="letter"><b>この模試の構成</b>：1〜4 リスニング（スクリプト無しのため3・4のみ）／5 電子辞書の比較（A/B）／6 アンケート発表原稿の穴うめ／7 円グラフの英文／8 El Sistema／9 イルカのWinter／10 学校紹介の自由英作文（15語以上）。<br>模試の答えを<b>見ないで打てる</b>までが定着。</div>
+  <div id="modeList"></div>
+  <p class="foot">入力問題は「①答えを見て写す → ③自力で入力」の2段階。選択問題は4択。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="modeName"></span><span id="count"></span></div>
+    <div class="steps hidden" id="steps"><span id="st1">① 写して覚える</span><span id="st2">③ 自力で入力</span></div>
+    <span class="qtag" id="qtag"></span>
+    <div id="passBox"></div>
+    <p class="q" id="qText"></p>
+    <div id="ctxBox"></div>
+    <div id="copyBox"></div>
+    <div id="opts"></div>
+    <div id="inputArea">
+      <input class="inp" id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="ここに入力">
+      <div class="row"><button class="btn" id="judgeBtn">判定する</button><button class="btn ghost sm" id="hintBtn" style="flex:0 0 40%;margin-top:12px;padding:14px 6px;">ヒント</button></div>
+    </div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめて一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ（<span id="wrongN"></span>問）</button>
+    <button class="btn hidden" id="toStep2">③ 自力で入力 →</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">一覧へ</button>
+  </div>
+</div>
+
+<script>
+/* ===== 本文 ===== */
+const PASS = {
+ speech:`We asked our classmates, "What is your favorite subject?" Please look at the graph. According to our results, ten of our classmates like P.E. the best. Five of them like music the best, and English got the same number. Four of them like math the best. Six like other subjects, such as Japanese, science, or art. As a result, we found that P.E. is the most popular subject in our class. We thought many students in our class like reading books better than working out, so we were a little surprised by the results.<br><small>グラフ：P.E. 10人／music 5人／English 5人／math 4人／others 6人</small>`,
+ dict:`<b>A</b>：幅108.5×奥行87.0×厚さ19.0mm／21,000円／収録辞書数 15／人気ランキング 1位<br><b>B</b>：幅148.0×奥行105.5×厚さ19.0mm／43,000円／収録辞書数 35／人気ランキング 5位<br><br><b>Jim:</b> Which do you want, Miki?<br><b>Miki:</b> Well, ① is smaller than ②, so I want A. And ③ is more popular than ④. How about you, Jim?<br><b>Jim:</b> I want ⑤ because it has more than 30 dictionaries in it. I think it's more useful. I need to save money to buy it.`,
+ pie:`クラスの「好きな映画のジャンル」アンケート（円グラフ）：Animated movies 40%／Action movies 25%／Science fiction 20%／Others 15%`,
+ anita:`Hello, everyone. I'm Anita Lopez from Venezuela. I like classical music. I like it because it's very emotional. My family doesn't have enough money for lessons, but I learn music through a special program.<br>The program is "El Sistema." In 1975, the government started it to help poor children in Venezuela. In this program, children can borrow instruments and become a member of an orchestra. The program is free. Now El Sistema is one of the most famous educational programs in the world. More than 350,000 children are members.<br>I joined the program five years ago. I play the violin. I really enjoy playing music with my friends in the orchestra. My life is happier than before.`,
+ winter:`Sawyer is a shy 11-year-old boy. One day, he sees a dolphin on a beach. The dolphin has a serious tail injury. Sawyer tries to help her. Soon some people from an aquarium come to rescue her. They name her Winter and take good care of her. Sawyer visits the aquarium every day to see her.<br>Winter knows that Sawyer saved her life. So she looks happy when she sees Sawyer. Winter becomes his best friend.<br>Winter looks happy, ( &nbsp; ) her condition does not get better. Winter's injury is very bad. The doctor must cut off her tail. Without a tail, she'll die. But making an artificial one is very expensive. People at the aquarium are sad, but they can't do anything.<br>Sawyer thinks of an idea. He plans a charity event with volunteers. Many people come, and Sawyer collects money for Winter. Sawyer is no longer shy.<br>Finally, Winter gets a new tail. It's the best thing for her. She can swim as well as other dolphins.`,
+ map:`御堂筋線（Midosuji Line）：梅田 → 本町（Hommachi）→ なんば（Namba）が一直線。四つ橋線（Yotsubashi Line）・千日前線（Sennichimae Line）は本町・なんばで交差。<br>※スクリプトは資料に無し。正解＝エ「御堂筋線でそのままなんばへ」。`
+};
+
+/* ===== 入力問題 ===== */
+const Q5 = [
+ {n:"5①",p:"dict",j:"Miki: Well, ① ___ is smaller than ②, so I want A.",c:"A か B を入力",a:["a"],e:"小さいほう＝A（108.5mm ＜ 148.0mm）。「so I want A」がヒント。"},
+ {n:"5②",p:"dict",j:"Miki: Well, A is smaller than ② ___, so I want A.",c:"A か B を入力",a:["b"],e:"A is smaller than B。"},
+ {n:"5③",p:"dict",j:"Miki: And ③ ___ is more popular than ④.",c:"A か B を入力",a:["a"],e:"人気ランキング A=1位 ＞ B=5位。"},
+ {n:"5④",p:"dict",j:"Miki: And A is more popular than ④ ___.",c:"A か B を入力",a:["b"],e:"A is more popular than B。"},
+ {n:"5⑤",p:"dict",j:"Jim: I want ⑤ ___ because it has more than 30 dictionaries in it.",c:"A か B を入力",a:["b"],e:"収録辞書数 35 ＞ 30 ＝ B。"},
+];
+const Q6 = [
+ {n:"6①",p:"speech",j:"We asked our classmates, \"What is your favorite ① ___?\"",a:["subject"],e:"調査したトピック＝いちばん好きな教科。sub-ject。"},
+ {n:"6②",p:"speech",j:"Five of them like music the best, and ② ___ got the same number.",a:["english"],e:"グラフで music と同じ5人＝English。"},
+ {n:"6③",p:"speech",j:"③ ___ of them like math the best.",a:["four"],e:"グラフで math＝4人。文頭なので Four。"},
+ {n:"6④",p:"speech",j:"As a result, we found that P.E. is the ④ ___ ___ subject in our class.",c:"2語",a:["most popular"],e:"最上級：the most popular。10人で1位。"},
+ {n:"6⑤",p:"speech",j:"P.E. is the most popular subject ⑤ ___ our class.",a:["in"],e:"「〜の中で」＝in our class（範囲・集団）。"},
+ {n:"6⑥",p:"speech",j:"We thought many students in our class like ⑥ ___ books better than working out,",a:["reading"],e:"like＋動名詞 … better than ～：reading books。"},
+ {n:"6⑦",p:"speech",j:"so we were a little ⑦ ___ by the results.",a:["surprised"],e:"「驚いた」＝surprised（be surprised by …）。"},
+];
+const Q9in = [
+ {n:"9(1)",p:"winter",j:"（　）にあてはまる英語1語を本文から書きぬきなさい。 Winter looks happy, (　) her condition does not get better.",a:["but"],e:"「幸せそうに見える、しかし状態はよくならない」＝but。本文の People at the aquarium are sad, but … と同じ使い方。"},
+];
+const Q10 = [
+ {n:"10 例",j:"学校紹介（15語以上）の解答例を打つ",a:["Our unique facility is an indoor pool. We can swim even if it rains. It is a great place to enjoy swimming."],e:"型＝①施設の紹介（Our … is …）②できること（We can …）③感想（It is a great place to …）。3文で15語を超える。"},
+ {n:"10 型①",j:"（自分の学校で書く練習）私たちの学校の特別な場所は体育館です。",a:["Our special place is the gym.","Our unique facility is the gym."],e:"1文目：場所を名乗る。"},
+ {n:"10 型②",j:"私たちはそこで毎日バスケットボールをすることができます。",a:["We can play basketball there every day."],e:"2文目：できること（can）。"},
+ {n:"10 型③",j:"それは友達と運動するのにすばらしい場所です。",a:["It is a great place to exercise with friends.","It's a great place to exercise with friends."],e:"3文目：感想（It is a great place to …）。"},
+];
+const QS = [
+ {n:"比較文1",j:"Aは B より小さいです。",a:["A is smaller than B."],e:"比較級 -er＋than。"},
+ {n:"比較文2",j:"Aは B より人気があります。",a:["A is more popular than B."],e:"長い形容詞は more ＋ than。"},
+ {n:"比較文3",j:"それには30冊より多くの辞書が入っています。",a:["It has more than 30 dictionaries in it."],e:"more than ＝ 〜より多い。"},
+ {n:"比較文4",j:"体育は私たちのクラスでいちばん人気のある教科です。",a:["P.E. is the most popular subject in our class.","PE is the most popular subject in our class."],e:"最上級 the most ＋ in（集団）。"},
+ {n:"比較文5",j:"アニメ映画がいちばん人気です。",a:["Animated movies are the most popular."],e:"大問7のア〜エの型。"},
+ {n:"比較文6",j:"SF映画はアニメ映画ほど人気がありません。",a:["Science fiction is not as popular as animated movies."],e:"not as … as ＝ 〜ほど…ない。大問7の正解イ。"},
+ {n:"比較文7",j:"私の生活は以前より幸せです。",a:["My life is happier than before."],e:"happy → happier（yをiに）。"},
+ {n:"比較文8",j:"エル・システマは世界で最も有名な教育プログラムの1つです。",a:["El Sistema is one of the most famous educational programs in the world."],e:"one of the ＋最上級＋複数名詞。"},
+ {n:"比較文9",j:"彼女はほかのイルカと同じくらい上手に泳げます。",a:["She can swim as well as other dolphins."],e:"as well as ＝ 同じくらい上手に。"},
+ {n:"比較文10",j:"それは彼女にとっていちばんよいことです。",a:["It's the best thing for her.","It is the best thing for her."],e:"good → best。"},
+ {n:"比較文11",j:"多くの生徒は運動するより本を読むほうが好きです。",a:["Many students like reading books better than working out."],e:"like A better than B。"},
+];
+
+/* ===== 選択問題 ===== */
+const QL = [
+ {n:"3",p:"map",q:"アナは梅田駅で運行情報を聞いています。なんば駅へ最も早く行くには？ Anna should take the Midosuji Line to Hommachi and …",o:[["エ：take the Midosuji Line to Namba.",1],["ア：take a bus to Namba.",0],["イ：change to the Yotsubashi Line.",0],["ウ：change to the Sennichimae Line.",0]],e:"正解エ。御堂筋線は本町からなんばまでそのまま行ける（地図参照）。※スクリプト無し。"},
+ {n:"4",q:"拓海（バレー部）の発表で最も伝えたいことは？",o:[["エ：Thanks to his experience on the volleyball team, Takumi now knows that he can do anything with hard work.",1],["ア：Takumi is a member of the volleyball team.",0],["イ：At first, Takumi wasn't good at playing volleyball, but now he loves playing it with his friends.",0],["ウ：Takumi and his teammates won second place at the tournament.",0]],e:"正解エ。「最も伝えたいこと」＝経験から学んだ結論。ア・イ・ウは事実や途中経過。Unit4・5模試の大問4（由実の省エネ）と同じ読み方。"},
+];
+const QR = [
+ {n:"7",p:"pie",q:"円グラフ（Animated 40%・Action 25%・SF 20%・Others 15%）を表す英文として適切なものは？",o:[["イ：Science fiction is not as popular as animated movies.",1],["ア：Action movies are the most popular.",0],["ウ：Science fiction is more popular than any other genre.",0],["エ：Action movies are more popular than animated movies.",0]],e:"SF 20% ＜ Animated 40% → 「SFはアニメほど人気がない」＝イ。ア・エはAction（25%）が1位でないので×、ウはSFが1位でないので×。"},
+ {n:"8(1)①",p:"anita",q:"Anita Lopez's family is rich, so she joined a special program.（○か×か）",o:[["×（家族はレッスンのお金が十分にない）",1],["○",0]],e:"My family doesn't have enough money for lessons ＝ 裕福ではない。"},
+ {n:"8(1)②",p:"anita",q:"Anita joined the program more than 10 years ago.（○か×か）",o:[["×（5年前）",1],["○",0]],e:"I joined the program five years ago。"},
+ {n:"8(2)",p:"anita",q:"アニータさんが最も伝えたいことは？",o:[["イ：Thanks to the \"El Sistema\" program, Anita can learn classical music and become happier.",1],["ア：Children can borrow instruments for free in \"El Sistema.\"",0],["ウ：The program \"El Sistema\" is popular among children in Venezuela.",0],["エ：Anita does not like playing music with her friends.",0]],e:"最後の文 My life is happier than before が結論。アは事実の一部、エは逆。"},
+ {n:"9(2)",p:"winter",q:"英文の要約として最も適切なものは？",o:[["ア：Sawyer, a shy boy, meets a dolphin on the beach and decides to help her. He visits her every day and becomes her best friend. He organizes a charity event to collect money for her new tail, and she can swim again.",1],["イ：Sawyer is a shy 11-year-old boy. He meets a dolphin on the beach and decides to help her. He brings her to the aquarium. The staff names her Summer.",0],["ウ：Winter, a dolphin, suffers a bad injury, and Sawyer wants to help her. He collects money for her at the aquarium, and she becomes healthy again. Sawyer keeps visiting, and they become best friends.",0],["エ：Sawyer helps a dolphin. He takes her to an aquarium. She recovers quickly and swims without any help.",0]],e:"イ＝名前がSummer（×Winter）、ウ＝お金を集めたのは水族館でなくチャリティイベント、エ＝すぐ回復したわけではない。"},
+];
+
+const SETS = {
+ s5:{sec:"⌨️ 知識・技能（入力で定着）",title:"大問5 電子辞書の比較（5問）",emo:"📱",sub:"表を見て A/B を入力。smaller than／more popular than／more than 30",items:Q5.map(x=>({t:"in",...x})),two:true},
+ s6:{title:"大問6 発表原稿の穴うめ（7問・3点×7＝21点）",emo:"📊",sub:"グラフを見て subject／English／Four／most popular／in／reading／surprised",items:Q6.map(x=>({t:"in",...x})),two:true},
+ s9:{title:"大問9(1) 本文から書きぬき（1問）",emo:"🔍",sub:"接続詞 but",items:Q9in.map(x=>({t:"in",...x})),two:true},
+ ss:{title:"比較の文をまるごと入力（11文）",emo:"📝",sub:"模試に出た比較級・最上級・as…as の文を日本語→英語で",items:QS.map(x=>({t:"in",...x})),two:true},
+ s10:{sec:"✍️ 思考・判断・表現",title:"大問10 学校紹介の英作文（例＋型3文）",emo:"🏫",sub:"解答例を写して覚える→自力で。「場所・できること・感想」の3文型",items:Q10.map(x=>({t:"in",...x})),two:true},
+ sl:{sec:"🎧 リスニング（スクリプト無し：3・4のみ）",title:"大問3〜4（2問）",emo:"👂",sub:"地図の乗り換え／発表の主張（「最も伝えたいこと」の見つけ方）",items:QL.map(x=>({t:"ch",...x}))},
+ sr:{sec:"📖 読解",title:"大問7〜9 読解（5問）",emo:"📰",sub:"円グラフ・El Sistema・イルカのWinter。本文を開いて根拠を探す",items:QR.map(x=>({t:"ch",...x}))},
+ all:{sec:"🧪 本番形式",title:"全問テスト（入力28＋選択7＝35問）",emo:"🧪",sub:"ランダム順・自力のみ",items:[...Q5,...Q6,...Q9in,...QS,...Q10].map(x=>({t:"in",...x})).concat([...QL,...QR].map(x=>({t:"ch",...x}))),testOnly:true},
+};
+const $=id=>document.getElementById(id);
+let state={};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function bestKey(s){return "kotest_eigo_yuko_mogi6_"+s;}
+function norm(s){return (s||"").toLowerCase().replace(/[’‘`]/g,"'").replace(/[-–—]/g," ").replace(/[.,!?。、"“”()]/g,"").replace(/\s+/g," ").trim();}
+function renderHome(){
+  $("home").classList.remove("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");
+  const list=$("modeList");list.innerHTML="";
+  for(const s in SETS){const st=SETS[s];
+    if(st.sec){const h=document.createElement("div");h.className="sechead";h.textContent=st.sec;list.appendChild(h);}
+    const best=localStorage.getItem(bestKey(s));
+    const b=document.createElement("button");b.className="mode";
+    b.innerHTML=`<span class="emo">${st.emo}</span><span class="tt"><b>${st.title}</b><small>${st.sub}</small></span>${best?`<span class="best">最高 ${best}%</span>`:""}`;
+    b.onclick=()=>start(s, st.two?1:2);list.appendChild(b);}
+}
+function start(set,step,subset){
+  const st=SETS[set];
+  const qs=subset?subset:(step===1?st.items.slice():shuffle(st.items));
+  state={set,step,items:qs,pos:0,score:0,wrong:[],hint:0};
+  $("home").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");
+  $("modeName").textContent=st.emo+" "+st.title;
+  $("steps").classList.toggle("hidden",!st.two);
+  $("st1").className=step===1?"on":"";$("st2").className=step===2?"on":"";
+  renderQ();
+}
+function renderQ(){
+  const it=state.items[state.pos];state.hint=0;
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("exp").className="exp";$("exp").innerHTML="";$("nextBtn").classList.add("hidden");
+  $("ctxBox").innerHTML="";$("copyBox").innerHTML="";$("passBox").innerHTML="";$("opts").innerHTML="";
+  $("qtag").textContent="大問"+it.n;
+  if(it.p)$("passBox").innerHTML=`<details><summary>📄 本文（スクリプト）を見る</summary><div class="passage">${PASS[it.p]}</div></details>`;
+  if(it.t==="in"){
+    $("inputArea").classList.remove("hidden");
+    const inp=$("inp");inp.value="";inp.className="inp";inp.disabled=false;
+    $("judgeBtn").classList.remove("hidden");$("hintBtn").classList.toggle("hidden",state.step===1);
+    $("qText").textContent=it.j;
+    if(it.c)$("ctxBox").innerHTML=`<div class="ctx">${it.c}</div>`;
+    inp.placeholder=state.step===1?"↑を見て、そのまま打って覚える":"英語で入力";
+    if(state.step===1)$("copyBox").innerHTML=`<div class="copyans">✎ ${it.a[0]}</div>`;
+    setTimeout(()=>inp.focus(),50);
+  }else{
+    $("inputArea").classList.add("hidden");
+    $("qText").textContent=it.q;
+    shuffle(it.o).forEach(op=>{const b=document.createElement("button");b.className="opt";b.textContent=op[0];b.onclick=()=>{$("opts").querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.textContent===it.o.find(o=>o[1]===1)[0])x.classList.add("correct");});if(op[1]!==1)b.classList.add("wrong");finish(op[1]===1,it);};$("opts").appendChild(b);});
+  }
+  window.scrollTo(0,0);
+}
+function diffMark(user,cor){const u=norm(user),c=norm(cor);let i=0;while(i<u.length&&i<c.length&&u[i]===c[i])i++;return `<span class="diff">${c.slice(0,i)}<b>${c.slice(i)}</b></span>`;}
+function finish(correct,it,userText){
+  if(correct)state.score++;else state.wrong.push(it);
+  let body="";
+  if(it.t==="in")body=correct?`<div class="ansline"><span class="cor">${it.a[0]}</span></div>`:`<div class="ansline">あなた：<span class="you">${userText||"（空欄）"}</span></div><div class="ansline">正解：<span class="cor">${it.a[0]}</span>${it.a.length>1?`<small style="color:#6b7686">（${it.a.slice(1).join(" / ")} も可）</small>`:""}</div><div class="ansline">ちがう所から→ ${diffMark(userText,it.a[0])}</div>`;
+  $("exp").innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ここを定着'}</span>${body}${it.e||""}`;
+  $("exp").classList.add("show");$("nextBtn").classList.remove("hidden");
+  $("judgeBtn").classList.add("hidden");$("hintBtn").classList.add("hidden");$("inp").disabled=true;
+  setTimeout(()=>$("nextBtn").focus(),50);
+}
+$("judgeBtn").onclick=()=>{const it=state.items[state.pos];const v=$("inp").value;const ok=it.a.some(x=>norm(x)===norm(v));$("inp").className="inp "+(ok?"ok":"ng");finish(ok,it,v);};
+$("inp").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(!$("judgeBtn").classList.contains("hidden"))$("judgeBtn").click();else $("nextBtn").click();}});
+$("hintBtn").onclick=()=>{const it=state.items[state.pos];state.hint++;const ans=it.a[0];if(ans.indexOf(" ")<0){$("inp").value=ans.slice(0,Math.min(state.hint,ans.length-1));}else{const ws=ans.split(" ");$("inp").value=ws.slice(0,Math.min(state.hint,ws.length-1)).join(" ")+" ";}$("inp").focus();};
+$("nextBtn").onclick=()=>{state.pos++;if(state.pos>=state.items.length)renderResult();else renderQ();};
+function renderResult(){
+  $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+  const total=state.items.length,sc=state.score,pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;$("scorePct").textContent=(state.step===1?"写し ":"")+`正答率 ${pct}%`;
+  let ring,msg;
+  if(state.step===1){ring="📖";msg=pct===100?"全部写せた。次は③ 自力で入力":"写し間違いあり。もう一度ていねいに写してから③へ";}
+  else if(pct===100){ring="🎉";msg="全問正解！このセットは定着";}
+  else if(pct>=80){ring="💪";msg="合格ライン。まちがえた問題だけもう1周";}
+  else{ring="📝";msg="まちがえた問題だけ、✗ゼロになるまで";}
+  $("ring").textContent=ring;$("resMsg").textContent=msg;
+  const full=state.items.length===SETS[state.set].items.length;
+  if(full&&state.step===2){
+    const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
+    if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
+    if(typeof reportUnit==="function")reportUnit("✉️ ゆうちゃん先生の模試（Unit6）："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 全問正解！":pct>=80?"✅ 合格ライン！":"あと少し！定着させます💪")+"\n#莉映の小テスト対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.step,state.wrong.slice());}else rw.classList.add("hidden");
+  const t2=$("toStep2");if(state.step===1){t2.classList.remove("hidden");t2.onclick=()=>start(state.set,2);}else t2.classList.add("hidden");
+}
+$("againBtn").onclick=()=>start(state.set,state.step);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{if(confirm("一覧に戻りますか？"))renderHome();};
+renderHome();
+</script>
+</body>
+</html>
