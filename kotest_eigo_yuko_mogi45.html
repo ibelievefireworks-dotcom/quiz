@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ゆうちゃん先生の模擬試験（Unit 4・5）</title>
+<script src="report.js"></script>
+<style>
+  :root{--bg:#fff8f2;--card:#fff;--ink:#1f2733;--sub:#6b7686;--accent:#c2410c;--accent-d:#9a3412;--ok:#16a34a;--ok-bg:#dcfce7;--ng:#dc2626;--ng-bg:#fee2e2;--line:#f6d9c6;--shadow:0 4px 14px rgba(160,70,20,.08);}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:17px;padding:14px 12px 40px;max-width:480px;margin:0 auto;}
+  h1{font-size:19px;margin:6px 0 2px;text-align:center;}
+  .lead{text-align:center;color:var(--sub);font-size:13px;margin:0 0 12px;}
+  .backlink{display:inline-block;margin-bottom:6px;color:var(--accent);text-decoration:none;font-weight:700;font-size:14px;}
+  .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px;}
+  .letter{background:#fffdf7;border:1px solid #f3e2c8;border-left:5px solid #e0a96d;border-radius:12px;padding:12px 14px;font-size:13.5px;color:#4a3a2a;margin-bottom:12px;}
+  .letter b{color:#9a3412;}
+  .sechead{font-size:13px;font-weight:800;color:#7c2d12;letter-spacing:.05em;margin:16px 4px 8px;padding-bottom:4px;border-bottom:2px solid #f3c9a8;}
+  .mode{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow);cursor:pointer;}
+  .mode .emo{font-size:24px;} .mode .tt{flex:1;} .mode .tt b{font-size:15px;display:block;} .mode .tt small{color:var(--sub);font-size:12px;}
+  .mode .best{font-size:11px;color:var(--ok);font-weight:700;white-space:nowrap;}
+  .bar{height:8px;background:#fbe7d6;border-radius:99px;overflow:hidden;margin-bottom:8px;} .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s;}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:12px;}
+  .qtag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:2px 8px;margin-bottom:10px;}
+  .q{font-size:17px;font-weight:700;margin:0 0 8px;line-height:1.55;}
+  .ctx{font-size:15.5px;color:#334;background:#fff3ea;border-radius:10px;padding:10px 12px;margin:0 0 12px;font-family:Georgia,"Times New Roman",serif;line-height:1.6;}
+  .ctx b{color:var(--accent);}
+  .ctx .sp{display:block;margin:2px 0;}
+  .passage{font-size:14.5px;line-height:1.7;font-family:Georgia,serif;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 12px;}
+  details summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14px;margin-bottom:8px;}
+  .inp{width:100%;font-size:19px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-family:Georgia,serif;outline:none;}
+  .inp:focus{border-color:var(--accent);} .inp.ok{border-color:var(--ok);background:var(--ok-bg);} .inp.ng{border-color:var(--ng);background:var(--ng-bg);}
+  .opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px;font-size:15.5px;color:var(--ink);cursor:pointer;line-height:1.5;}
+  .opt.correct{border-color:var(--ok);background:var(--ok-bg);font-weight:700;} .opt.wrong{border-color:var(--ng);background:var(--ng-bg);} .opt:disabled{cursor:default;}
+  .row{display:flex;gap:10px;}
+  .btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:var(--shadow);}
+  .btn:active{background:var(--accent-d);} .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:none;} .btn.gray{background:#f7ece3;color:var(--sub);box-shadow:none;}
+  .btn.sm{padding:10px;font-size:14px;margin-top:10px;}
+  .exp{background:#fff3ea;border-left:4px solid var(--accent);border-radius:8px;padding:11px 13px;font-size:14px;color:#334;margin-top:12px;display:none;} .exp.show{display:block;}
+  .exp .res{font-weight:800;display:block;margin-bottom:3px;} .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .ansline{font-family:Georgia,serif;font-size:16px;margin:4px 0;} .ansline .you{color:var(--ng);} .ansline .cor{color:var(--ok);font-weight:800;} .diff b{color:var(--ng);text-decoration:underline;}
+  .copyans{font-family:Georgia,serif;font-size:17px;font-weight:800;color:var(--accent);background:#fff;border:2px dashed var(--accent);border-radius:10px;padding:8px 12px;margin:0 0 10px;text-align:center;}
+  .steps{display:flex;gap:6px;margin:0 0 10px;} .steps span{flex:1;text-align:center;font-size:11px;padding:5px 2px;border-radius:8px;background:#f7ece3;color:var(--sub);font-weight:700;} .steps span.on{background:var(--accent);color:#fff;}
+  .hidden{display:none;}
+  .score{text-align:center;padding:8px 0 4px;} .score .big{font-size:46px;font-weight:800;line-height:1;} .score .pct{font-size:15px;color:var(--sub);}
+  .ring{font-size:54px;text-align:center;margin:6px 0;} .msg{text-align:center;font-size:16px;font-weight:700;margin:6px 0 16px;}
+  .foot{text-align:center;color:var(--sub);font-size:11px;margin-top:18px;}
+</style>
+</head>
+<body>
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>✉️ ゆうちゃん先生の模擬試験（Unit 4・5）</h1>
+  <p class="lead">「2学期中間テスト例」100点満点（知技63／思判表37）<br><b>出題確率が極めて高い</b>ので、全部を定着させる</p>
+  <div class="letter"><b>この模試の構成</b>：1〜4 リスニング（ここでは文を読んで判断）／5 選択／6 英文完成／7・8 ポスターとメールの要旨／9 やさしい日本語の読解／10 ピクトグラムの英作文。<br>模試で書けた答えを、<b>見ないで打てる</b>までが定着。</div>
+  <div id="modeList"></div>
+  <p class="foot">入力問題は「①答えを見て写す → ③自力で入力」の2段階。選択問題は4択。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="modeName"></span><span id="count"></span></div>
+    <div class="steps hidden" id="steps"><span id="st1">① 写して覚える</span><span id="st2">③ 自力で入力</span></div>
+    <span class="qtag" id="qtag"></span>
+    <div id="passBox"></div>
+    <p class="q" id="qText"></p>
+    <div id="ctxBox"></div>
+    <div id="copyBox"></div>
+    <div id="opts"></div>
+    <div id="inputArea">
+      <input class="inp" id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="ここに入力">
+      <div class="row"><button class="btn" id="judgeBtn">判定する</button><button class="btn ghost sm" id="hintBtn" style="flex:0 0 40%;margin-top:12px;padding:14px 6px;">ヒント</button></div>
+    </div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめて一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ（<span id="wrongN"></span>問）</button>
+    <button class="btn hidden" id="toStep2">③ 自力で入力 →</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">一覧へ</button>
+  </div>
+</div>
+
+<script>
+/* ===== 本文 ===== */
+const PASS = {
+ miki:`<span class="sp"><b>Miki:</b> You speak Japanese well, Tom.</span><span class="sp"><b>Tom:</b> Thank you. I can communicate in Japanese, but I can't read or write kanji. Miki, can you teach me how to write kanji when you have time?</span><span class="sp"><b>Miki:</b> Sure. Why don't we study together every Saturday afternoon?</span><span class="sp"><b>Tom:</b> OK. Thanks, Miki. I'll teach you something, too.</span><span class="sp"><b>Miki:</b> Really? I often write e-mails in English to my friend in America. Can you check them?</span><span class="sp"><b>Tom:</b> No problem. Oh, I also want to learn how to make Japanese dishes.</span><span class="sp"><b>Miki:</b> Well, I'm not good at cooking. Kana is very good at it. She sometimes makes delicious dishes for me. I'm sure that she can teach you.</span><span class="sp"><b>Tom:</b> I see.</span>`,
+ watch:`"Universal" means "for all people." Look at this watch. It's a great example. Do you see the small balls on the watch face? If you touch them, you can tell the time. It's easy for anyone to check the time without looking. The design is cool, too, and you can choose from many different colors. I think this watch will help a lot of people.`,
+ yumi:`Hi, I'm Yumi. Today, I want to talk about using electricity in Japan. Sometimes, we use too much electricity. My classmates and I talked about this at school. We all think that saving electricity is important, even for junior high school students.<br>For example, I turn off the lights when I leave a room. I also unplug my phone charger when I don't use it. One of my friends uses a fan instead of air conditioning. We are all trying to do little things to save electricity. What do you think?`,
+ shines:`<b>Special Event: Shines Mini Concert at Horizon Shopping Center!</b><br>We are excited to announce a special mini concert by the band Shines at Horizon Shopping Center! The concert will start at 3 p.m. today in the Blue Zone. This month, the band released a new album. They will play some of their new songs live.<br>As a special bonus, if you buy their new CD at the event, you will receive a signed photo from a band member. Don't miss this special event! We hope to see you at 3 p.m. in the Blue Zone.`,
+ nina:`My host family has two young children. They are very active and always want to play with me after school. I like spending time with them, but sometimes I get tired after a long day. I feel bad when I tell them I can't play because they look disappointed. I don't want to hurt their feelings, but I also need some time to relax. How can I tell them in a kind way?`,
+ easyjp:`When we see foreign people in Japan, many of us think that they can speak English. But is that always true?<br>A lot of people come to Japan from all over the world today. They are from the Philippines, India, China, and many other countries. Some of them don't understand English.<br>When the Great Hanshin-Awaji Earthquake occurred in 1995, many foreign people couldn't get important information. The information was all in difficult Japanese or in English. Since then, some cities are trying to use easy Japanese.<br>Easy language is a good way to communicate anywhere. Think about the English word "haven", ( &nbsp; ). It's a difficult word. But if I say "a place to be safe," you can understand me. If we use simple and easy Japanese for news and public information, many foreign people can understand the meaning easily. Easy Japanese is useful for Japanese people, too. Children can understand it. Here are some examples of easy Japanese.<br>○消防車→火を消す車 ○相談窓口→相談できるところ ○避難場所→逃げるところ<br>By this small action, our country can be a safe and comfortable place for everyone.`
+};
+
+/* ===== 入力問題（t:"in"）：a=正解配列, c=文脈 ===== */
+const Q5 = [
+ {n:"5(1)a",j:"A: It's already 8:30!　B: Oh no, I ___ go now.",c:"( have / has to / have to )",a:["have to"],e:"主語がIなので have to。"},
+ {n:"5(1)b",j:"B: … I ___ go home by 9 o'clock.",c:"( must / must not / need )",a:["must"],e:"「〜しなければならない」＝must。need は need to が必要。"},
+ {n:"5(2)",j:"A: Do we have practice next Saturday?　B: We have no club activities next Saturday, so you ___ go to school.",c:"( must / must not / don't have to )",a:["don't have to"],e:"「行く必要はない」＝don't have to。must not だと「行ってはいけない」。"},
+ {n:"5(3)",j:"B: Yes, it was amazing! Everyone enjoyed ___ lunch at that restaurant.",c:"( eat / eating / to eating )",a:["eating"],e:"enjoy＋動名詞。"},
+ {n:"5(4)",j:"B: ___ fast is very good for your health.",c:"( Walk / Walks / Walking )",a:["walking"],e:"動名詞が主語。Unit 4 小テストで落とした「Seeing … was nice」と同じ型。"},
+ {n:"5(5)",j:"A: I've never used chopsticks before. Could you show me ___ use them?",c:"( to how / how / how to )",a:["how to"],e:"show＋人＋how to＋動詞。"},
+ {n:"5(6)",j:"A: My dad's birthday is coming soon. I don't know ___ buy for him.　B: How about a nice tie?",c:"( when to / what to / where to )",a:["what to"],e:"「何を買うべきか」＝what to。答えが「ネクタイ（物）」なので what。"},
+];
+const Q6 = [
+ {n:"6(1)",j:"（車の運転の仕方を知りたい場合）Could you tell me ___? 〈drive, a car〉",a:["how to drive a car"],e:"how to＋動詞の原形。"},
+ {n:"6(2)",j:"（映画を見たあとで昼食に誘う場合）Let's have lunch ___. 〈the movie〉",a:["after seeing the movie","after watching the movie"],e:"after＋動名詞。"},
+ {n:"6(3)",j:"（図書館では静かにしなければいけないことを伝える場合）In the library, ___. 〈quiet〉",a:["we must be quiet","you must be quiet"],e:"must＋be＋形容詞。模試では You we と主語が2つになっていたので注意。"},
+ {n:"6(4)",j:"（アナが宿題を手伝ってくれたことがうれしいと伝える場合）___ helped me with my homework. 〈I, Anna〉",a:["I'm glad that Anna","I'm happy that Anna","I am glad that Anna","I am happy that Anna"],e:"主語＋be動詞＋形容詞＋that…。"},
+ {n:"6(5)",j:"（健康のために何を食べればいいのか教えてほしい場合）Please ___ for a healthy life. 〈tell, eat〉",a:["tell me what to eat"],e:"tell＋人＋what to＋動詞。"},
+ {n:"6(6)",j:"（動物園に行く際にどこで電車を降りるべきかをたずねる場合）Do you know ___ the train to get to the zoo? 〈get off〉",a:["where to get off"],e:"where to＋動詞。"},
+ {n:"6(7)",j:"（何時間も勉強し続けたので疲れていることを伝える場合）I'm tired because I ___. 〈kept, for hours〉",a:["kept studying for hours"],e:"keep＋動名詞＝〜し続ける。過去形 kept。"},
+ {n:"6(8)",j:"（今日は宿題をする必要はないと伝える場合）I ___ today. 〈homework〉",a:["don't have to do my homework","do not have to do my homework"],e:"don't have to＋動詞。"},
+];
+const Q10 = [
+ {n:"10 例",j:"免税店のピクトグラム（TAX FREE）",a:["You can buy items without tax, but you have to spend 5,000 yen or more."],e:"例文。「できること＋条件（have to）」の型。"},
+ {n:"10(1)",j:"水のみ場のピクトグラム",a:["You can drink water here. Japanese tap water is clean and safe to drink, so don't worry."],e:"解答例。模試では You can drink water here. It is clean and safe to drink. と書けていた＝十分正解。"},
+ {n:"10(2)",j:"パスポート提示のピクトグラム",a:["You must show your passport here. You don't need to show your ticket.","You must show your passport. You don't need to show your ticket."],e:"解答例。must（しなければならない）＋don't need to（必要ない）の対比。"},
+ {n:"10(3)",j:"両替所のピクトグラム",a:["You can change your money to yen here. You don't need to change a lot of money because you can use credit cards in Japan.","You can change your money here. You don't need to change a lot of money because you can use credit cards in Japan."],e:"解答例。can＋don't need to＋because。"},
+];
+const Q1S = [
+ {n:"1(1)",j:"「ここで食べ物を食べてはいけません。」",a:["You must not eat food here."],e:"絵オ（ピアノの部屋・飲食禁止）。"},
+ {n:"1(2)",j:"「自分の部屋をそうじしなければなりません。」",a:["You must clean your room."],e:"絵ウ（散らかった部屋で怒られる）。"},
+ {n:"1(3)",j:"「ここで写真を撮ってはいけません。」",a:["You must not take pictures here."],e:"絵カ（恐竜の骨格・撮影禁止）。Unit 4 小テストで落とした文。"},
+ {n:"1(4)",j:"「順番を待つために列に並ばなければなりません。」",a:["You have to wait in line for your turn."],e:"絵エ（チケット売り場の行列）。"},
+];
+
+/* ===== 選択問題（t:"ch"）：o=[[text,正解?],...] ===== */
+const QL = [
+ {n:"1(1)",q:"You must not eat food here. ― 合う絵は？",o:[["オ：ピアノのある部屋に「飲食禁止」のマーク",1],["ア：絵が飾られた部屋に「手をふれないで」のマーク",0],["カ：恐竜の骨格の横に「撮影禁止」のマーク",0],["イ：ロッカーと掲示のある部屋",0]],e:"eat food → 飲食禁止マーク＝オ。"},
+ {n:"1(2)",q:"You must clean your room. ― 合う絵は？",o:[["ウ：散らかった部屋で寝転ぶ男の子と、怒っているお母さん",1],["イ：ロッカーと掲示のある部屋",0],["エ：チケット売り場の行列",0],["ア：絵が飾られた部屋",0]],e:"clean your room → 散らかった部屋＝ウ。"},
+ {n:"1(3)",q:"You must not take pictures here. ― 合う絵は？",o:[["カ：恐竜の骨格の横に「撮影禁止」のマーク",1],["オ：ピアノのある部屋に「飲食禁止」のマーク",0],["ア：絵が飾られた部屋に「手をふれないで」のマーク",0],["エ：チケット売り場の行列",0]],e:"take pictures → カメラ禁止マーク＝カ。"},
+ {n:"1(4)",q:"You have to wait in line for your turn. ― 合う絵は？",o:[["エ：チケット売り場に並ぶ人の列",1],["ウ：散らかった部屋",0],["イ：ロッカーの部屋",0],["カ：恐竜の骨格",0]],e:"wait in line → 行列＝エ。"},
+ {n:"2(1)",p:"miki",q:"Tom can read kanji, but can't write kanji.",o:[["×（読むことも書くこともできない）",1],["○",0]],e:"I can't read or write kanji ＝ 読めないし書けない。「or」に注意。"},
+ {n:"2(2)",p:"miki",q:"Miki and Tom will study together every Saturday afternoon.",o:[["○",1],["×",0]],e:"Why don't we study together every Saturday afternoon? → Tom: OK."},
+ {n:"2(3)",p:"miki",q:"Tom will write an e-mail in English to Miki.",o:[["×（Mikiが書いたメールをTomがチェックする）",1],["○",0]],e:"メールを書くのはMiki（to my friend in America）。Tomは check する側。"},
+ {n:"2(4)",p:"miki",q:"Miki thinks Kana can teach Tom how to make Japanese dishes.",o:[["○",1],["×",0]],e:"I'm sure that she (=Kana) can teach you."},
+ {n:"3",p:"watch",q:"エディが発表に使ったスライドとして最も適切なものは？",o:[["ア：You can check the time without looking.",1],["イ：You can choose from two different colors.",0],["ウ：The watch tells the time with a voice.",0]],e:"without looking がそのまま本文に。色は many different colors（twoではない）、声ではなく触る。"},
+ {n:"4",p:"yumi",q:"由実が最も伝えたいことは？",o:[["ウ：Doing things to save electricity is important.",1],["ア：Japanese people sometimes waste a lot of electricity.",0],["イ：We have to turn off the lights when we leave a room.",0],["エ：Junior high school students don't have to save electricity.",0]],e:"We all think that saving electricity is important ＝ 主張。ア・イは例や前置き、エは逆。"},
+];
+const QR = [
+ {n:"7",p:"shines",q:"案内の内容を最も適切に表しているポスターは？",o:[["ウ：Time 3:00 p.m.／Place Blue Zone／Buy their new CD and get a photo!",1],["ア：Time 3:00 p.m.／Place Blue Zone／Buy a photo and get their new CD!",0],["イ：Time 2:00 p.m.／Place Yellow Zone／Buy their new CD and get a photo!",0]],e:"3 p.m.・Blue Zone・CDを買うと写真がもらえる。アは「写真を買うとCD」で逆。"},
+ {n:"8",p:"nina",q:"ニーナが最も伝えたいことは？",o:[["エ：子供たちと遊ぶのは好きだが、自分がくつろぐ時間も必要なので、やさしく断る方法を知りたい。",1],["ア：放課後はいつも、ホストファミリーの子供たちと遊んでいる。",0],["イ：子供たちと一日中遊ぶのは疲れるので、やさしく断る方法を知りたい。",0],["ウ：子供たちと遊ぶと気分が悪くなってしまう。",0]],e:"I like spending time with them ＋ I also need some time to relax ＋ How can I tell them in a kind way? の3点をすべて含むのはエ。"},
+ {n:"9(1)",p:"easyjp",q:"（　）に当てはまる語句は？　Think about the English word \"haven\", (　). It's a difficult word.",o:[["イ：for example",1],["ア：and so on",0],["ウ：each other",0],["エ：first",0]],e:"「例えば haven という単語」＝for example。"},
+ {n:"9(2)",p:"easyjp",q:"英文の要約として最も適切なものは？",o:[["ウ：Not all foreign people in Japan speak English. After the 1995 earthquake, some cities started using easy Japanese. Now, many foreign people can understand important information. It also helps children.",1],["ア：Many foreign people from around the world are in Japan. They had trouble during the 1995 earthquake because they didn't speak English. Some cities now use easy English to help them.",0],["イ：Many foreign people in Japan speak English. After the 1995 earthquake, the government gave important information in English. This helped foreign people.",0]],e:"アは easy English が誤り（easy Japanese）。イは「英語で情報を出した」が逆。"},
+];
+
+const SETS = {
+ s5:{sec:"⌨️ 知識・技能（入力で定着）",title:"大問5 選択（7問）",emo:"🔘",sub:"( )内から選んで入力。have to／must／don't have to／動名詞／how to・what to",items:Q5.map(x=>({t:"in",...x})),two:true},
+ s6:{title:"大問6 英文完成（8問・3点×8＝24点）",emo:"📝",sub:"〈 〉の語を使って文を完成。配点が一番大きい大問",items:Q6.map(x=>({t:"in",...x})),two:true},
+ s1s:{title:"大問1 スクリプトの文を入力（4文）",emo:"🔊",sub:"must not / must / have to の4文を丸ごと",items:Q1S.map(x=>({t:"in",...x})),two:true},
+ s10:{sec:"✍️ 思考・判断・表現",title:"大問10 ピクトグラムの英作文（例＋3問）",emo:"🛂",sub:"解答例を写して覚える→自力で。can／must／don't need to の型",items:Q10.map(x=>({t:"in",...x})),two:true},
+ sl:{sec:"🎧 リスニング（文を読んで判断）",title:"大問1〜4 リスニング（10問）",emo:"👂",sub:"スクリプトを読んで絵・○×・スライド・主張を選ぶ",items:QL.map(x=>({t:"ch",...x}))},
+ sr:{sec:"📖 読解",title:"大問7〜9 読解（4問）",emo:"📰",sub:"ポスター・メール・やさしい日本語。本文を開いて根拠を探す",items:QR.map(x=>({t:"ch",...x}))},
+ all:{sec:"🧪 本番形式",title:"全問テスト（入力23＋選択14＝37問）",emo:"🧪",sub:"ランダム順・自力のみ。知技63／思判表37の感覚で",items:[...Q5,...Q6,...Q1S,...Q10].map(x=>({t:"in",...x})).concat([...QL,...QR].map(x=>({t:"ch",...x}))),testOnly:true},
+};
+
+const $=id=>document.getElementById(id);
+let state={};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function bestKey(s){return "kotest_eigo_yuko_mogi45_"+s;}
+function norm(s){return (s||"").toLowerCase().replace(/[’‘`]/g,"'").replace(/[-–—]/g," ").replace(/[.,!?。、"“”()]/g,"").replace(/\s+/g," ").trim();}
+function renderHome(){
+  $("home").classList.remove("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");
+  const list=$("modeList");list.innerHTML="";
+  for(const s in SETS){const st=SETS[s];
+    if(st.sec){const h=document.createElement("div");h.className="sechead";h.textContent=st.sec;list.appendChild(h);}
+    const best=localStorage.getItem(bestKey(s));
+    const b=document.createElement("button");b.className="mode";
+    b.innerHTML=`<span class="emo">${st.emo}</span><span class="tt"><b>${st.title}</b><small>${st.sub}</small></span>${best?`<span class="best">最高 ${best}%</span>`:""}`;
+    b.onclick=()=>start(s, st.two?1:2);list.appendChild(b);}
+}
+function start(set,step,subset){
+  const st=SETS[set];
+  const qs=subset?subset:(step===1?st.items.slice():shuffle(st.items));
+  state={set,step,items:qs,pos:0,score:0,wrong:[],hint:0};
+  $("home").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");
+  $("modeName").textContent=st.emo+" "+st.title;
+  $("steps").classList.toggle("hidden",!st.two);
+  $("st1").className=step===1?"on":"";$("st2").className=step===2?"on":"";
+  renderQ();
+}
+function renderQ(){
+  const it=state.items[state.pos];state.hint=0;
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("exp").className="exp";$("exp").innerHTML="";$("nextBtn").classList.add("hidden");
+  $("ctxBox").innerHTML="";$("copyBox").innerHTML="";$("passBox").innerHTML="";$("opts").innerHTML="";
+  $("qtag").textContent="大問"+it.n;
+  if(it.p)$("passBox").innerHTML=`<details><summary>📄 本文（スクリプト）を見る</summary><div class="passage">${PASS[it.p]}</div></details>`;
+  if(it.t==="in"){
+    $("inputArea").classList.remove("hidden");
+    const inp=$("inp");inp.value="";inp.className="inp";inp.disabled=false;
+    $("judgeBtn").classList.remove("hidden");$("hintBtn").classList.toggle("hidden",state.step===1);
+    $("qText").textContent=it.j;
+    if(it.c)$("ctxBox").innerHTML=`<div class="ctx">${it.c}</div>`;
+    inp.placeholder=state.step===1?"↑を見て、そのまま打って覚える":"英語で入力";
+    if(state.step===1)$("copyBox").innerHTML=`<div class="copyans">✎ ${it.a[0]}</div>`;
+    setTimeout(()=>inp.focus(),50);
+  }else{
+    $("inputArea").classList.add("hidden");
+    $("qText").textContent=it.q;
+    shuffle(it.o).forEach(op=>{const b=document.createElement("button");b.className="opt";b.textContent=op[0];b.onclick=()=>{$("opts").querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.textContent===it.o.find(o=>o[1]===1)[0])x.classList.add("correct");});if(op[1]!==1)b.classList.add("wrong");finish(op[1]===1,it);};$("opts").appendChild(b);});
+  }
+  window.scrollTo(0,0);
+}
+function diffMark(user,cor){const u=norm(user),c=norm(cor);let i=0;while(i<u.length&&i<c.length&&u[i]===c[i])i++;return `<span class="diff">${c.slice(0,i)}<b>${c.slice(i)}</b></span>`;}
+function finish(correct,it,userText){
+  if(correct)state.score++;else state.wrong.push(it);
+  let body="";
+  if(it.t==="in")body=correct?`<div class="ansline"><span class="cor">${it.a[0]}</span></div>`:`<div class="ansline">あなた：<span class="you">${userText||"（空欄）"}</span></div><div class="ansline">正解：<span class="cor">${it.a[0]}</span>${it.a.length>1?`<small style="color:#6b7686">（${it.a.slice(1).join(" / ")} も可）</small>`:""}</div><div class="ansline">ちがう所から→ ${diffMark(userText,it.a[0])}</div>`;
+  $("exp").innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ここを定着'}</span>${body}${it.e||""}`;
+  $("exp").classList.add("show");$("nextBtn").classList.remove("hidden");
+  $("judgeBtn").classList.add("hidden");$("hintBtn").classList.add("hidden");$("inp").disabled=true;
+  setTimeout(()=>$("nextBtn").focus(),50);
+}
+$("judgeBtn").onclick=()=>{const it=state.items[state.pos];const v=$("inp").value;const ok=it.a.some(x=>norm(x)===norm(v));$("inp").className="inp "+(ok?"ok":"ng");finish(ok,it,v);};
+$("inp").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();if(!$("judgeBtn").classList.contains("hidden"))$("judgeBtn").click();else $("nextBtn").click();}});
+$("hintBtn").onclick=()=>{const it=state.items[state.pos];state.hint++;const ans=it.a[0];if(ans.indexOf(" ")<0){$("inp").value=ans.slice(0,Math.min(state.hint,ans.length-1));}else{const ws=ans.split(" ");$("inp").value=ws.slice(0,Math.min(state.hint,ws.length-1)).join(" ")+" ";}$("inp").focus();};
+$("nextBtn").onclick=()=>{state.pos++;if(state.pos>=state.items.length)renderResult();else renderQ();};
+function renderResult(){
+  $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+  const total=state.items.length,sc=state.score,pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`;$("scorePct").textContent=(state.step===1?"写し ":"")+`正答率 ${pct}%`;
+  let ring,msg;
+  if(state.step===1){ring="📖";msg=pct===100?"全部写せた。次は③ 自力で入力":"写し間違いあり。もう一度ていねいに写してから③へ";}
+  else if(pct===100){ring="🎉";msg="全問正解！このセットは定着";}
+  else if(pct>=80){ring="💪";msg="合格ライン。まちがえた問題だけもう1周";}
+  else{ring="📝";msg="まちがえた問題だけ、✗ゼロになるまで";}
+  $("ring").textContent=ring;$("resMsg").textContent=msg;
+  const full=state.items.length===SETS[state.set].items.length;
+  if(full&&state.step===2){
+    const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
+    if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
+    if(typeof reportUnit==="function")reportUnit("✉️ ゆうちゃん先生の模試（Unit4・5）："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 全問正解！":pct>=80?"✅ 合格ライン！":"あと少し！定着させます💪")+"\n#莉映の小テスト対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.step,state.wrong.slice());}else rw.classList.add("hidden");
+  const t2=$("toStep2");if(state.step===1){t2.classList.remove("hidden");t2.onclick=()=>start(state.set,2);}else t2.classList.add("hidden");
+}
+$("againBtn").onclick=()=>start(state.set,state.step);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{if(confirm("一覧に戻りますか？"))renderHome();};
+renderHome();
+</script>
+</body>
+</html>
