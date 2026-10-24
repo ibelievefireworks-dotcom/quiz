@@ -56,8 +56,8 @@ function doPost(e){
     return ContentService.createTextOutput("ok");
   }
 
-  // ② クイズの結果（プレーンテキスト）→ すぐ送らず“ためる”だけ
-  if (body) { appendToBuffer(body); }
+  // ② クイズの結果（プレーンテキスト）→ リアルタイム送信（5分以内の連続分は1通にまとめる）
+  if (body) { realtimeReport(body); }
   return ContentService.createTextOutput("ok");
 }
 
@@ -101,21 +101,14 @@ function appendToBuffer(text){
 function studyGroup(){ return PROPS.getProperty("GROUP_STUDY") || ""; }
 function trainGroup(){ return PROPS.getProperty("GROUP_TRAIN") || PROPS.getProperty("GROUP_ID") || ""; }
 
-/* 1日3回（18/20/23時）：たまっている分をまとめて1通だけ送る（トリガーで自動実行） */
+/* 1日3回（18/20/23時）：リアルタイム通知に切り替えたため、今日まだ1セットもやっていない日の20時だけリマインドを送る */
 function sendDailyDigest(){
   var gid = studyGroup();
   if (!gid) { return; }
-  var buf = PROPS.getProperty("BUFFER") || "";
-  if (!buf) { push(gid, reminderText()); return; }  // 前回以降に動きが無い → リマインドを送る
-
-  var lines = buf.split("\n");
-  var passCount = lines.filter(function(l){ return l.indexOf("✅") >= 0; }).length;
-  var header = "📚 学習まとめ（" + lines.length + "単元 ・ 合格" + passCount + "）";
-  var msg = header + "\n――――――――――\n" + buf +
-            "\n――――――――――\nこの調子でいこう！ #莉映の期末対策";
-
-  push(gid, msg);
-  PROPS.deleteProperty("BUFFER");                  // 送ったら今日分はリセット
+  var today = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd");
+  var hour = parseInt(Utilities.formatDate(new Date(), "Asia/Tokyo", "H"));
+  if (PROPS.getProperty("RT_LAST_DATE") === today) return;   // 今日やった分はリアルタイムで送信済み
+  if (hour >= 19 && hour <= 21) push(gid, reminderText());   // 20時台のトリガーだけリマインド
 }
 
 /* 1日3回（18時・20時・23時）のまとめ送信を予約（一度だけ実行する） */
@@ -126,6 +119,61 @@ function setupDailyTrigger(){
   [18, 20, 23].forEach(function(h){
     ScriptApp.newTrigger("sendDailyDigest").timeBased().everyDays(1).atHour(h).create();
   });
+}
+
+/* ---- リアルタイム通知（2026-10-24 父の要望：進み具合をその場で知りたい）----
+   クイズのセットが終わるたびに勉強グループへ送る。ただし連続でやった分は
+   5分間ためて1通にまとめる（LINEの無料枠 月200通を守るため）。 */
+var RT_WINDOW_MS = 5 * 60 * 1000;
+function realtimeReport(text){
+  var line = summarizeLine(text);
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+    var buf = PROPS.getProperty("RT_BUF") || "";
+    buf += (buf ? "
+" : "") + line;
+    PROPS.setProperty("RT_BUF", buf);
+    var last = parseInt(PROPS.getProperty("RT_LAST_PUSH") || "0");
+    if (Date.now() - last > RT_WINDOW_MS) {
+      flushRealtime();                                  // 直近5分に送っていなければ今すぐ
+    } else if (PROPS.getProperty("RT_PENDING") !== "1") {
+      PROPS.setProperty("RT_PENDING", "1");             // 5分後にまとめて送る予約
+      ScriptApp.newTrigger("flushRealtime").timeBased().at(new Date(last + RT_WINDOW_MS + 5000)).create();
+    }
+  } catch (e) {
+  } finally { try { lock.releaseLock(); } catch (e2) {} }
+}
+function flushRealtime(){
+  deleteTriggersOf("flushRealtime");
+  PROPS.deleteProperty("RT_PENDING");
+  var buf = PROPS.getProperty("RT_BUF") || "";
+  if (!buf) return;
+  var gid = studyGroup(); if (!gid) return;
+  var lines = buf.split("
+");
+  var now = Utilities.formatDate(new Date(), "Asia/Tokyo", "H:mm");
+  var head = "📱 " + now + " 莉映くんがやりました（" + lines.length + "セット）
+――――――――――
+";
+  push(gid, head + buf + "
+――――――――――
+" + encourage(lines));
+  PROPS.setProperty("RT_BUF", "");
+  PROPS.setProperty("RT_LAST_PUSH", String(Date.now()));
+  PROPS.setProperty("RT_LAST_DATE", Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd"));
+}
+function summarizeLine(text){
+  var first = text.split("
+")[0];
+  var m = text.match(/（(d+)%）/);
+  var pct = m ? m[1] : "?";
+  var pass = text.indexOf("🎉") >= 0 || text.indexOf("✅") >= 0;
+  return first + "  " + pct + "%" + (pass ? " ✅" : " 💪");
+}
+function encourage(lines){
+  var all = lines.every(function(l){ return l.indexOf("✅") >= 0; });
+  return all ? "全部合格ライン！いいペース👍" : "💪のセットは「まちがえた問題だけ」でもう1周";
 }
 
 /* ---- LINE送信ヘルパー ---- */
