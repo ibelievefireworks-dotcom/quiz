@@ -131,8 +131,7 @@ function realtimeReport(text){
   try {
     lock.waitLock(5000);
     var buf = PROPS.getProperty("RT_BUF") || "";
-    buf += (buf ? "
-" : "") + line;
+    buf += (buf ? "\n" : "") + line;
     PROPS.setProperty("RT_BUF", buf);
     var last = parseInt(PROPS.getProperty("RT_LAST_PUSH") || "0");
     if (Date.now() - last > RT_WINDOW_MS) {
@@ -150,22 +149,16 @@ function flushRealtime(){
   var buf = PROPS.getProperty("RT_BUF") || "";
   if (!buf) return;
   var gid = studyGroup(); if (!gid) return;
-  var lines = buf.split("
-");
+  var lines = buf.split("\n");
   var now = Utilities.formatDate(new Date(), "Asia/Tokyo", "H:mm");
-  var head = "📱 " + now + " 莉映くんがやりました（" + lines.length + "セット）
-――――――――――
-";
-  push(gid, head + buf + "
-――――――――――
-" + encourage(lines));
+  var head = "📱 " + now + " 莉映くんがやりました（" + lines.length + "セット）\n――――――――――\n";
+  push(gid, head + buf + "\n――――――――――\n" + encourage(lines));
   PROPS.setProperty("RT_BUF", "");
   PROPS.setProperty("RT_LAST_PUSH", String(Date.now()));
   PROPS.setProperty("RT_LAST_DATE", Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd"));
 }
 function summarizeLine(text){
-  var first = text.split("
-")[0];
+  var first = text.split("\n")[0];
   var m = text.match(/（(\d+)%）/);
   var pct = m ? m[1] : "?";
   var pass = text.indexOf("🎉") >= 0 || text.indexOf("✅") >= 0;
