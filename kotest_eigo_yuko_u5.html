@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ゆうちゃん先生の Unit 5 プリント</title>
+<title>Unit 5 小テスト（学校配布プリント）</title>
 <script src="report.js"></script>
 <style>
   :root{
@@ -75,12 +75,12 @@
 
 <div id="home">
   <a class="backlink" href="index.html">← 科目をえらぶ</a>
-  <h1>✉️ ゆうちゃん先生の Unit 5 プリント</h1>
-  <p class="lead"><b style="color:#1d4ed8">🏫 出典：学校配布プリント（10/9にゆうちゃん先生が先に送ってくれたものと同一）</b><br>教科書 pp.59〜66 ／ <b>10/27（火）2時間目・学校の小テスト本番</b>（このプリントがそのまま出る）<br>スペルはキーボード入力で判定。目標は100点</p>
+  <h1>🏫 Unit 5 小テスト（学校配布プリント）</h1>
+  <p class="lead"><b style="color:#1d4ed8">🏫 出典：学校配布プリント「単語・表現のまとめ」「Key Sentencesのまとめ」</b><br>教科書 pp.59〜66 ／ <b>10/27（火）2時間目・学校の小テスト本番</b>（このプリントがそのまま出る）<br>スペルはキーボード入力で判定。目標は100点</p>
   <div class="letter">
-    <b>ゆうちゃん先生のやり方</b>（手紙より）<br>
+    <b>覚え方</b>（ゆうちゃん先生のすすめる手順）<br>
     ① 解答を見て、きちんと写す → ② 覚える → ③ 解答を見ないで自分で記入 → ④ 間違いをチェックして、記入しながら覚える → ⑤ まで、<b>毎日1頁をメドに</b>。Ⓐの次はⒷも同じように。<br>
-    <small>※このプリントは家の外に持ち出さないこと。</small>
+    
   </div>
   <div id="modeList"></div>
   <p class="foot">各セットは「写す→自力で入力」の2段階。間違えた問題だけ何度でもやり直せます。</p>
@@ -271,7 +271,7 @@ function renderResult(){
   if(full&&state.step===2){
     const prev=parseInt(localStorage.getItem(bestKey(state.set))||"0");
     if(pct>prev)localStorage.setItem(bestKey(state.set),pct);
-    if(typeof reportUnit==="function")reportUnit("✉️ ゆうちゃん先生のUnit5プリント："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 自力で全問正解！":pct>=80?"✅ 合格ライン！":"あと少し！覚え直します💪")+"\n#莉映の小テスト対策");
+    if(typeof reportUnit==="function")reportUnit("🏫 Unit5 小テスト（学校配布プリント）："+SETS[state.set].title+"\n"+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct===100?"🎉 自力で全問正解！":pct>=80?"✅ 合格ライン！":"あと少し！覚え直します💪")+"\n#莉映の小テスト対策");
   }
   const rw=$("retryWrong");
   if(state.wrong.length>0){rw.classList.remove("hidden");$("wrongN").textContent=state.wrong.length;rw.onclick=()=>start(state.set,state.step,state.wrong.slice());}else rw.classList.add("hidden");
