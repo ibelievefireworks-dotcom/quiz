@@ -166,7 +166,7 @@ function flushRealtime(){
 function summarizeLine(text){
   var first = text.split("
 ")[0];
-  var m = text.match(/（(d+)%）/);
+  var m = text.match(/（(\d+)%）/);
   var pct = m ? m[1] : "?";
   var pass = text.indexOf("🎉") >= 0 || text.indexOf("✅") >= 0;
   return first + "  " + pct + "%" + (pass ? " ✅" : " 💪");
