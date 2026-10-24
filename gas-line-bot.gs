@@ -147,6 +147,8 @@ function flushRealtime(){
   deleteTriggersOf("flushRealtime");
   PROPS.deleteProperty("RT_PENDING");
   var buf = PROPS.getProperty("RT_BUF") || "";
+  var old = PROPS.getProperty("BUFFER");               // 旧まとめ方式に残っていた分も一緒に送る
+  if (old) { buf = old + (buf ? "\n" + buf : ""); PROPS.deleteProperty("BUFFER"); }
   if (!buf) return;
   var gid = studyGroup(); if (!gid) return;
   var lines = buf.split("\n");
