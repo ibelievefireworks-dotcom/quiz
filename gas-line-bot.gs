@@ -31,7 +31,7 @@ function doPost(e){
       var gid = ev.source && ev.source.groupId;
       var txt0 = (ev.type === "message" && ev.message && ev.message.type === "text") ? (ev.message.text || "") : "";
       // 投稿先の登録は明示コマンドだけ（他のグループの発言で勝手に切り替わらない）
-      //   「勉強登録」→ 学習まとめ・「進捗」の投稿先（りえい 明光義塾）
+      //   「勉強登録」→ 学習まとめ・「進捗」の投稿先（りえい トライ）
       //   「野球登録」→ 自主トレ達成率（20:00/21:30）の投稿先（りえい 黒羽根コーチ）
       if (gid && ev.replyToken && txt0.indexOf("勉強登録") >= 0) {
         PROPS.setProperty("GROUP_STUDY", gid);
