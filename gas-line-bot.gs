@@ -290,6 +290,12 @@ function testTrainingStatusNow(){
   if (gid) push(gid, trainingStatusText());
 }
 
+/* 達成状況を勉強グループへ今すぐ送る（誤送時の転送用） */
+function sendProgressToStudy(){
+  var gid = studyGroup();
+  if (gid) push(gid, progressText());
+}
+
 /* ---- 動作確認用 ---- */
 function testPush(){            // 接続テスト：勉強グループへ今すぐ1通送る
   var gid = studyGroup();
