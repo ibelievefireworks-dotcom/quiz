@@ -293,7 +293,14 @@ function testTrainingStatusNow(){
 /* 達成状況を勉強グループへ今すぐ送る（誤送時の転送用） */
 function sendProgressToStudy(){
   var gid = studyGroup();
-  if (gid) push(gid, progressText());
+  Logger.log("GROUP_STUDY=" + (gid ? gid.slice(0,6)+"..." : "(unset)") + " / GROUP_TRAIN=" + (PROPS.getProperty("GROUP_TRAIN") ? "set" : "(unset)") + " / GROUP_ID=" + (PROPS.getProperty("GROUP_ID") ? "set" : "(unset)"));
+  if (!gid) { Logger.log("勉強グループ未登録"); return; }
+  var res = UrlFetchApp.fetch("https://api.line.me/v2/bot/message/push", {
+    method: "post", headers: { "Authorization": "Bearer " + CHANNEL_ACCESS_TOKEN },
+    contentType: "application/json",
+    payload: JSON.stringify({ to: gid, messages: [{ type: "text", text: progressText() }] }),
+    muteHttpExceptions: true });
+  Logger.log("push HTTP " + res.getResponseCode() + " " + res.getContentText().slice(0, 300));   // 429 = LINEの月間上限
 }
 
 /* ---- 動作確認用 ---- */
