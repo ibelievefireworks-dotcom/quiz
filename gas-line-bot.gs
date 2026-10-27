@@ -46,10 +46,13 @@ function doPost(e){
       // 「進捗」「状況」と送られたら、現在の達成状況を返信
       if (ev.type === "message" && ev.message && ev.message.type === "text" && ev.replyToken) {
         var t = ev.message.text || "";
-        if (t.indexOf("トレ") >= 0 || t.indexOf("メニュー") >= 0) {
-          reply(ev.replyToken, trainingStatusText());        // 自主トレの今の状況
-        } else if (t.indexOf("進捗") >= 0 || t.indexOf("状況") >= 0 || t.indexOf("しんちょく") >= 0) {
-          reply(ev.replyToken, progressText());
+        // コマンドは「そのグループ専用」＋「短いメッセージ」のときだけ反応（普通の会話に混じった語で誤爆しない）
+        var isTrainG = (gid === trainGroup()), isStudyG = (gid === studyGroup());
+        var short = t.length <= 12;
+        if (isTrainG && short && (t.indexOf("トレ") >= 0 || t.indexOf("メニュー") >= 0)) {
+          reply(ev.replyToken, trainingStatusText());        // 自主トレの今の状況（野球グループのみ）
+        } else if (isStudyG && short && (t.indexOf("進捗") >= 0 || t.indexOf("しんちょく") >= 0)) {
+          reply(ev.replyToken, progressText());              // 勉強の達成状況（勉強グループのみ。「状況」は誤爆が多いので廃止）
         }
       }
     });
