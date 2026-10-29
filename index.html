@@ -106,6 +106,13 @@
   .sitem .si-links a.none{background:#f1f5f9; color:#334155; border-color:#cbd5e1;}
   .sitem .si-links a.try{background:#fef3c7; color:#b45309;}
   .sitem .si-links a.pass{background:#dcfce7; color:#15803d;}
+  .si-pri{display:inline-block; font-size:10.5px; font-weight:800; background:#dc2626; color:#fff; border-radius:6px; padding:1px 7px; margin-right:6px; vertical-align:middle;}
+  .si-pri.p3{background:#16a34a;}
+  .sitem.pri2{border:2px solid #ef4444;}
+  .si-wait{font-size:12px; color:#9a3412; font-weight:700;}
+  .src.pri{background:#dc2626; color:#fff;}
+  .prio{margin:10px auto 0; max-width:420px; background:#fef2f2; border:1px solid #fca5a5; border-radius:12px; padding:8px 12px; font-size:12.5px; color:#7f1d1d; text-align:left;}
+  .prio b{color:#b91c1c;}
   .sure .swait{font-size:11.5px; color:#92400e; margin-top:4px;}
 </style>
 </head>
@@ -116,6 +123,7 @@
     <p>莉映の期末専用。下の「確実に点が取れる項目」から順に全部✓にしよう</p>
     <div class="exam"><span><b>11/10(火)</b> 国語・理科・音楽</span><span><b>11/11(水)</b> 社会・英語・美術</span><span><b>11/12(木)</b> 数学・保体・技家</span></div>
     <div class="cd" id="cd"></div>
+    <div class="prio">🔴 <b>最優先＝数学・理科・英語・音楽・美術</b>（1学期に「2」だった5教科）。まずこの5教科で「2」をゼロにする。🟢 国語・社会・保体・技家は「3→4」を狙う</div>
   </div>
 
   <div class="dash" id="dash">
@@ -130,67 +138,67 @@
   <div class="sure" id="sure">
     <div class="shead">
       <div class="stitle">🎯 確実に点が取れる項目</div>
-      <div class="ssub">覚えた分がそのまま点になる「暗記で取れる」問題。<b>まずここを全部✓にする</b>のが最短ルート</div>
+      <div class="ssub">覚えた分がそのまま点になる「暗記で取れる」問題。<b>🔴最優先の教科から順に全部✓にする</b>のが最短ルート</div>
       <div class="sprog"><span id="spct">0</span><small>／<span id="stot">0</span> 合格（80%以上）</small></div>
       <div class="sbar"><i id="sbar"></i></div>
     </div>
     <div id="surelist"></div>
-    <div class="swait">⏳ 音楽・美術・保健・技術・家庭：プリント／Classroomの資料が届き次第ここに追加</div>
+    <div class="swait">⏳ 保健・技術・家庭：プリント／ワークの写真が届き次第ここに追加</div>
   </div>
 
   <div class="term">📗 期末考査の範囲 全クイズ（11/10〜12）＋小テスト対策</div>
 
   <a class="subj eigo" href="kotest_eigo_yuko_mogi6.html">
     <span class="emo">🧪</span>
-    <span class="t"><span class="src yuko">✉️ ゆうちゃん先生・期末予想</span><b>【期末予想】ゆうちゃん先生の模擬試験（Unit 6・比較）</b><small>「2学期期末テスト例」。電子辞書の比較・発表原稿の穴うめ・比較の文11・学校紹介英作文は入力判定、円グラフ・El Sistema・Winterは4択（計35問）</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src yuko">✉️ ゆうちゃん先生・期末予想</span><b>【期末予想】ゆうちゃん先生の模擬試験（Unit 6・比較）</b><small>「2学期期末テスト例」。電子辞書の比較・発表原稿の穴うめ・比較の文11・学校紹介英作文は入力判定、円グラフ・El Sistema・Winterは4択（計35問）</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj eigo" href="kotest_eigo_yuko_mogi45.html">
     <span class="emo">🧪</span>
-    <span class="t"><span class="src yuko">✉️ ゆうちゃん先生・期末予想</span><b>【期末予想】ゆうちゃん先生の模擬試験（Unit 4・5）</b><small>「2学期中間テスト例」100点分を全部定着。大問5選択・6英文完成・10英作文は入力判定、リスニング4問とメール/ポスター/読解は4択（計37問）</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src yuko">✉️ ゆうちゃん先生・期末予想</span><b>【期末予想】ゆうちゃん先生の模擬試験（Unit 4・5）</b><small>「2学期中間テスト例」100点分を全部定着。大問5選択・6英文完成・10英作文は入力判定、リスニング4問とメール/ポスター/読解は4択（計37問）</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj eigo" href="kotest_eigo_yuko_u5.html">
     <span class="emo">✉️</span>
-    <span class="t"><span class="src school">🏫 学校配布</span><b>【10/27（火）本番】Unit 5 小テスト</b><small>Ⓐ単語24＋表現7／ⒷKey Sentences 13問。プリントそのまま出題。「写して覚える→自力で入力」の2段階、100点を取りに行く</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src school">🏫 学校配布</span><b>【10/27（火）本番】Unit 5 小テスト</b><small>Ⓐ単語24＋表現7／ⒷKey Sentences 13問。プリントそのまま出題。「写して覚える→自力で入力」の2段階、100点を取りに行く</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj eigo" href="kotest_eigo_unit45.html">
     <span class="emo">⌨️</span>
-    <span class="t"><span class="src ai">🤖 Claude作成（Unit4答案＋教科書から）</span><b>【小テスト】英語：Unit 4 復習＋Unit 5 予測</b><small>スペルはキーボード入力で判定。Unit 4 単語30・文12・英作文の型6・読解9／Unit 5 単語42・文12・読解8（計119問）</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src ai">🤖 Claude作成（Unit4答案＋教科書から）</span><b>【小テスト】英語：Unit 4 復習＋Unit 5 予測</b><small>スペルはキーボード入力で判定。Unit 4 単語30・文12・英作文の型6・読解9／Unit 5 単語42・文12・読解8（計119問）</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj rika" href="kotest_rika_shokubutsu.html">
     <span class="emo">🔔</span>
-    <span class="t"><span class="src school">🏫 学校配布プリント</span><b>【小テスト 9/28】理科：植物の体のつくり</b><small>両面12問（道管・師管・気孔・蒸散・維管束・単子葉/双子葉＋ふ入りアサガオの光合成実験）を4セット計48問に。セット1〜3＝選択式、セット4＝記述（本番形式）</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src school">🏫 学校配布プリント</span><b>【小テスト 9/28】理科：植物の体のつくり</b><small>両面12問（道管・師管・気孔・蒸散・維管束・単子葉/双子葉＋ふ入りアサガオの光合成実験）を4セット計48問に。セット1〜3＝選択式、セット4＝記述（本番形式）</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj rika" href="kotest_rika_saibou.html">
     <span class="emo">🔔</span>
-    <span class="t"><span class="src school">🏫 学校配布プリント</span><b>【小テスト】理科：細胞のつくり</b><small>プリント「生物のからだのつくりとはたらき」を4セット計36問に。セット1〜3＝選択式（そのまま／言い換え・逆問い／図と分類）、セット4＝記述（本番形式）</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src school">🏫 学校配布プリント</span><b>【小テスト】理科：細胞のつくり</b><small>プリント「生物のからだのつくりとはたらき」を4セット計36問に。セット1〜3＝選択式（そのまま／言い換え・逆問い／図と分類）、セット4＝記述（本番形式）</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj eigo" href="eigo2.html">
     <span class="emo">🔤</span>
-    <span class="t"><span class="src school">🏫 期末11/11範囲 確定</span><b>英語（2学期）</b><small>範囲＝Unit 4〜6のPart 2まで（p.49〜71）：have to／must・動名詞・疑問詞＋to・助動詞まとめ・単語／全55問。Unit 6 Part 3以降は範囲外</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src school">🏫 期末11/11範囲 確定</span><b>英語（2学期）</b><small>範囲＝Unit 4〜6のPart 2まで（p.49〜71）：have to／must・動名詞・疑問詞＋to・助動詞まとめ・単語／全55問。Unit 6 Part 3以降は範囲外</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj sugaku" href="sugaku.html">
     <span class="emo">📐</span>
-    <span class="t"><span class="src school">🏫 期末11/12範囲 確定</span><b>数学（2学期）</b><small>範囲＝教科書p.94まで：2章 連立方程式の利用（新17問）＋3章 1次関数（定義・変化の割合・グラフ・式の求め方・方程式とグラフ・利用）／全77問。定規でグラフをかく問題あり</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src school">🏫 期末11/12範囲 確定</span><b>数学（2学期）</b><small>範囲＝教科書p.94まで：2章 連立方程式の利用（新17問）＋3章 1次関数（定義・変化の割合・グラフ・式の求め方・方程式とグラフ・利用）／全77問。定規でグラフをかく問題あり</small></span>
     <span class="go">›</span>
   </a>
 
   <a class="subj rika" href="rika2.html">
     <span class="emo">🌱</span>
-    <span class="t"><span class="src school">🏫 期末11/10範囲 確定</span><b>理科（2学期）</b><small>範囲＝生物分野 p.2〜67（全部）：細胞・光合成・蒸散・消化と吸収・血液循環・刺激と反応／全62問</small></span>
+    <span class="t"><span class="src pri">🔴 最優先（評定2→3）</span><span class="src school">🏫 期末11/10範囲 確定</span><b>理科（2学期）</b><small>範囲＝生物分野 p.2〜67（全部）：細胞・光合成・蒸散・消化と吸収・血液循環・刺激と反応／全62問</small></span>
     <span class="go">›</span>
   </a>
 
@@ -368,22 +376,26 @@ try{ renderDash(); }catch(e){ console.warn("dash",e); }
 })();
 /* ===== 確実に点が取れる項目（暗記で取れる） ===== */
 const SURE=[
-  {emo:"✏️",day:"11/10 国語",title:"漢字ノート⑦〜⑳の読み",why:"範囲表に「学習漢字ノート p.14〜41」と明記。読めた分がそのまま点になる",
-   links:[["⑦〜⑯ 読み","kokugo2.html?t=kanji",{q:"kokugo2_best_kanji"}],["⑰〜⑳ 読み","kokugo2.html?t=kanji2",{q:"kokugo2_best_kanji2"}]]},
-  {emo:"✍️",day:"11/10 国語",title:"漢字ノート⑦〜⑳の書き",why:"同じノートから書き取りも必ず出る。紙に書いて✓をつける（1日10枚）",
-   links:[["⑦〜⑯ 書き","output.html?deck=kanji2_write",{o:"kanji2_write",n:22}],["⑰〜⑳ 書き","output.html?deck=kanji2b_write",{o:"kanji2b_write",n:69}]]},
-  {emo:"🌸",day:"11/10 国語",title:"短歌（作者・表現技法・句切れ）",why:"知識問題＝覚えれば確実。文章読解より先に固める",
-   links:[["短歌","kokugo2.html?t=tanka",{q:"kokugo2_best_tanka"}]]},
-  {emo:"🌱",day:"11/10 理科",title:"生物の用語（細胞・光合成・消化・血液・神経）",why:"用語の穴うめは暗記で取れる。考察問題より先にここを100%に",
+  {pri:2,emo:"🌱",day:"11/10 理科",title:"生物の用語（細胞・光合成・消化・血液・神経）",why:"用語の穴うめは暗記で取れる。考察問題より先にここを100%に",
    links:[["細胞","rika2.html?t=saibou",{q:"rika2_best_saibou"}],["光合成","rika2.html?t=kougousei",{q:"rika2_best_kougousei"}],["水の通り道","rika2.html?t=mizu",{q:"rika2_best_mizu"}],["消化","rika2.html?t=shouka",{q:"rika2_best_shouka"}],["血液","rika2.html?t=junkan",{q:"rika2_best_junkan"}],["刺激と反応","rika2.html?t=shinkei",{q:"rika2_best_shinkei"}],["用語(書く)","output.html?deck=rika2_write",{o:"rika2_write",n:15}]]},
-  {emo:"🔤",day:"11/11 英語",title:"Unit 4〜6 の単語・Key Sentences",why:"10/27小テストのプリント（Unit 5）がそのまま範囲内。単語は書けた分だけ点",
+  {pri:2,emo:"🔤",day:"11/11 英語",title:"Unit 4〜6 の単語・Key Sentences",why:"10/27小テストのプリント（Unit 5）がそのまま範囲内。単語は書けた分だけ点",
    links:[["Unit5 単語Ⓐ","kotest_eigo_yuko_u5.html",{k:"kotest_eigo_yuko_u5_aall"}],["Unit5 文Ⓑ","kotest_eigo_yuko_u5.html",{k:"kotest_eigo_yuko_u5_ball"}],["単語 4〜6","eigo2.html?t=tango",{q:"eigo2_best_tango"}],["スペル(書く)","output.html?deck=eigo2_write",{o:"eigo2_write",n:15}]]},
-  {emo:"🏯",day:"11/11 社会",title:"歴史の用語（人物・出来事・年代）",why:"範囲は4章1・2節に確定。用語は丸暗記で確実",
-   links:[["大航海時代","rekishi2.html?t=europe",{q:"rekishi2_best_europe"}],["信長・秀吉","rekishi2.html?t=tenka",{q:"rekishi2_best_tenka"}],["江戸幕府","rekishi2.html?t=edo",{q:"rekishi2_best_edo"}],["鎖国","rekishi2.html?t=sakoku",{q:"rekishi2_best_sakoku"}]]},
-  {emo:"🗾",day:"11/11 社会",title:"地理の用語（人口・資源・産業・地域区分）",why:"p.152〜166の用語＋都道府県。グラフ読み取りより先に用語を固める",
-   links:[["日本の人口","chiri2.html?t=jinko",{q:"chiri2_best_jinko"}],["地域区分","chiri2.html?t=chiiki",{q:"chiri2_best_chiiki"}],["資源","chiri2.html?t=shigen",{q:"chiri2_best_shigen"}],["農業","chiri2.html?t=nougyou",{q:"chiri2_best_nougyou"}],["工業","chiri2.html?t=kougyou",{q:"chiri2_best_kougyou"}]]},
-  {emo:"📐",day:"11/12 数学",title:"計算問題（連立方程式を解く・1次関数の式を求める）",why:"文章題より先に計算で確実に点を取る。途中式を書けば部分点も",
+  {pri:2,emo:"📐",day:"11/12 数学",title:"計算問題（連立方程式を解く・1次関数の式を求める）",why:"文章題より先に計算で確実に点を取る。途中式を書けば部分点も",
    links:[["計算(書く)","output.html?deck=sugaku_calc",{o:"sugaku_calc",n:15}],["変化の割合","sugaku.html?t=wariai",{q:"sugaku_best_wariai"}],["式の求め方","sugaku.html?t=shiki",{q:"sugaku_best_shiki"}]]},
+  {pri:2,emo:"🎵",day:"11/10 音楽",title:"オペラ・フーガ・サンタルチア・「ほらね」・リズム譜",why:"1学期オールC。Classroom「音楽2学期期末考査ファイル」とプリントI〜Vが届いたら即クイズ化",
+   links:[]},
+  {pri:2,emo:"🎨",day:"11/11 美術",title:"美術サイト[2学年]の内容（動画含む）＋1学期分",why:"サイトの画面写真かURLが届いたら即クイズ化。カラーワイヤーアートの提出も点",
+   links:[]},
+  {pri:3,emo:"✏️",day:"11/10 国語",title:"漢字ノート⑦〜⑳の読み",why:"範囲表に「学習漢字ノート p.14〜41」と明記。読めた分がそのまま点になる",
+   links:[["⑦〜⑯ 読み","kokugo2.html?t=kanji",{q:"kokugo2_best_kanji"}],["⑰〜⑳ 読み","kokugo2.html?t=kanji2",{q:"kokugo2_best_kanji2"}]]},
+  {pri:3,emo:"✍️",day:"11/10 国語",title:"漢字ノート⑦〜⑳の書き",why:"同じノートから書き取りも必ず出る。紙に書いて✓をつける（1日10枚）",
+   links:[["⑦〜⑯ 書き","output.html?deck=kanji2_write",{o:"kanji2_write",n:22}],["⑰〜⑳ 書き","output.html?deck=kanji2b_write",{o:"kanji2b_write",n:69}]]},
+  {pri:3,emo:"🌸",day:"11/10 国語",title:"短歌（作者・表現技法・句切れ）",why:"知識問題＝覚えれば確実。文章読解より先に固める",
+   links:[["短歌","kokugo2.html?t=tanka",{q:"kokugo2_best_tanka"}]]},
+  {pri:3,emo:"🏯",day:"11/11 社会",title:"歴史の用語（人物・出来事・年代）",why:"範囲は4章1・2節に確定。用語は丸暗記で確実",
+   links:[["大航海時代","rekishi2.html?t=europe",{q:"rekishi2_best_europe"}],["信長・秀吉","rekishi2.html?t=tenka",{q:"rekishi2_best_tenka"}],["江戸幕府","rekishi2.html?t=edo",{q:"rekishi2_best_edo"}],["鎖国","rekishi2.html?t=sakoku",{q:"rekishi2_best_sakoku"}]]},
+  {pri:3,emo:"🗾",day:"11/11 社会",title:"地理の用語（人口・資源・産業・地域区分）",why:"p.152〜166の用語＋都道府県。グラフ読み取りより先に用語を固める",
+   links:[["日本の人口","chiri2.html?t=jinko",{q:"chiri2_best_jinko"}],["地域区分","chiri2.html?t=chiiki",{q:"chiri2_best_chiiki"}],["資源","chiri2.html?t=shigen",{q:"chiri2_best_shigen"}],["農業","chiri2.html?t=nougyou",{q:"chiri2_best_nougyou"}],["工業","chiri2.html?t=kougyou",{q:"chiri2_best_kougyou"}]]},
 ];
 function sureScore(s){
   if(s.q||s.k){ const v=parseInt(localStorage.getItem(s.q||s.k)||"-1"); return {attempted:v>=0, score:v}; }
@@ -401,8 +413,8 @@ function renderSure(){
       return '<a class="'+cls+'" href="'+l[1]+'">'+l[0]+mark+'</a>';
     }).join("");
     const div=document.createElement("div"); div.className="sitem"+(allPass?" done":"");
-    div.innerHTML='<div class="si-top"><span class="si-emo">'+it.emo+'</span><span class="si-title">'+it.title+(allPass?' ✅':'')+'</span><span class="si-day">'+it.day+'</span></div>'+
-      '<div class="si-why">'+it.why+'</div><div class="si-links">'+links+'</div>';
+    div.innerHTML='<div class="si-top"><span class="si-emo">'+it.emo+'</span><span class="si-title">'+(it.pri===2?'<span class="si-pri">🔴 最優先</span>':'<span class="si-pri p3">🟢 評定3→4</span>')+it.title+(allPass?' ✅':'')+'</span><span class="si-day">'+it.day+'</span></div>'+
+      '<div class="si-why">'+it.why+'</div><div class="si-links">'+(links||'<span class="si-wait">⏳ 資料待ち（届き次第ここに出る）</span>')+'</div>';
     list.appendChild(div);
   });
   document.getElementById("spct").textContent=ok; document.getElementById("stot").textContent=tot;
