@@ -412,7 +412,8 @@ function renderSure(){
       const mark=pass?" ✓":(sc.attempted?" "+sc.score+"%":"");
       return '<a class="'+cls+'" href="'+l[1]+'">'+l[0]+mark+'</a>';
     }).join("");
-    const div=document.createElement("div"); div.className="sitem"+(allPass?" done":"");
+    if(!it.links.length) allPass=false;
+    const div=document.createElement("div"); div.className="sitem"+(it.pri===2?" pri2":"")+(allPass?" done":"");
     div.innerHTML='<div class="si-top"><span class="si-emo">'+it.emo+'</span><span class="si-title">'+(it.pri===2?'<span class="si-pri">🔴 最優先</span>':'<span class="si-pri p3">🟢 もう一段上へ</span>')+it.title+(allPass?' ✅':'')+'</span><span class="si-day">'+it.day+'</span></div>'+
       '<div class="si-why">'+it.why+'</div><div class="si-links">'+(links||'<span class="si-wait">⏳ 資料待ち（届き次第ここに出る）</span>')+'</div>';
     list.appendChild(div);
