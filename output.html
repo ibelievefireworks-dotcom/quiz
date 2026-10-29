@@ -577,6 +577,7 @@ function lineShare(text){
   location.href = "https://line.me/R/share?text=" + encodeURIComponent(text);
 }
 renderHome();
+(function(){ const d=new URLSearchParams(location.search).get("deck"); if(d&&DECKS[d]) startDeck(d); })();
 </script>
 </body>
 </html>

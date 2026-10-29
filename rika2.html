@@ -387,6 +387,7 @@ $("againBtn").onclick=()=>startTopic(state.key);
 $("homeBtn").onclick=renderHome;
 $("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
 renderHome();
+(function(){ const t=new URLSearchParams(location.search).get("t"); if(t&&QUIZ[t]) startTopic(t); })();
 </script>
 </body>
 </html>
