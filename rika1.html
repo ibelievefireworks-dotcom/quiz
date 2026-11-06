@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>理科 1年の復習（音・地震）｜11/16 診断テスト対策</title>
+<script src="report.js"></script>
+<style>
+  :root{
+    --bg:#f2fbf6; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --accent:#059669; --accent-d:#047857;
+    --ok:#16a34a; --ok-bg:#dcfce7; --ng:#dc2626; --ng-bg:#fee2e2;
+    --line:#d8f0e3; --shadow:0 4px 14px rgba(10,90,60,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6; font-size:17px;
+    padding:14px 12px 40px; max-width:480px; margin:0 auto;
+  }
+  h1{font-size:20px; margin:6px 0 2px; text-align:center;}
+  .lead{text-align:center; color:var(--sub); font-size:13px; margin:0 0 16px;}
+  .backlink{display:inline-block; margin-bottom:6px; color:var(--accent); text-decoration:none; font-weight:700; font-size:14px;}
+  .card{background:var(--card); border-radius:16px; box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .topic{
+    display:flex; align-items:center; gap:12px; width:100%;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 14px; margin-bottom:11px; text-align:left;
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s;
+  }
+  .topic:active{transform:scale(.98);}
+  .topic .emo{font-size:26px; flex:0 0 auto;}
+  .topic .tt{flex:1 1 auto;}
+  .topic .tt b{font-size:16px; display:block;}
+  .topic .tt small{color:var(--sub); font-size:12px;}
+  .topic .best{font-size:11px; color:var(--ok); font-weight:700; flex:0 0 auto;}
+  .arrow{color:var(--accent); font-weight:700;}
+  .bar{height:8px; background:#e0f3ea; border-radius:99px; overflow:hidden; margin-bottom:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); width:0; transition:width .25s;}
+  .meta{display:flex; justify-content:space-between; font-size:12px; color:var(--sub); margin-bottom:14px;}
+  .qtag{display:inline-block; font-size:11px; font-weight:700; color:#fff; background:var(--accent); border-radius:6px; padding:2px 8px; margin-bottom:10px;}
+  .q{font-size:18px; font-weight:700; margin:0 0 16px; line-height:1.55;}
+  .opt{
+    display:block; width:100%; text-align:left; background:#fff;
+    border:2px solid var(--line); border-radius:12px; padding:13px 14px;
+    margin-bottom:10px; font-size:16px; color:var(--ink); cursor:pointer; transition:.1s;
+  }
+  .opt:active{transform:scale(.99);}
+  .opt.correct{border-color:var(--ok); background:var(--ok-bg); font-weight:700;}
+  .opt.wrong{border-color:var(--ng); background:var(--ng-bg);}
+  .opt:disabled{cursor:default;}
+  .exp{
+    background:#effaf4; border-left:4px solid var(--accent); border-radius:8px;
+    padding:11px 13px; font-size:14px; color:#334; margin-top:4px; display:none;
+  }
+  .exp.show{display:block;}
+  .exp .res{font-weight:800; display:block; margin-bottom:3px;}
+  .res.y{color:var(--ok);} .res.n{color:var(--ng);}
+  .btn{
+    display:block; width:100%; background:var(--accent); color:#fff; border:none;
+    border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer;
+    margin-top:14px; box-shadow:var(--shadow);
+  }
+  .btn:active{background:var(--accent-d);}
+  .btn.ghost{background:#fff; color:var(--accent); border:2px solid var(--accent); box-shadow:none;}
+  .btn.gray{background:#eef4f0; color:var(--sub); box-shadow:none;}
+  .hidden{display:none;}
+  .score{text-align:center; padding:8px 0 4px;}
+  .score .big{font-size:46px; font-weight:800; line-height:1;}
+  .score .pct{font-size:15px; color:var(--sub);}
+  .ring{font-size:54px; text-align:center; margin:6px 0;}
+  .msg{text-align:center; font-size:16px; font-weight:700; margin:6px 0 16px;}
+  .foot{text-align:center; color:var(--sub); font-size:11px; margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <a class="backlink" href="index.html">← 科目をえらぶ</a>
+  <h1>🔊 理科 1年の復習（音・地震）</h1>
+  <p class="lead">11/16（月）領域別診断テスト対策：音の性質・地震（1年の内容）<br>テーマを選んでスタート！</p>
+  <a href="output.html?subj=理科" style="display:block;text-align:center;text-decoration:none;font-weight:700;border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent);border-radius:14px;padding:12px;margin:2px 0 14px;background:#fff;">✍️ 書いて仕上げる（用語・考察の記述）→</a>
+  <div id="topicList"></div>
+  <p class="foot">※「合格ライン」は正答率80%。<br>まちがえた問題だけやり直せます。</p>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="card">
+    <div class="bar"><i id="prog"></i></div>
+    <div class="meta"><span id="topicName"></span><span id="count"></span></div>
+    <span class="qtag" id="qtag">問題</span>
+    <p class="q" id="qText"></p>
+    <div id="opts"></div>
+    <div class="exp" id="exp"></div>
+    <button class="btn hidden" id="nextBtn">次へ →</button>
+  </div>
+  <button class="btn gray" id="quitBtn">やめてテーマ一覧へ</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="card">
+    <div class="ring" id="ring">🎉</div>
+    <div class="score"><span class="big" id="scoreNum"></span><span class="pct" id="scorePct"></span></div>
+    <div class="msg" id="resMsg"></div>
+    <button class="btn ghost hidden" id="retryWrong">まちがえた問題だけ復習（<span id="wrongN"></span>問）</button>
+    <button class="btn" id="againBtn">もう一度（全問）</button>
+    <button class="btn gray" id="homeBtn">テーマ一覧へ</button>
+  </div>
+</div>
+
+<script>
+const QUIZ = {
+  oto: { title:"音の性質（1年の復習）", emo:"🔊", questions:[
+    {q:"音を出している物体（音源）に共通していることは？",
+     o:[["振動している",1],["熱くなっている",0],["光っている",0],["動き続けている",0]],
+     e:"音源（発音体）は必ず振動している。太鼓の膜、ギターの弦、声帯など。振動が止まると音も止まる。"},
+    {q:"音が空気中を伝わるしくみは？",
+     o:[["空気の振動が波として次々に伝わる",1],["空気が音源から耳まで移動する",0],["光と同じで何もなくても伝わる",0],["音が空気を押しのけて進む",0]],
+     e:"空気そのものは移動せず、振動（密と疎の波）が伝わる。真空中（空気がない）では音は伝わらない＝容器の空気を抜くとブザーの音が聞こえなくなる実験。"},
+    {q:"空気中を伝わる音の速さは、およそ秒速何m？",
+     o:[["約340m",1],["約34m",0],["約3400m",0],["約30万km",0]],
+     e:"約340m/s（気温15℃前後）。光は約30万km/s＝ほぼ一瞬なので、雷は光ってから音が遅れて聞こえる。"},
+    {q:"稲妻が光ってから5秒後に雷の音が聞こえた。雷までの距離は？（音速340m/s）",
+     o:[["約1700m",1],["約340m",0],["約68m",0],["約850m",0]],
+     e:"距離＝速さ×時間＝340×5＝1700m。光は一瞬で届くとみなす。"},
+    {q:"音の「大きさ」を決めるのは？",
+     o:[["振幅（振動の幅）",1],["振動数",0],["音の速さ",0],["弦の長さ",0]],
+     e:"振幅が大きい→大きい音。オシロスコープでは波の山の高さが高い。"},
+    {q:"音の「高さ」を決めるのは？",
+     o:[["振動数（1秒間に振動する回数）",1],["振幅",0],["音源の重さ",0],["空気の温度",0]],
+     e:"振動数が多い→高い音。単位はヘルツ（Hz）。波形では波の数が多い（間隔がせまい）。"},
+    {q:"振動数の単位は？",
+     o:[["Hz（ヘルツ）",1],["dB（デシベル）",0],["N（ニュートン）",0],["m/s",0]],
+     e:"1秒間に振動する回数＝振動数［Hz］。例：440Hz＝1秒間に440回振動（ラの音）。"},
+    {q:"モノコードで「高い音」を出すには、弦をどうする？",
+     o:[["短くする・細くする・強く張る",1],["長くする・太くする・ゆるめる",0],["強くはじく",0],["弱くはじく",0]],
+     e:"短い・細い・強く張る→振動数が増えて高い音。「強くはじく」は振幅が大きくなる＝大きい音で、高さは変わらない。"},
+    {q:"オシロスコープの波形で、波の「山の高さ」が高いほど？",
+     o:[["大きい音",1],["高い音",0],["速い音",0],["低い音",0]],
+     e:"山の高さ＝振幅＝音の大きさ。波の数（同じ時間内の山の数）＝振動数＝音の高さ。"},
+    {q:"同じ時間で波の数が2倍の波形は、もとの音と比べてどんな音？",
+     o:[["高い音（振動数が2倍）",1],["大きい音",0],["低い音",0],["小さい音",0]],
+     e:"波の数が多い＝振動数が多い＝高い音。1オクターブ上の音は振動数がちょうど2倍。"},
+    {q:"音が伝わらないのはどれ？",
+     o:[["真空中",1],["水中",0],["鉄の棒の中",0],["糸電話の糸",0]],
+     e:"音は気体・液体・固体の中を伝わる（固体の中が最も速い）。真空＝物質がないので伝わらない。"},
+    {q:"やまびこは音のどんな性質？",
+     o:[["反射",1],["屈折",0],["吸収",0],["振動数の変化",0]],
+     e:"音は壁や山で反射する。音の反射を利用した例：魚群探知機・超音波検査・こうもり。"},
+    {q:"船から海底に向けて音を出し、3秒後に反射音が戻った。海の深さは？（水中の音速1500m/s）",
+     o:[["2250m",1],["4500m",0],["500m",0],["1500m",0]],
+     e:"往復で3秒→片道1.5秒。1500×1.5＝2250m。「往復」に注意して半分にする。"},
+  ]},
+  jishin: { title:"地震（1年の復習）", emo:"🌋", questions:[
+    {q:"地震が発生した地下の場所を何という？",
+     o:[["震源",1],["震央",0],["断層",0],["震度",0]],
+     e:"震源＝地下で岩石が破壊された場所。その真上の地表の地点が「震央」。"},
+    {q:"震源の真上の地表の地点を何という？",
+     o:[["震央",1],["震源",0],["震源距離",0],["プレート",0]],
+     e:"震央は地表の点。震源から観測点までの距離が「震源距離」。"},
+    {q:"地震のはじめの小さなゆれを何という？",
+     o:[["初期微動",1],["主要動",0],["余震",0],["本震",0]],
+     e:"初期微動＝P波によるカタカタという小さなゆれ。あとから来る大きなゆれが主要動（S波）。"},
+    {q:"初期微動を伝える波と主要動を伝える波の組み合わせは？",
+     o:[["初期微動＝P波、主要動＝S波",1],["初期微動＝S波、主要動＝P波",0],["どちらもP波",0],["どちらもS波",0]],
+     e:"P（Primary＝最初）波が速く先に届く→初期微動。S（Secondary）波が遅く後に届く→主要動。"},
+    {q:"P波が届いてからS波が届くまでの時間を何という？",
+     o:[["初期微動継続時間",1],["主要動継続時間",0],["震源距離",0],["到達時間",0]],
+     e:"初期微動継続時間は震源からの距離に比例して長くなる。遠い地点ほど長い。"},
+    {q:"初期微動継続時間と震源からの距離の関係は？",
+     o:[["距離が遠いほど長い（比例）",1],["距離が遠いほど短い",0],["距離に関係なく一定",0],["震度が大きいほど長い",0]],
+     e:"P波とS波の速さの差で時間差が広がる。この性質を使って震源までの距離を推定できる（大森公式）。"},
+    {q:"P波の速さ6km/s、S波3km/s。震源から120kmの地点の初期微動継続時間は？",
+     o:[["20秒",1],["40秒",0],["10秒",0],["60秒",0]],
+     e:"P波到着：120÷6＝20秒後、S波到着：120÷3＝40秒後。差＝20秒。"},
+    {q:"「震度」とは何を表す？",
+     o:[["その場所でのゆれの大きさ",1],["地震の規模（エネルギー）",0],["震源の深さ",0],["初期微動の時間",0]],
+     e:"震度は観測地点ごとに違う。0〜7で、5と6は弱・強に分かれ全10階級。震源に近いほど大きくなる傾向。"},
+    {q:"「マグニチュード」とは何を表す？",
+     o:[["地震の規模（放出されたエネルギーの大きさ）",1],["観測地点のゆれの大きさ",0],["震源の深さ",0],["ゆれの続いた時間",0]],
+     e:"マグニチュード（M）は地震1回につき1つの値。震度は場所によって違う。Mが1大きいとエネルギーは約32倍、2大きいと約1000倍。"},
+    {q:"震度の階級は全部でいくつ？",
+     o:[["10階級（0〜7、5弱5強6弱6強）",1],["7階級",0],["8階級",0],["12階級",0]],
+     e:"0・1・2・3・4・5弱・5強・6弱・6強・7の10階級。"},
+    {q:"緊急地震速報のしくみは？",
+     o:[["速いP波を検知し、遅いS波（主要動）が来る前に知らせる",1],["地震を予知して発生前に知らせる",0],["S波を検知してから知らせる",0],["津波を観測して知らせる",0]],
+     e:"P波とS波の速さの差を利用。震源に近い場所では間に合わないこともある。"},
+    {q:"日本付近で地震が多い主な原因は？",
+     o:[["複数のプレートがぶつかり合っている",1],["火山が多いから",0],["島国で海に囲まれているから",0],["地下に空洞が多いから",0]],
+     e:"日本付近には北アメリカ・ユーラシア・太平洋・フィリピン海の4つのプレートが集まる。"},
+    {q:"海溝付近で起こる大地震（海溝型地震）のしくみは？",
+     o:[["沈み込む海洋プレートに引きずられた大陸プレートが、はね返る",1],["大陸プレートが海洋プレートの下に沈む",0],["火山の噴火でプレートが割れる",0],["地下水が岩を押し上げる",0]],
+     e:"海洋プレートが大陸プレートの下に沈み込み→引きずり込まれた大陸プレートの先がはね上がる→津波も起こる（東日本大震災など）。"},
+    {q:"内陸で起こる地震の原因となる、過去にくり返し動き今後も動く可能性のある断層を何という？",
+     o:[["活断層",1],["海溝",0],["震央",0],["プレート境界",0]],
+     e:"活断層による内陸型（直下型）地震は震源が浅く、Mが小さくても震度が大きくなりやすい（阪神・淡路大震災など）。"},
+    {q:"日本列島の地震の震源の深さの特徴は？",
+     o:[["太平洋側で浅く、日本海側に向かって深くなる",1],["日本海側で浅く、太平洋側で深い",0],["全国で同じ深さ",0],["北で浅く、南で深い",0]],
+     e:"沈み込む海洋プレートに沿って震源が分布するため、太平洋側（海溝側）から大陸側へ斜めに深くなる。"},
+    {q:"地震によって起こる現象でないものは？",
+     o:[["台風",1],["津波",0],["液状化",0],["土地の隆起・沈降",0]],
+     e:"津波・液状化現象（砂地が液体のようになる）・地割れ・がけくずれ・隆起/沈降は地震の被害。台風は気象現象。"},
+  ]},
+};
+
+const $ = id => document.getElementById(id);
+let state = {};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function bestKey(k){return "rika1_best_"+k;}
+function renderHome(){
+  $("home").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("result").classList.add("hidden");
+  const list=$("topicList"); list.innerHTML="";
+  for(const key in QUIZ){
+    const t=QUIZ[key]; const best=localStorage.getItem(bestKey(key));
+    const b=document.createElement("button"); b.className="topic";
+    b.innerHTML=`<span class="emo">${t.emo}</span>
+      <span class="tt"><b>${t.title}</b><small>全${t.questions.length}問</small></span>
+      ${best?`<span class="best">最高 ${best}%</span>`:``}<span class="arrow">▶</span>`;
+    b.onclick=()=>startTopic(key); list.appendChild(b);
+  }
+}
+function startTopic(key, subset){
+  const t=QUIZ[key];
+  let qs = subset ? subset.map(i=>t.questions[i]) : t.questions.slice();
+  state={ key, items:shuffle(qs), pos:0, score:0, wrong:[] };
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("quiz").classList.remove("hidden");
+  $("topicName").textContent=t.emo+" "+t.title;
+  renderQuestion();
+}
+function renderQuestion(){
+  const it=state.items[state.pos];
+  $("count").textContent=`${state.pos+1} / ${state.items.length}`;
+  $("prog").style.width=(state.pos/state.items.length*100)+"%";
+  $("qtag").textContent="第"+(state.pos+1)+"問";
+  $("qText").textContent=it.q;
+  $("exp").className="exp"; $("exp").innerHTML=""; $("nextBtn").classList.add("hidden");
+  const box=$("opts"); box.innerHTML="";
+  shuffle(it.o).forEach(op=>{
+    const btn=document.createElement("button"); btn.className="opt"; btn.textContent=op[0];
+    btn.onclick=()=>answer(btn,op[1]===1,it); box.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+function correctText(it){ return it.o.find(o=>o[1]===1)[0]; }
+function answer(btn, correct, it){
+  $("opts").querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(b.textContent===correctText(it)) b.classList.add("correct"); });
+  if(correct){ state.score++; } else { btn.classList.add("wrong"); state.wrong.push(it); }
+  const exp=$("exp");
+  exp.innerHTML=`<span class="res ${correct?'y':'n'}">${correct?'⭕ 正解！':'❌ ざんねん'}</span>${it.e}`;
+  exp.classList.add("show"); $("nextBtn").classList.remove("hidden");
+}
+$("nextBtn").onclick=()=>{ state.pos++; if(state.pos>=state.items.length) renderResult(); else renderQuestion(); };
+function renderResult(){
+  $("quiz").classList.add("hidden"); $("result").classList.remove("hidden");
+  const total=state.items.length, sc=state.score, pct=Math.round(sc/total*100);
+  $("scoreNum").textContent=`${sc} / ${total}`; $("scorePct").textContent=`正答率 ${pct}%`;
+  let ring,msg;
+  if(pct>=80){ring="🎉";msg="合格ライン突破！この調子！";}
+  else if(pct>=60){ring="💪";msg="あと少し！まちがえた問題を復習しよう";}
+  else{ring="📖";msg="まずは解説を読んで基礎固めだ！";}
+  $("ring").textContent=ring; $("resMsg").textContent=msg;
+  if(state.items.length===QUIZ[state.key].questions.length){
+    const prev=parseInt(localStorage.getItem(bestKey(state.key))||"0");
+    if(pct>prev) localStorage.setItem(bestKey(state.key),pct);
+    if(typeof reportUnit==="function") reportUnit("🔊 理科(1年復習)："+QUIZ[state.key].title+"\n4択クイズ "+total+"問 → "+sc+"問正解（"+pct+"%）\n"+(pct>=80?"🎉 合格ライン80%クリア！":"あと少し！復習します💪")+"\n#莉映の期末対策");
+  }
+  const rw=$("retryWrong");
+  if(state.wrong.length>0){
+    rw.classList.remove("hidden"); $("wrongN").textContent=state.wrong.length;
+    rw.onclick=()=>{ const t=QUIZ[state.key]; const idx=state.wrong.map(w=>t.questions.indexOf(w)); startTopic(state.key, idx); };
+  } else { rw.classList.add("hidden"); }
+}
+$("againBtn").onclick=()=>startTopic(state.key);
+$("homeBtn").onclick=renderHome;
+$("quitBtn").onclick=()=>{ if(confirm("テーマ一覧に戻りますか？（今の点数は記録されません）")) renderHome(); };
+renderHome();
+(function(){ const t=new URLSearchParams(location.search).get("t"); if(t&&QUIZ[t]) startTopic(t); })();
+</script>
+</body>
+</html>

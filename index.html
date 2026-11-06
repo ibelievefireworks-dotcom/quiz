@@ -81,6 +81,12 @@
     box-shadow:var(--shadow); font-size:13px; color:var(--sub);
   }
   .note b{color:var(--ink);}
+  .shindan{background:#eff6ff; border:2px solid #3b82f6; border-radius:18px; padding:16px 16px 12px; margin-bottom:18px; box-shadow:var(--shadow);}
+  .shindan .stitle{font-weight:800; font-size:17px; color:#1e3a8a;}
+  .shindan .ssub{font-size:12.5px; color:#1e40af; margin:4px 0 10px;}
+  .shindan .swait{font-size:11.5px; color:#1e40af; margin-top:4px;}
+  .sitem.shin{border-color:#93c5fd;}
+  .sitem.shin .si-day{background:#dbeafe; color:#1d4ed8;}
   .foot{text-align:center; color:#9aa6b8; font-size:11px; margin-top:22px;}
   .exam{display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin:10px 0 0;}
   .exam span{background:#fff; border:1px solid var(--line); border-radius:99px; padding:4px 10px; font-size:12px; font-weight:700; color:#334155;}
@@ -144,6 +150,15 @@
     </div>
     <div id="surelist"></div>
     <div class="swait">⏳ 保健・技術・家庭：プリント／ワークの写真が届き次第ここに追加</div>
+  </div>
+
+  <div class="shindan" id="shindan">
+    <div class="shead">
+      <div class="stitle">📋 11/16（月）領域別診断テスト</div>
+      <div class="ssub">期末の4日後。<b>範囲の大半は期末と同じ</b>＋1学期・1年の復習。期末が終わったら（11/13〜15）ここの🔁を回す。進み具合はボタンの色でわかる</div>
+    </div>
+    <div id="shinlist"></div>
+    <div class="swait">※ クイズに無いもの：国語の長文読解・聞き取り、英語のリスニング・記述、数学の「数の計算・式の計算」。これらは学校ワークで</div>
   </div>
 
   <div class="term">📗 期末考査の範囲 全クイズ（11/10〜12）＋小テスト対策</div>
@@ -220,6 +235,12 @@
     <span class="go">›</span>
   </a>
 
+  <a class="subj rika" href="rika1.html">
+    <span class="emo">🔊</span>
+    <span class="t"><span class="src ai">🤖 Claude作成（1年の内容）</span><b>【11/16 診断テスト】理科：音の性質・地震</b><small>領域別診断テストの範囲のうち1年の内容。音（振幅・振動数・音速の計算）13問、地震（P波S波・初期微動継続時間・震度とマグニチュード・プレート）16問</small></span>
+    <span class="go">›</span>
+  </a>
+
   <div class="term">📘 1学期の復習（学年末は年間総合。ここも財産！）</div>
 
   <a class="subj chiri" href="chiri.html">
@@ -290,6 +311,7 @@ const Qz = {
   sugaku:{label:"数学",emo:"📐",prefix:"sugaku_best_",topics:[["renritsu","連立方程式の利用"],["teigi","1次関数とは"],["wariai","変化の割合"],["graph","グラフ"],["shiki","式の求め方"],["hoteishiki","方程式とグラフ"],["riyou","利用"]]},
   eigo2:{label:"英語2学期",emo:"🔤",prefix:"eigo2_best_",topics:[["haveto","have to/must"],["doumeishi","動名詞"],["gimonto","疑問詞+to"],["jodoushi","助動詞"],["tango","単語"]]},
   rika2:{label:"理科2学期",emo:"🌱",prefix:"rika2_best_",topics:[["saibou","細胞と顕微鏡"],["kougousei","光合成と呼吸"],["mizu","水の通り道"],["shouka","消化と吸収"],["junkan","血液・排出"],["shinkei","刺激と反応"]]},
+  rika1:{label:"理科(1年復習)",emo:"🔊",prefix:"rika1_best_",topics:[["oto","音の性質"],["jishin","地震"]]},
   kokugo2:{label:"国語2学期",emo:"📖",prefix:"kokugo2_best_",topics:[["tanka","短歌"],["kotoba","言葉の力・語彙"],["humanoid","ヒューマノイド"],["hagaki","字のない葉書"],["moai","モアイは語る"],["kanji","漢字⑦〜⑯"],["kanji2","漢字⑰〜⑳"],["keigo","敬語(範囲外)"],["tegami","手紙(範囲外)"]]},
   rekishi2:{label:"歴史2学期",emo:"🏯",prefix:"rekishi2_best_",topics:[["europe","大航海時代"],["tenka","信長・秀吉"],["edo","江戸幕府"],["sakoku","鎖国と窓口"],["sangyo","産業と三都"],["kaikaku","幕政の改革"],["bunka","元禄・化政文化"]]},
   chiri2:{label:"地理2学期",emo:"🗾",prefix:"chiri2_best_",topics:[["jinko","日本の人口"],["chiiki","地域区分・都道府県"],["shigen","資源・エネルギー"],["nougyou","日本の農業"],["kougyou","日本の工業・商業"],["kyushu_shizen","九州の自然と暮らし"],["kyushu_sangyo","九州の工業・沖縄"]]},
@@ -422,6 +444,35 @@ function renderSure(){
   document.getElementById("sbar").style.width=(tot?Math.round(ok/tot*100):0)+"%";
 }
 try{ renderSure(); }catch(e){ console.warn("sure",e); }
+/* ===== 11/16 領域別診断テスト ===== */
+const SHIN=[
+  {emo:"📖",day:"国語",title:"漢字の読み書き・語句・文法",why:"期末と同じ：漢字ノート⑦〜⑳。文法は1学期のクイズで復習",
+   links:[["漢字⑦〜⑯","kokugo2.html?t=kanji",{q:"kokugo2_best_kanji"}],["漢字⑰〜⑳","kokugo2.html?t=kanji2",{q:"kokugo2_best_kanji2"}],["語句","kokugo2.html?t=kotoba",{q:"kokugo2_best_kotoba"}],["🔁 文法(1学期)","kokugo.html?t=bunpo",{q:"kokugo_best_bunpo"}],["🔁 漢字(1学期)","kokugo.html?t=kanji",{q:"kokugo_best_kanji"}]]},
+  {emo:"📐",day:"数学",title:"連立方程式の解き方・応用・一次関数",why:"期末と同じ範囲。計算は途中式を書いて確実に",
+   links:[["連立 文章題","sugaku.html?t=renritsu",{q:"sugaku_best_renritsu"}],["1次関数とは","sugaku.html?t=teigi",{q:"sugaku_best_teigi"}],["変化の割合","sugaku.html?t=wariai",{q:"sugaku_best_wariai"}],["グラフ","sugaku.html?t=graph",{q:"sugaku_best_graph"}],["式の求め方","sugaku.html?t=shiki",{q:"sugaku_best_shiki"}],["計算(書く)","output.html?deck=sugaku_calc",{o:"sugaku_calc",n:15}]]},
+  {emo:"🔤",day:"英語",title:"過去進行形・未来の文・既習事項・読解",why:"🔁過去進行形と未来の文は1学期（Unit 0〜1）。読解はゆうちゃん先生の模試で",
+   links:[["🔁 過去形・過去進行形","eigo.html?t=u0",{q:"eigo_best_u0"}],["🔁 未来の文","eigo.html?t=mirai",{q:"eigo_best_mirai"}],["🔁 接続詞","eigo.html?t=setsuzoku",{q:"eigo_best_setsuzoku"}],["🔁 不定詞","eigo.html?t=futei",{q:"eigo_best_futei"}],["have to/must","eigo2.html?t=haveto",{q:"eigo2_best_haveto"}],["動名詞","eigo2.html?t=doumeishi",{q:"eigo2_best_doumeishi"}],["模試4・5","kotest_eigo_yuko_mogi45.html",{k:"kotest_eigo_yuko_mogi45_all"}]]},
+  {emo:"🗾",day:"社会",title:"地域調査・日本の自然・人口資源産業／ヨーロッパ人〜鎖国",why:"歴史は期末と同じ。地理は🔁1学期の「地域調査・地形と気候・自然災害」が加わる",
+   links:[["🔁 地域調査","chiri.html?t=survey",{q:"best_survey"}],["🔁 地形・気候","chiri.html?t=japan",{q:"best_japan"}],["🔁 自然災害","chiri.html?t=disaster",{q:"best_disaster"}],["人口","chiri2.html?t=jinko",{q:"chiri2_best_jinko"}],["資源","chiri2.html?t=shigen",{q:"chiri2_best_shigen"}],["農業","chiri2.html?t=nougyou",{q:"chiri2_best_nougyou"}],["工業","chiri2.html?t=kougyou",{q:"chiri2_best_kougyou"}],["大航海時代","rekishi2.html?t=europe",{q:"rekishi2_best_europe"}],["信長・秀吉","rekishi2.html?t=tenka",{q:"rekishi2_best_tenka"}],["江戸幕府","rekishi2.html?t=edo",{q:"rekishi2_best_edo"}],["鎖国","rekishi2.html?t=sakoku",{q:"rekishi2_best_sakoku"}]]},
+  {emo:"🧪",day:"理科",title:"光合成・蒸散・消化／🔁化学変化（1学期）／🔁音・地震（1年）",why:"生物は期末と同じ。化学変化は1学期のクイズ、音と地震は新しく作成（1年の内容）",
+   links:[["光合成と呼吸","rika2.html?t=kougousei",{q:"rika2_best_kougousei"}],["蒸散","rika2.html?t=mizu",{q:"rika2_best_mizu"}],["消化と吸収","rika2.html?t=shouka",{q:"rika2_best_shouka"}],["🔁 成り立ち","rika.html?t=bunkai",{q:"rika_best_bunkai"}],["🔁 原子・分子","rika.html?t=genshi",{q:"rika_best_genshi"}],["🔁 化学反応式","rika.html?t=shiki",{q:"rika_best_shiki"}],["🔁 酸化・燃焼","rika.html?t=sanka",{q:"rika_best_sanka"}],["🔁 還元","rika.html?t=kangen",{q:"rika_best_kangen"}],["🔁 質量","rika.html?t=shitsuryo",{q:"rika_best_shitsuryo"}],["🔁 熱","rika.html?t=netsu",{q:"rika_best_netsu"}],["🔁 音の性質","rika1.html?t=oto",{q:"rika1_best_oto"}],["🔁 地震","rika1.html?t=jishin",{q:"rika1_best_jishin"}]]},
+];
+function renderShin(){
+  const list=document.getElementById("shinlist"); if(!list) return; list.innerHTML="";
+  SHIN.forEach(function(it){
+    const links=it.links.map(function(l){
+      const sc=sureScore(l[2]); const pass=sc.attempted&&sc.score>=80;
+      const cls=pass?"pass":(sc.attempted?"try":"none");
+      const mark=pass?" ✓":(sc.attempted?" "+sc.score+"%":"");
+      return '<a class="'+cls+'" href="'+l[1]+'">'+l[0]+mark+'</a>';
+    }).join("");
+    const div=document.createElement("div"); div.className="sitem shin";
+    div.innerHTML='<div class="si-top"><span class="si-emo">'+it.emo+'</span><span class="si-title">'+it.title+'</span><span class="si-day">'+it.day+'</span></div>'+
+      '<div class="si-why">'+it.why+'</div><div class="si-links">'+links+'</div>';
+    list.appendChild(div);
+  });
+}
+try{ renderShin(); }catch(e){ console.warn("shin",e); }
 </script>
 </body>
 </html>
