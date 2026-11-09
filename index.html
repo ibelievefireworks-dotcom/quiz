@@ -379,7 +379,7 @@ function renderDash(){
   (function(){
     const sl=["📊 莉映くんの期末 達成状況（テスト日順）","全体：合格 "+r.tP+" / "+r.tU+"単元（"+pct+"%）","――――――――――"];
     r.subj.forEach(function(s){ const sp=s.n?Math.round(s.p/s.n*100):0; sl.push(s.emo+s.label+" "+sp+"%（"+s.p+"/"+s.n+"）"); });
-    window._snap={overall:pct, lines:sl};
+    window._snap={overall:pct, lines:sl, attempted:r.tA};
   })();
 }
 document.getElementById("dtoggle").onclick=function(){
@@ -441,7 +441,7 @@ function renderSure(){
   });
   document.getElementById("spct").textContent=ok; document.getElementById("stot").textContent=tot;
   document.getElementById("sbar").style.width=(tot?Math.round(ok/tot*100):0)+"%";
-  if(window._snap && typeof pushSnapshot==="function"){
+  if(window._snap && window._snap.attempted>0 && typeof pushSnapshot==="function"){ /* 未着手の端末（父の確認用PCなど）からは送らない */
     const sl=window._snap.lines.slice();
     sl.push("――――――――――","🎯 確実に点が取れる項目（合格 "+ok+"/"+tot+"）");
     SURE.slice().sort(function(a,b){ return a.day.slice(0,5).localeCompare(b.day.slice(0,5))||a.pri-b.pri; }).forEach(function(it){ const n=it.links.length; let p=0; it.links.forEach(function(l){ const sc=sureScore(l[2]); if(sc.attempted&&sc.score>=80) p++; }); sl.push((it.pri===2?"🔴":"🟢")+it.day+"：「"+it.title+"」 "+(n?p+"/"+n:"資料待ち")); });
