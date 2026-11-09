@@ -425,7 +425,7 @@ function sureScore(s){
 function renderSure(){
   const list=document.getElementById("surelist"); if(!list) return; list.innerHTML="";
   let tot=0,ok=0;
-  SURE.forEach(function(it){
+  SURE.slice().sort(function(a,b){ return a.day.localeCompare(b.day)||a.pri-b.pri; }).forEach(function(it){
     let allPass=true;
     const links=it.links.map(function(l){
       const sc=sureScore(l[2]); tot++; const pass=sc.attempted&&sc.score>=80; if(pass) ok++; else allPass=false;
@@ -444,7 +444,7 @@ function renderSure(){
   if(window._snap && typeof pushSnapshot==="function"){
     const sl=window._snap.lines.slice();
     sl.push("――――――――――","🎯 確実に点が取れる項目（合格 "+ok+"/"+tot+"）");
-    SURE.forEach(function(it){ const n=it.links.length; let p=0; it.links.forEach(function(l){ const sc=sureScore(l[2]); if(sc.attempted&&sc.score>=80) p++; }); sl.push((it.pri===2?"🔴":"🟢")+it.day+"：「"+it.title+"」 "+(n?p+"/"+n:"資料待ち")); });
+    SURE.slice().sort(function(a,b){ return a.day.localeCompare(b.day)||a.pri-b.pri; }).forEach(function(it){ const n=it.links.length; let p=0; it.links.forEach(function(l){ const sc=sureScore(l[2]); if(sc.attempted&&sc.score>=80) p++; }); sl.push((it.pri===2?"🔴":"🟢")+it.day+"：「"+it.title+"」 "+(n?p+"/"+n:"資料待ち")); });
     sl.push("――――――――――","（80%以上で合格）#莉映の期末対策");
     pushSnapshot({overall:window._snap.overall, text:sl.join("\n")});
   }
